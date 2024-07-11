@@ -1,0 +1,126 @@
+<div *ngIf="!data.archive">
+    <div *ngIf="!data.id">
+        <div class="confirmation-dialog" *ngIf="!data.serviceConfirm && !data.serviceConfirmData && !data.reportConfirm">
+            <div *ngIf="!data.statusconfirm">
+                <h1 mat-dialog-title>Delete Confirmation</h1>
+                <div mat-dialog-content>
+                    <p>Are you sure you want to delete this data - {{data.name}}?</p>
+                </div>
+            </div>
+            <div *ngIf="data.statusconfirm == 1 || data.statusconfirm == 2">
+                <h1 mat-dialog-title>Change Status Confirmation</h1>
+                <div mat-dialog-content>
+                    <p *ngIf="data.statusconfirm == 1">Are you sure want to {{data.status}} this news?</p>
+                    <p *ngIf="data.statusconfirm == 2">Are you sure you want to update the status of this news to
+                        {{data.status}}?</p>
+                </div>
+            </div>
+            <div mat-dialog-actions>
+                <button mat-button class="btn btn-yellow text-uppercase fw-bold mr-2" (click)="onDeleteClick()">
+                    <span *ngIf="data.statusconfirm == 1 || data.statusconfirm == 2">Yes</span>
+                    <span *ngIf="!data.statusconfirm">Delete</span>
+                </button>
+                <button mat-button (click)="onCancelClick()"
+                    class="btn btn-yellow text-uppercase fw-bold">Cancel</button>
+            </div>
+        </div>
+
+
+        <div class="confirmation-dialog" *ngIf="data.serviceConfirm && !data.serviceConfirmData">
+            <h1 mat-dialog-title>Confirmation</h1>
+            <div mat-dialog-content>
+                You have selected multiple trade route as primary trade route.
+            </div>
+            <div mat-dialog-actions>
+                <button mat-button class="btn btn-yellow text-uppercase fw-bold mr-2" (click)="onDeleteClick()">
+                    <span>OK</span>
+                </button>
+                <button mat-button (click)="onCancelClick()"
+                    class="btn btn-yellow text-uppercase fw-bold">Cancel</button>
+            </div>
+        </div>
+
+
+        <div class="confirmation-dialog" *ngIf="!data.serviceConfirm && data.serviceConfirmData">
+            <h1 mat-dialog-title>Confirmation</h1>
+            <div mat-dialog-content>
+                Traderoute altered. Please adjust Wayport Values.
+            </div>
+            <div mat-dialog-actions>
+                <button mat-button class="btn btn-yellow text-uppercase fw-bold mr-2" (click)="onDeleteClick()">
+                    <span>Close</span>
+                </button>
+            </div>
+        </div>
+
+        <div *ngIf="data.reportConfirm">
+            <div class="confirmation-dialog">
+                <h1 mat-dialog-title>Generate Report</h1>
+                <div mat-dialog-content>
+                    <p>Do you really want to generate a new report?</p>
+                </div>
+                <div mat-dialog-actions>
+                    <button mat-button class="btn btn-yellow text-uppercase fw-bold mr-2" (click)="onDeleteClick()">
+                        <span>Yes</span>
+                    </button>
+                    <button mat-button (click)="onCancelClick()"
+                        class="btn btn-yellow text-uppercase fw-bold">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="data.id" class="confirmation-dialog">
+        <h1 mat-dialog-title>Service Delete</h1>
+        <div mat-dialog-content>
+            <p>Fill Reason why you are deleting this service.</p>
+            <textarea matInput [(ngModel)]="reason" style="width:88%" rows="5"></textarea>
+        </div>
+        <div mat-dialog-actions>
+            <button mat-button class="btn btn-yellow text-uppercase fw-bold mr-2" (click)="onYesClick()"
+                [disabled]="!reason || reason.trim().length === 0">
+                <span>DELETE</span>
+            </button>
+            <button mat-button (click)="onCancelClick()" class="btn btn-yellow text-uppercase fw-bold">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="data.archive">
+    <div *ngIf="!data.confirmation">
+        <div class="confirmation-dialog">
+            <h1 mat-dialog-title>{{data.name}}</h1>
+            <div mat-dialog-content>
+                <p>{{data.title}}</p>
+                <input *ngIf="data.buttonTitle == 'OK'" type="password" matInput [(ngModel)]="reason" style="width:100%"
+                    class="form-control">
+                <textarea *ngIf="data.buttonTitle == 'ADD'" matInput [(ngModel)]="reason" style="width:88%"
+                    rows="3"></textarea>
+            </div>
+            <div mat-dialog-actions>
+                <button mat-button class="btn btn-yellow text-uppercase fw-bold mr-2" (click)="onYesClick()"
+                    [disabled]="!reason || reason.trim().length === 0">
+                    <span>{{data.buttonTitle}}</span>
+                </button>
+                <button mat-button (click)="onCancelClick()"
+                    class="btn btn-yellow text-uppercase fw-bold">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="data.confirmation">
+        <div class="confirmation-dialog">
+            <h1 mat-dialog-title>{{data.name}}</h1>
+            <div mat-dialog-content>
+                <p>{{data.confirmation}}</p>
+            </div>
+            <div mat-dialog-actions>
+                <button mat-button class="btn btn-yellow text-uppercase fw-bold mr-2" (click)="onDeleteClick()">
+                    <span>Yes</span>
+                </button>
+                <button mat-button (click)="onCancelClick()"
+                    class="btn btn-yellow text-uppercase fw-bold">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

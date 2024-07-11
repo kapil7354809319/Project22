@@ -1,0 +1,319 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+  <div class="container-fluid">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-12 col-12">
+          <h1 class="m-0">Manage Port Range ({{ tabActive }})</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12 text-right"></div>
+        <!-- /.col -->
+      </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="row m-0">
+      <div class="col-12">
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item">
+            <a
+              (click)="tabChange('Add')"
+              class="nav-link active"
+              data-toggle="tab"
+              href="#addnew"
+              role="tab"
+              >Add New</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              (click)="tabChange('Search')"
+              class="nav-link"
+              data-toggle="tab"
+              href="#search"
+              role="tab"
+              >Search</a
+            >
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane active" id="addnew" role="tabpanel">
+            <form
+              class="form-horizontal row"
+              method="post"
+              [formGroup]="portRangeForm"
+              (ngSubmit)="onSubmit()"
+            >
+              <div class="col-md-12 col-12">
+                <div class="form-group row">
+                  <div class="col-md-3 col-12">
+                    <label class="control-label">Port Range Description*</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="port_range_description"
+                      id="port_range_description"
+                    />
+                    <div
+                      *ngIf="
+                        portRangeForm
+                          ?.get('port_range_description')
+                          ?.hasError('required') &&
+                        portRangeForm?.get('port_range_description')?.touched
+                      "
+                    >
+                      <span class="error-message"
+                        >Port Range Description is required</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold mr-2"
+                    type="submit"
+                  >
+                    Add New
+                  </button>
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold"
+                    (click)="resetForm()"
+                    type="button"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="tab-pane" id="search" role="tabpanel">
+            <form
+              class="form-horizontal row"
+              method="post"
+              [formGroup]="portSearchRangeForm"
+              (ngSubmit)="onSearch()"
+            >
+              <div class="col-md-12 col-12">
+                <div class="form-group row">
+                  <div class="col-md-3 col-12">
+                    <label class="control-label">Port Range Description</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="port_range_description"
+                      id="port_range_description"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold mr-2"
+                    type="submit"
+                    [disabled]="portSearchRangeForm.invalid"
+                  >
+                    Search
+                  </button>
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold"
+                    (click)="resetFormSearch()"
+                    type="button"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 mt-2">
+        <div class="panel panel-white h-100">
+          <div class="panel-heading d-inline-block float-left">
+            Port Range List
+          </div>
+          <div class="panel-body table-responsive pt-3">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>S.NO</th>
+                  <th (click)="sortData('port_range_description')">
+                    Port Range Description
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'port_range_description' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'port_range_description' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th class="text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let port of portRangeList; let index = index">
+                  <td class="py-1 lh-28">{{ index + fromStart.from }}.</td>
+                  <td class="py-2 lh-28">{{ port.port_range_description }}</td>
+                  <td class="text-right lh-28 py-2">
+                    <button
+                      (click)="editSelect(port.port_range_id)"
+                      class="btn btn-blue btn-sm my-0 px-3"
+                      style="background-color: #97bfe480; color: #132e67"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      (click)="
+                        deleteData(
+                          port.port_range_id,
+                          port.port_range_description
+                        )
+                      "
+                      class="btn btn-transparent btn-sm my-0"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="portRangeList && portRangeList.length === 0">
+                  <td colspan="3"><strong>No records found</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-paggination">
+            <div class="page-counter">
+              Showing
+              <select
+                class=""
+                [(ngModel)]="per_page"
+                (change)="onPerPageChange($event)"
+              >
+                <option *ngFor="let value of getPerPageCount" [value]="value">
+                  {{ value }}
+                </option>
+              </select>
+              of {{ total }} entries
+            </div>
+            <div class="custom-paggination float-right">
+              <ul>
+                <li *ngFor="let pagination of pagination; let index = index">
+                  <ng-container
+                    *ngIf="pagination.label !== '...'; else emptyLabel"
+                  >
+                    <a
+                      [innerHTML]="pagination.label"
+                      [ngClass]="{
+                        active: pagination.label == fromStart.current_page,
+                        disabled: pagination.url == null
+                      }"
+                      (click)="changePagination(pagination.url)"
+                    ></a>
+                  </ng-container>
+                  <ng-template #emptyLabel>
+                    <a>{{ pagination.label }}</a>
+                  </ng-template>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>
+
+<div
+  id="myModal"
+  class="modal fade editModal"
+  tabindex="-1"
+  role="dialog"
+  data-backdrop="static"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Port Range</h5>
+        <button type="button" class="close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form
+          class="form-horizontal"
+          method="post"
+          [formGroup]="portRangeForm"
+          (ngSubmit)="onUpdate()"
+          *ngIf="editListData && editListData.length > 0"
+        >
+          <div *ngFor="let editList of editListData">
+            <div class="col-md-12 col-12">
+              <div class="form-group row">
+                <div class="col-md-7 col-12">
+                  <label class="control-label">Port Range Description*</label>
+                  <input
+                    type="hidden"
+                    formControlName="id"
+                    [(ngModel)]="editList.port_range_id"
+                  />
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="port_range_description"
+                    id="port_range_description"
+                    [(ngModel)]="editList.port_range_description"
+                  />
+                  <div
+                    *ngIf="
+                      portRangeForm
+                        ?.get('port_range_description')
+                        ?.hasError('required') &&
+                      portRangeForm?.get('port_range_description')?.touched
+                    "
+                  >
+                    <span class="error-message"
+                      >Port Range Description is required</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 mb-4">
+              <div class="form-group">
+                <button
+                  class="btn btn-yellow text-uppercase fw-bold mr-2"
+                  type="submit"
+                  [disabled]="portRangeForm.invalid"
+                >
+                  Save
+                </button>
+                <button
+                  class="btn btn-yellow text-uppercase fw-bold"
+                  (click)="closeModal()"
+                  type="button"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,165 @@
+::ng-deep {
+    .modal-open .cdk-overlay-container {
+        z-index: 9999999 !important;
+    }
+
+    .NgxEditor__Content {
+        height: 200px;
+        overflow-y: auto;
+    }
+
+    .NgxEditor__Wrapper {
+        border: none !important;
+    }
+
+    .NgxEditor__MenuBar {
+        padding: 4px;
+        color: #002d5a;
+    }
+
+    .addsearchform .multiselect-dropdown .dropdown-list {
+        position: inherit !important;
+        box-shadow: none !important;
+    }
+
+    .searchform .multiselect-dropdown .dropdown-btn .selected-item {
+        margin-bottom: 0px;
+        padding: 4px 8px 4px 7px !important;
+        font-size: 13px;
+        line-height: normal;
+    }
+
+    .searchform.multiselect-dropdown .dropdown-btn {
+        padding: 6px 12px !important;
+    }
+
+    .searchform .multiselect-dropdown .dropdown-btn .selected-item a {
+        font-size: 12px;
+    }
+
+    .custom-accordion {
+        height: auto;
+        padding: 0;
+    }
+
+    .card-header button {
+        color: #002B5C;
+        font-size: 15px;
+        background-color: #ffffff !important;
+
+        &:hover {
+            color: #002B5C;
+        }
+    }
+
+    .card-header button:hover {
+        text-decoration: none;
+    }
+
+    .accordion .form-group {
+        padding: 10px 20px;
+        margin: 0;
+    }
+
+    .btn.focus,
+    .btn:focus {
+        box-shadow: none;
+        text-decoration: none;
+    }
+
+    .card-header button {
+        background: url(https://cdn0.iconfinder.com/data/icons/entypo/91/arrow56-512.png) no-repeat calc(100% - 20px) center;
+        background-size: 13px;
+
+    }
+
+    .card-header button[aria-expanded="false"] {
+        background: url(https://cdn0.iconfinder.com/data/icons/arrows-android-l-lollipop-icon-pack/24/expand2-256.png) no-repeat calc(100% - 20px) center;
+        background-size: 13px;
+    }
+
+    .multiselect-dropdown .dropdown-btn .selected-item {
+        border: 1px solid #545b62 !important;
+        background: #545b62 !important;
+        max-width: 270px !important;
+        margin-bottom: 5px;
+        padding: 5px 8px 5px 7px !important;
+        color: #fff !important;
+
+        &:hover {
+            box-shadow: none !important;
+        }
+    }
+
+    .multiselect-dropdown .dropdown-btn .selected-item a {
+        color: #fff !important;
+        padding-left: 10px !important;
+        font-size: 17px;
+    }
+
+    .addsearchform .multiselect-dropdown .dropdown-btn {
+        border: none !important;
+        background: #e9ecf1 !important;
+        border-radius: 3px !important;
+        padding: 9px 12px !important;
+        color: #70767A !important;
+    }
+
+    .card {
+        border-radius: 0px;
+        border: none;
+    }
+
+    .mdc-text-field--filled {
+        height: 36px !important;
+    }
+
+    .mat-mdc-text-field-wrapper {
+        height: 36px !important;
+        flex: auto;
+    }
+
+    mat-form-field {
+        width: 100%;
+    }
+
+    .mat-mdc-form-field-infix {
+        min-height: 30px !important;
+    }
+
+    .mdc-text-field--no-label:not(.mdc-text-field--outlined):not(.mdc-text-field--textarea) .mat-mdc-form-field-infix {
+        padding-top: 7px !important;
+        padding-bottom: 0 !important;
+    }
+
+    .mat-mdc-icon-button.mat-mdc-button-base {
+        --mdc-icon-button-state-layer-size: 36px;
+    }
+
+    .mat-mdc-icon-button .mat-mdc-button-touch-target {
+        height: 34px;
+    }
+
+    .mat-mdc-icon-button.mat-mdc-button-base {
+        padding: 0px;
+    }
+
+    .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+        background-color: #fff !important;
+        border: none !important;
+        border-radius: 2px;
+    }
+
+    .mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-line-ripple::before,
+    .mdc-line-ripple {
+        display: none !important;
+    }
+
+    .multiselect-dropdown .dropdown-btn {
+        padding: 6px 12px !important;
+    }
+
+    .editModal .multiselect-dropdown .dropdown-btn {
+        background: #e9ecf1;
+    }
+}

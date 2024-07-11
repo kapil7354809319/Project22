@@ -1,0 +1,127 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div
+  class="content-wrapper reefer-bg"
+  data-widget="main-content"
+  *ngFor="let news of newsData"
+>
+  <div class="container-fluid">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-12 col-12">
+          <h1 class="m-0">{{ news.news_title }}</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12">
+          <div class="article-date-time">
+            <span class="aos-ArticleDate aos-MRXS3 aos-NM">{{
+              news.created_date | date : "dd-MMM-yyyy"
+            }}</span>
+          </div>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-4 col-12">
+          <div
+            class="recent-news-heading d-flex align-items-center justify-content-between"
+          >
+            <h4 class="mb-0">Recent News</h4>
+            <button
+              *ngIf="news.image != ''"
+              type="button"
+              (click)="downloadFile(news.image)"
+              class="btn btn-yellow text-uppercase fw-bold"
+            >
+              Download
+            </button>
+          </div>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-12">
+          <hr class="mt-2 mb-0" />
+        </div>
+      </div>
+    </div>
+    <!-- Page Content -->
+    <div id="banner_container" class="clear">
+      <div class="row pl-2">
+        <div class="col-md-8">
+          <div class="d-flex justify-content-between">
+            <p class="mb-2">Source: {{ news.source_link }}</p>
+            <p class="mb-2">
+              Source Link:
+              <a href="{{ news.source_link }}" target="_blank">{{
+                news.source_link
+              }}</a>
+            </p>
+          </div>
+          <hr class="mt-1 mb-4" />
+          <div class="aos-DS30-WYSEdit aos-MBM3">
+            <div [innerHTML]="news.news_description"></div>
+            <div class="tags-section">
+              <h4>Service Tags</h4>
+              <p *ngIf="servicesArray.length > 0">
+                <span
+                  class="news-tags-span"
+                  *ngFor="let service of servicesArray"
+                >
+                  {{ service }}</span
+                >
+              </p>
+              <h4>Operator Tags</h4>
+              <p *ngIf="operatorArray.length > 0">
+                <span
+                  class="news-tags-span"
+                  *ngFor="let operator of operatorArray"
+                >
+                  {{ operator }}</span
+                >
+              </p>
+              <h4>Trade Tags</h4>
+              <p *ngIf="tradesArray.length > 0">
+                <span class="news-tags-span" *ngFor="let trade of tradesArray">
+                  {{ trade }}</span
+                >
+              </p>
+              <h4>Port Tags</h4>
+              <p *ngIf="portsArray.length > 0">
+                <span class="news-tags-span" *ngFor="let port of portsArray">
+                  {{ port }}</span
+                >
+              </p>
+              <h4>Region Tags</h4>
+              <p *ngIf="regionsArray.length > 0">
+                <span
+                  class="news-tags-span"
+                  *ngFor="let region of regionsArray"
+                >
+                  {{ region }}</span
+                >
+              </p>
+            </div>
+          </div>
+          <div class="newsimage">
+            <img
+              *ngIf="!fileImage"
+              width="150px"
+              [src]="imageBasePath + news.image"
+              alt="Selected File"
+            />
+          </div>
+          <!-- <img
+            *ngIf="fileImage"
+            width="150px"
+            [src]="fileImage"
+            alt="Selected File"
+          /> -->
+        </div>
+        <!--/.col8-->
+
+        <div class="col-md-4">
+          <app-recent-news [recentNewsData]="latestNews"></app-recent-news>
+        </div>
+        <!--/.col4-->
+        <span class="clr"></span>
+      </div>
+    </div>
+  </div>
+</div>

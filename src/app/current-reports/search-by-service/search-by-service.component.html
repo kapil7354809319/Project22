@@ -1,0 +1,439 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+  <div class="container-fluid">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-4 col-12">
+          <h1 class="m-0">Search By Service</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12 text-right"></div>
+        <!-- /.col -->
+      </div>
+    </div>
+    <div class="row m-0">
+      <div class="col-md-12">
+        <form
+          class="form-horizontal row"
+          method="post"
+          [formGroup]="searchByService"
+          (ngSubmit)="onSubmit()"
+        >
+          <div class="col-md-12 col-12">
+            <div class="form-group row"></div>
+          </div>
+          <div class="col-md-12 col-12">
+            <div class="form-group row">
+              <div class="col-md-3 mb-10px col-12">
+                <!-- <div class="col-md-3 mb-10px col-12 mx-auto"> -->
+                <label class="control-label">Select Year</label>
+                <select
+                  class="form-control custom-form-control"
+                  (change)="onChangeYear()"
+                  formControlName="year"
+                >
+                  <option value="">Select Year</option>
+                  <option *ngFor="let years of years" [value]="years.year">
+                    {{ years.year }}
+                  </option>
+                </select>
+                <div *ngIf="
+                searchByService
+                          ?.get('year')
+                          ?.hasError('required') &&
+                          searchByService?.get('year')?.touched
+                      ">
+                      <span class="error-message">Select Year</span>
+                    </div>
+              </div>
+              <div class="col-md-3 mb-10px col-12">
+                <label class="control-label">Select Month</label>
+                <select
+                  class="form-control custom-form-control"
+                  formControlName="month"
+                  (change)="onChangeMonth()"
+                >
+                  <option value="">Select Month</option>
+                  <option *ngFor="let month of months" [value]="month.month">
+                    {{ month.month }}
+                  </option>
+                </select>
+                <div *ngIf="
+                searchByService
+                          ?.get('month')
+                          ?.hasError('required') &&
+                          searchByService?.get('month')?.touched
+                      ">
+                      <span class="error-message">Select Month</span>
+                    </div>
+              </div>
+              <div class="col-md-3 mb-10px col-12">
+                <label class="control-label">Select Service</label>
+                <select id="serviceSelect" class="form-control custom-form-control"
+                formControlName="service" (change)="getservice_code()"
+              >
+                  <option value="">Select Service</option>
+                  <option
+                    *ngFor="let service of serviceList"
+                    [value]="service.archived_service_id"
+                  >
+                    {{ service.service_name }}
+                  </option>
+                </select>
+                <div *ngIf="searchByService.errors?.['serviceOrCodeRequired'] && (searchByService.dirty || searchByService.touched)">
+                  <div class="error">Either Service or Code is required.</div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-10px col-12">
+                <label class="control-label">Drewry Reference Code</label>
+                <input type="text" class="form-control custom-form-control" placeholder="RCD002" (input)="removeslected_service()" formControlName="code" [(ngModel)]="selectedService_code">
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mb-4">
+            <div class="form-group">
+              <button
+                (click)="onSubmit()"
+                class="btn btn-yellow text-uppercase fw-semibold mr-2"
+                type="button"
+              >
+                Details
+              </button>
+              <button
+                class="btn fw-semibold text-decoration-underline"
+                type="button"
+                (click)="clear()"
+              >
+                Clear Search
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <!-- for service details---///////////// -->
+      <div class="col-12 mt-2">
+        <div *ngIf="showContent" class="panel panel-white h-100">
+          <div class="panel-heading" style="color: #333333">
+            Service Details
+          </div>
+          <div class="panel-body table-responsive pt-3">
+            <table class="table table-striped">
+              <!-- <thead>
+                                <tr>
+                                
+                                </tr>
+                            </thead> -->
+              <tbody>
+                <tr>
+                  <td class="py-1 lh-28">
+                    <label style="font-weight: bold">Service Name:</label>
+                  </td>
+                  <td class="py-2 lh-28">{{ serviceDetail.service_name }}</td>
+                  <td class="py-2 lh-28">
+                    <label style="font-weight: bold">Frequency:</label>
+                  </td>
+                  <td class="text-right lh-28 py-2">{{ serviceDetail.service_frequency | number }}</td>
+                </tr>
+                <tr>
+                  <td class="py-1 lh-28">
+                    <label style="font-weight: bold">Alliance (if Any):</label>
+                  </td>
+                  <td class="py-2 lh-28">{{ serviceDetail.alliance_name  }}</td>
+                  <td class="py-2 lh-28">
+                    <label style="font-weight: bold">Round Voyage days:</label>
+                  </td>
+                  <td class="text-right lh-28 py-2">{{ serviceDetail.service_round_voyage_days | number }}</td>
+                </tr>
+                <tr>
+                  <td class="py-1 lh-28">
+                    <label style="font-weight: bold"
+                      >Service Starting Date:</label
+                    >
+                  </td>
+                  <td class="py-2 lh-28">{{ serviceDetail.starting_date_attribute  }}</td>
+                  <td class="py-2 lh-28">
+                    <label style="font-weight: bold"
+                      >Drewry Reference Code:</label
+                    >
+                  </td>
+                  <td class="text-right lh-28 py-2">{{ serviceDetail.drewry_service_name  }}</td>
+                </tr>
+                <tr>
+                  <td class="py-1 lh-28">
+                    <label style="font-weight: bold">Status:</label>
+                  </td>
+                  <td class="py-2 lh-28">{{ serviceDetail.service_status.service_status  }}</td>
+                  <td class="py-2 lh-28">
+                    <label style="font-weight: bold">Service Type:</label>
+                  </td>
+                  <td class="text-right lh-28 py-2">{{ serviceDetail.servicetype.service_type_name
+                  }}</td>
+                </tr>
+                <tr>
+                  <td class="py-1 lh-28">
+                    <label style="font-weight: bold">Routing:</label>
+                  </td>
+                  <td class="py-2 lh-28">{{ serviceDetail.canal_name  }}</td>
+                  <td class="py-2 lh-28">
+                    <label style="font-weight: bold">Total Vessel:</label>
+                  </td>
+                  <td class="text-right lh-28 py-2">{{ serviceDetail.no_of_vessel | number }}</td>
+                </tr>
+                <tr>
+                  <td class="py-1 lh-28">
+                    <label style="font-weight: bold">Active Vessel:</label>
+                  </td>
+                  <td class="py-2 lh-28">{{ serviceDetail.active_vessels_count  | number}}</td>
+                  <td class="py-2 lh-28">
+                    <label style="font-weight: bold">Missed Vessel:</label>
+                  </td>
+                  <td class="text-right lh-28 py-2">{{ serviceDetail.missed_vessels_count| number  }}</td>
+                </tr>
+                <tr>
+                  <td class="py-1 lh-28">
+                    <label style="font-weight: bold">Service Code:</label>
+                  </td>
+                  <td class="py-2 lh-28">{{ serviceDetail.service_code  }}</td>
+                  <td class="py-2 lh-28">
+                    <label style="font-weight: bold">Average Capacity:</label>
+                  </td>
+                  <td class="text-right lh-28 py-2">{{ roundOff(serviceDetail.average_of_vessel_size) | number }}</td>
+                </tr>
+                <tr>
+                  <td class="py-1 lh-28">
+                    <label style="font-weight: bold">Remarks:</label>
+                  </td>
+                  <td class="py-2 lh-28">
+                    {{ serviceDetail.remarks  }}
+                  </td>
+                  <td class="py-2 lh-28">
+                    <label style="font-weight: bold">Performa Frequency:</label>
+                  </td>
+                  <td class="text-right lh-28 py-2">{{ serviceDetail.performa_frequency  | number }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- /////---port rotation---//// -->
+      <div class="col-12 mt-2">
+        <div *ngIf="showContent" class="panel panel-white h-100">
+          <div class="panel-heading" style="color: #333333">PORT Rotation</div>
+          <div class="panel-body table-responsive pt-3">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Ports</th>
+                  <th>No of Arrival Days</th>
+                  <th>No of Departure Days</th>
+                  <th>Arrival Days</th>
+                  <th class="text-right">Departure Days</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let port of serviceDetail.ports">
+                  <td class="py-1 lh-28">
+                    <label style="font-weight: bold">{{
+                      port.port_name
+                    }}</label>
+                  </td>
+                  <td class="py-2 lh-28">{{ port.arrival_days | number}}</td>
+                  <td class="py-2 lh-28">{{ port.departure_days | number}}</td>
+                  <td class="py-2 lh-28">{{ port.arrival_day }}</td>
+                  <td class="text-right lh-28 py-2">{{ port.departure_day }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- subtrade  -->
+      <div class="col-12 mt-2">
+        <div *ngIf="showContent" class="panel panel-white h-100">
+          <div class="panel-heading" style="color: #333333">Sub- Trade</div>
+          <div class="panel-body table-responsive pt-3">
+            <table class="table table-striped">
+              <!-- <thead>
+                <tr>
+                  <th>Ports</th>
+                  <th>No of Arrival Days</th>
+                  <th>No of Departure Days</th>
+                  <th>Arrival Days</th>
+                  <th class="text-right">Departure Days</th>
+                </tr>
+              </thead> -->
+              <tbody>
+                <tr *ngFor="let subtrade of serviceDetail.trades">
+                  <td class="py-1 lh-28">
+                    <label style="font-weight: bold">{{
+                      subtrade.trade_name
+                    }}</label>
+                  </td>
+                  <!-- <td class="py-2 lh-28">{{ "0" }}</td>
+                  <td class="py-2 lh-28">{{ "1" }}</td>
+                  <td class="py-2 lh-28">{{ "Monday" }}</td>
+                  <td class="text-right lh-28 py-2">{{ "Tuesday" }}</td> -->
+                </tr>
+                <!-- <tr>
+                  <td class="py-1 lh-28">
+                    <label style="font-weight: bold">{{ "Qingdao" }}</label>
+                  </td>
+                  <td class="py-2 lh-28">{{ "3" }}</td>
+                  <td class="py-2 lh-28">{{ "3" }}</td>
+                  <td class="py-2 lh-28">{{ "Thursday" }}</td>
+                  <td class="text-right lh-28 py-2">{{ "Thursday" }}</td>
+                </tr> -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- subtrade end  -->
+
+      <!-- capacity deduction -->
+      <div class="col-12 mt-2">
+        <div *ngIf="showContent" class="panel panel-white h-100">
+          <div class="panel-heading" style="color: #333333">
+            Capacity Deduction
+          </div>
+          <div class="panel-body table-responsive pt-3">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Trade Route</th>
+                  <th>Wway Port %</th>
+                  <th>Out of Scope %</th>
+                  <th>Dwt Adjustment %</th>
+                  <th class="text-right">High Cube Adjustment %</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let tradeRoute of serviceDetail.trade_routes">
+                  <td class="py-1 lh-28">
+                    <label style="font-weight: bold">{{ tradeRoute.trade_route_name }}</label>
+                  </td>
+
+                  <td class="py-2 lh-28">{{ tradeRoute.way_port_percentage }}</td>
+                  <td class="py-2 lh-28">{{ tradeRoute.out_of_scope }}</td>
+                  <td class="py-2 lh-28">{{ tradeRoute.dwt_adjustment }}</td>
+                  <td class="text-right lh-28 py-2">{{ tradeRoute.high_cube_adjustment }}</td>
+                </tr>
+              
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- capacity deduction end -->
+
+      <!-- operator details  -->
+      <div class="col-12 mt-2">
+        <div *ngIf="showContent" class="panel panel-white h-100">
+          <div class="panel-heading" style="color: #333333">
+            Operator Details
+          </div>
+          <div class="panel-body table-responsive pt-3">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Operator</th>
+                  <th>Service Alias</th>
+                  <th class="text-right">Schedule Hyper Link</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let operator of serviceDetail.allias">
+                  <td class="py-1 lh-28">
+                    <label style="font-weight: bold">{{ operator.operator_name }}</label>
+                  </td>
+                  <td class="py-2 lh-28">{{ operator.alias_name }}</td>
+                  <td class="text-right lh-28 py-2">
+                    {{
+                     operator.schedule_hyperlink
+                    }}
+                  </td>
+                </tr>
+               
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- operator details end -->
+
+      <!-- vessel details  -->
+      <div class="col-12 mt-2">
+        <div *ngIf="showContent" class="panel panel-white h-100">
+          <div class="panel-heading" style="color: #333333">Vessel Details</div>
+          <div class="panel-body table-responsive pt-3">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Vessel</th>
+                  <th>Opertaor</th>
+                  <th>Teu Capacity</th>
+                  <th class="text-right">Ownership Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let vessel of serviceDetail.vessels">
+                  <td class="py-1 lh-28">
+                    <label style="font-weight: bold">{{ vessel.vessel_name }}</label>
+                  </td>
+                  <td class="py-2 lh-28">{{ vessel.operator_name }}</td>
+                  <td class="py-2 lh-28">{{ vessel.teu_capacity | number}}</td>
+                  <td class="text-right lh-28 py-2">{{ vessel.ownership_status }}</td>
+                </tr>
+              
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- vessel details End -->
+
+      <!-- archive  -->
+      <div class="col-12 mt-2">
+        <div *ngIf="showContent" class="panel panel-white h-100">
+          <div class="panel-heading" style="color: #333333">Archive</div>
+          <div class="panel-body table-responsive pt-3">
+            <table class="table table-striped" *ngIf="archieveServices.length === 0">
+              <tbody>
+                <tr >
+                  <td class="py-1 lh-28">
+                    <label style="font-weight: bold">{{
+                      "No past data available"
+                    }}</label>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Service Name</th>
+                  <th>Archived Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let archieveService of archieveServices">
+                  <td class="py-1 lh-28">
+                    <label style="font-weight: bold">{{ archieveService.service_name }}</label>
+                  </td>
+                  <td class="py-2 lh-28">{{ archieveService.add_date }}</td>
+                  <td class="py-2 lh-28"><a class="link" (click)="viewDetail(archieveService.archived_service_id)">View Detail</a></td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          </div>
+        </div>
+      </div>
+      <!-- archive End -->
+    </div>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+<app-data-loader *ngIf="(loading | async)"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+    <div class="container-fluid">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="row page-header" id="stickyHeader">
+                <div class="col-md-12 col-12">
+                    <h1 class="m-0">Vessel Deployment Reports</h1>
+                </div><!-- /.col -->
+                <div class="col-md-8 col-12 text-right">
+
+                </div><!-- /.col -->
+            </div>
+        </div>
+        <div class="row m-0">
+            <div class="col-md-12">
+                <button mat-flat-button color="primary" (click)="generateReports()">Generate Report</button>
+            </div>
+        </div>
+    </div>
+</div>

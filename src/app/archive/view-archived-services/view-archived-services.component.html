@@ -1,0 +1,65 @@
+<!-- <app-data-loader *ngIf="(loading | async)"></app-data-loader> -->
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+    <div class="container-fluid monthly-archive">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="row page-header" id="stickyHeader">
+                <div class="col-md-4 col-12">
+                    <h1 class="m-0">Edit Archive Services</h1>
+                </div><!-- /.col -->
+                <div class="col-md-8 col-12 text-right">
+
+                </div><!-- /.col -->
+            </div>
+        </div>
+        <div class="row m-0">
+            <div class="col-md-12">
+                <form class="form-horizontal row addsearchform" method="post" [formGroup]="servicesArchiveForm"
+                    (ngSubmit)="onSubmit()">
+                    <div class="col-md-12 col-12">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group row">
+                                    <div class="col-md-6 mb-10px pr-md-2 col-12 mb-2">
+                                        <label class="control-label">Select Archived Year*</label>
+                                        <select class="form-control custom-form-control" (change)="onChangeYear()"
+                                            formControlName="archivedYear">
+                                            <option value="">Select</option>
+                                            <option *ngFor="let years of years" [value]="years.year">
+                                                {{years.year}}
+                                            </option>
+                                        </select>
+                                        <div
+                                            *ngIf="servicesArchiveForm?.get('archivedYear')?.hasError('required') && servicesArchiveForm?.get('archivedYear')?.touched">
+                                            <span class="error-message">Archived Year is required</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-10px pr-md-2 col-12 mb-2">
+                                        <label class="control-label">Select Archived Month</label>
+                                        <select class="form-control custom-form-control"
+                                            formControlName="archivedMonth">
+                                            <option value="">Select</option>
+                                            <option *ngFor="let month of months"
+                                                [value]="month.month">
+                                                {{month.month}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-4">
+                        <div class="form-group">
+                            <button class="btn btn-yellow text-uppercase fw-bold mr-2"
+                                [disabled]="servicesArchiveForm.invalid" type="submit">View</button>
+                            <button class="btn btn-yellow text-uppercase fw-bold" type="button"
+                                (click)="resetForm()">Reset</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <app-footer></app-footer>
+    </div>
+</div>

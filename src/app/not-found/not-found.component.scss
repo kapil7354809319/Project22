@@ -1,0 +1,35 @@
+.pagenot {
+    height: 100vh;
+    background: #E9ECF1;
+    padding: 2rem;
+}
+
+.pagenot h1 {
+    font-size: 17rem;
+    line-height: normal;
+    margin: 0;
+    color: #F3B000;
+    font-weight: bold;
+}
+
+.pagenot h6 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.pagenot p {
+    font-size: 1.3rem;
+}
+
+.found-pagebtn a {
+    background: #F3B000;
+    padding: 10px 12px;
+    display: inline-block;
+    color: #fff;
+    border-radius: 0;
+    font-weight: bold;
+    font-size: 17px;
+    min-width: 190px;
+    margin: 8px;
+}

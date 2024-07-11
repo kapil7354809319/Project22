@@ -1,0 +1,401 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+  <div class="container-fluid">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-4 col-12">
+          <h1 class="m-0">Captab Report</h1>
+        </div><!-- /.col -->
+        <div class="col-md-8 col-12 text-right">
+
+        </div><!-- /.col -->
+      </div>
+    </div>
+    <div class="row m-0">
+      <div class="col-md-12">
+        <form class="form-horizontal row" [formGroup]="searchForm">
+          <div class="col-md-12 col-12">
+            <div class="form-group row">
+              <div class="col-md-3 mb-10px col-12 d-flex">
+                <input type="radio" checked name="report-one" (change)="loadYears('after17')" />
+                <label class="control-label ml-2" name="report-one">Report (Sep 17 Onwards)</label>
+              </div>
+              <div class="col-md-3 mb-10px pr-md-2 col-12 d-flex">
+                <input type="radio" name="report-one"  (change)="loadYears('before17')" />
+                <label class="control-label ml-2" name="report-two">Report (Jan 15 - Aug 17)</label>
+              </div>
+              <!-- <button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top"
+                title="Tooltip on top">
+                Tooltip on top
+              </button> -->
+            </div>
+          </div>
+          <div class="col-md-12 col-12">
+            <div class="form-group row">
+              <div class="col-md-3 mb-10px col-12">
+                <label class="control-label">Select Year</label>
+                <select class="form-control custom-form-control"
+                  (change)="onChangeYear()"
+                  formControlName="year">
+                  <option value="">Select Year</option>
+                  <option *ngFor="let years of years"  [value]="years.year">
+                    {{ years.year }}
+                  </option>
+                </select>
+              </div>
+              <div class="col-md-3 mb-10px pr-md-2 col-12">
+                <label class="control-label">Select Month</label>
+                <select
+                class="form-control custom-form-control"
+                formControlName="month"
+                (change)="onChangeMonth()"
+              >
+                <option value="">Select Month</option>
+                <option *ngFor="let month of months" [value]="month.month">
+                  {{ month.month }}
+                </option>
+              </select>
+              </div>
+              <div class="col-md-3 mb-10px pr-md-2 col-12">
+                <label class="control-label">Trade Route</label>
+                <select class="form-control custom-form-control"
+                formControlName="route"
+                (change)="onChangeRoute()">
+                <option value="">Select Trade Route</option>
+                  <option *ngFor="let report of reports" [value]="report.file ? report.file : report.trade_route_id">
+                    {{  report.trade_route_name ? report.trade_route_name : report.trade_route_id}}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mb-4">
+            <div class="form-group">
+              <button class="btn btn-yellow text-uppercase fw-semibold mr-2" type="button">GET REPORT</button>
+              <button class="btn fw-semibold text-decoration-underline" type="button" (click)="clear()">Clear Search</button>
+            </div>
+          </div>
+        </form>
+
+      </div>
+      
+
+      <!-- newyyy -->
+      <div class="col-12 mt-2" *ngIf="viewReport">
+        <div class="panel panel-white h-100">
+          <div class="panel-heading d-inline-block float-left">{{routeDetails}} (As on: {{genDate}})</div>
+          <div class="d-inline-block float-right text-right">
+            <form class="form-horizontal">
+              <div class="search-group bg-transparent pl-0">
+                <button class="btn btn-secondary text-center" (click)="export('excel-export-captab')">Export</button>
+              </div>
+            </form>
+          </div>
+          <div class="panel-body table-responsive pt-3">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Service <span>(Service Type)</span></th>
+                  <th>Round Voyage <span>(Days / Frequency)</span></th>
+                  <th>Ships<span class="d-block">(Total / Active/Missed)</span></th>
+                  <th>Capacity- TEU<span class="d-block">(Average/Annual Operational)</span></th>
+                  <th>Est. Wayport Deduction
+                    <span class="d-block" *ngIf="tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Westbound'">
+                      (Eastbound / Westbound)
+                    </span>
+                    <span class="d-block" *ngIf="tradeRouteNameDir === 'Northbound' || tradeRouteNameDir === 'Southbound'">
+                      (Northbound / Southbound)
+                    </span>
+                  </th>
+                  <th>Est. Wayport Adjusted
+                    <span class="d-block" *ngIf="tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Westbound'">
+                      (Eastbound / Westbound)
+                    </span>
+                    <span class="d-block" *ngIf="tradeRouteNameDir === 'Northbound' || tradeRouteNameDir === 'Southbound'">
+                      (Northbound / Southbound)
+                    </span>
+                  </th>
+                  <th>Est. Wayport + Hight cube &amp; Dwt Adjusted
+                    <span class="d-block" *ngIf="tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Westbound'">
+                      (Eastbound / Westbound)
+                    </span>
+                    <span class="d-block" *ngIf="tradeRouteNameDir === 'Northbound' || tradeRouteNameDir === 'Southbound'">
+                      (Northbound / Southbound)
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody *ngFor="let report of tradeReports">
+
+                <!-- new 27 -->
+                  <tr class="bg-dark-grey" *ngIf="tradeReports.length > 1" >
+                    <td colspan="5" class="pt-2 pb-2">
+                      {{report.group_name}}
+                    </td>
+                    <td class="pt-2 pb-2">
+                      <span *ngIf="tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound'">
+                        {{report.aec_wp | number}} / {{report.aec_wp_reverse | number}}
+                      </span>
+                      <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                        {{report.aec_wp_reverse | number}}/ {{report.aec_wp| number}}
+                      </span>
+                    </td>
+                    <td class="pt-2 pb-2">
+                      <span *ngIf="tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound'">
+                        {{report.aec_wp_hc| number}} / {{report.aec_wp_hc_reverse| number}}
+                      </span>
+                      <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                        {{report.aec_wp_hc_reverse| number}}/ {{report.aec_wp_hc| number}}
+                      </span>
+                    </td>
+                  </tr>
+                  <tr class="bg-dark-grey"  *ngIf="tradeReports.length > 1" >
+                    <td colspan="5" class="pt-2 pb-2">
+                      Market Share
+                    </td>
+                    <td class="pt-2 pb-2">
+                      <span *ngIf="(tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound')">
+                        {{report.aec_wp_percent}} % / {{report.aec_wp_reverse_percent}} %
+                      </span>
+                      <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                        {{report.aec_wp_reverse_percent}}% / {{report.aec_wp_percent}}%
+                      </span>
+                    </td>
+                    <td class="pt-2 pb-2">
+                      <span *ngIf="(tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound')">
+                        {{report.aec_wp_hc_percent}} % / {{report.aec_wp_hc_reverse_percent}} %
+                      </span>
+                      <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                        {{report.aec_wp_hc_reverse_percents}}% / {{report.aec_wp_hc_percent}}%
+                      </span>
+                    </td>
+                  </tr>
+                  <tr *ngFor="let service of report.services_compact_array">
+                    <td >
+                      {{service.service_name}}
+                      <span class="text-muted">({{service.service_type_name}}) - <span
+                          class="text-mute-blue">{{service.port_rotation}}
+                        </span>
+                      </span>
+                    </td>
+                    <td>{{service.round_voyage_days}} ({{service.frequency}})</td>
+                    <td>{{service.no_of_total_vessel}} / {{service.no_of_active_vessel}} / {{service.no_of_missed_vessel}}</td>
+                    <td>{{service.average_capacity | number}} / {{service.annual_operational_capacity| number}}</td>
+                    <td>
+                      <span *ngIf="(tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound')">
+                        {{service.wayport}} % / {{service.wayport_reverse}} %
+                      </span>
+                      <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                        {{service.wayport_reverse}}% / {{service.wayport}}%
+                      </span>
+                    </td>
+                    <td>
+                      <span *ngIf="(tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound')">
+                        {{service.aec_wp  | number}}/ {{service.aec_wp_reverse | number}}
+                      </span>
+                      <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                        {{service.aec_wp_reverse | number}} / {{service.aec_wp | number}}
+                      </span>
+                    </td>
+                    <td>
+                      <span *ngIf="(tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound')">
+                        {{service.aec_wp_hc| number}} / {{service.aec_wp_hc_reverse | number}}
+                      </span>
+                      <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                        {{service.aec_wp_hc_reverse | number}} / {{service.aec_wp_hc | number}}
+                      </span>
+                    </td>
+                  </tr>
+                
+
+                
+              </tbody>
+                <!-- new 27 -->
+
+              <tbody>
+                <br>
+                  <!-- for another alliancee other -->
+                  <tr class="bg-dark-grey">
+                    <td colspan="5" class="pt-2 pb-2">
+                      Subtotal
+                    </td>
+                    <td class="pt-2 pb-2">
+                      <span *ngIf="(tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound')">
+                        {{captab.sub_total_wp | number }} / {{captab.sub_total_wp_reverse | number}} 
+                      </span>
+                      <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                        {{captab.sub_total_wp_reverse| number}} / {{captab.sub_total_wp| number}}
+                      </span>
+                    </td>
+                    <td class="pt-2 pb-2">
+                      <span *ngIf="(tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound')">
+                        {{captab.sub_total_hc| number}} / {{captab.sub_total_hc_reverse| number}}
+                      </span>
+                      <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                        {{captab.sub_total_hc_reverse| number}} / {{captab.sub_total_hc| number}}
+                      </span>
+                    </td>
+                  </tr>
+                  <tr class="bg-dark-grey" *ngIf="captab.relay_forward_dir >0  || captab.relay_reverse_dir>0 || captab.relay_hc_forward_dir>0 || captab.relay_hc_reverse_dir>0">
+                    <td colspan="4">
+                      <div class="bg-table-light-grey">Estimated Relay %</div>
+                    </td>
+                    <td>
+                      <div class="bg-table-light-grey">
+                        <span *ngIf="(tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound')">
+                          {{captab.relay_fwd}} % / {{captab.relay_rwd}} %
+                        </span>
+                        <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                          {{captab.relay_rwd}}% / {{captab.relay_fwd}}%
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="bg-table-light-grey">&nbsp;</div>
+                    </td>
+                    <td>
+                      <div class="bg-table-light-grey">&nbsp;</div>
+                    </td>
+                  </tr>
+                  <tr class="bg-dark-grey" *ngIf="captab.relay_forward_dir >0  || captab.relay_reverse_dir>0 || captab.relay_hc_forward_dir>0 || captab.relay_hc_reverse_dir>0">
+                    <td colspan="5" class="pt-2 pb-2">
+                      Estimated Relay Adjustment
+                    </td>
+                    <td class="pt-2 pb-2">
+                      <span *ngIf="(tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound')">
+                        {{captab.relay_forward_dir| number}} / {{captab.relay_reverse_dir| number}}
+                      </span>
+                      <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                        {{captab.relay_reverse_dir| number}} / {{captab.relay_forward_dir| number}}
+                      </span>
+                    </td>
+                    <td class="pt-2 pb-2">
+                      <span *ngIf="(tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound')">
+                        {{captab.relay_hc_forward_dir| number}} / {{captab.relay_hc_reverse_dir| number}}
+                      </span>
+                      <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                        {{captab.relay_hc_reverse_dir| number}} / {{captab.relay_hc_forward_dir| number}}
+                      </span>
+                    </td>
+                  </tr>
+                  <tr class="bg-dark-grey">
+                    <td colspan="4">
+                      <div class="bg-table-light-grey">Estimated Dead-Weigh Deduction</div>
+                    </td>
+                    <td>
+                      <div class="bg-table-light-grey">
+                        <span *ngIf="(tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound')">
+                          {{captab.dead_weight}} % / {{captab.dead_weight_reverse}} %
+                        </span>
+                        <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                          {{captab.dead_weight_reverse}}% / {{captab.dead_weight}}%
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="bg-table-light-grey">&nbsp;</div>
+                    </td>
+                    <td>
+                      <div class="bg-table-light-grey">&nbsp;</div>
+                    </td>
+                  </tr>
+                  <tr class="bg-dark-grey">
+                    <td colspan="4">
+                      <div class="bg-table-light-grey">Estimated High-Cube Deduction</div>
+                    </td>
+                    <td>
+                      <div class="bg-table-light-grey">
+                        <span *ngIf="(tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound')">
+                          {{captab.high_cube}} % / {{captab.high_cube_reverse}} %
+                        </span>
+                        <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                          {{captab.high_cube_reverse}}% / {{captab.high_cube}}%
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="bg-table-light-grey">&nbsp;</div>
+                    </td>
+                    <td>
+                      <div class="bg-table-light-grey">&nbsp;</div>
+                    </td>
+                  </tr>
+                  <tr class="bg-dark-grey">
+                    <td colspan="5" class="pt-2 pb-2">
+                      Annual Effective Capacity (Unadjusted)
+                    </td>
+                    <td class="pt-2 pb-2">
+                      <span *ngIf="(tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound')">
+                        {{captab.aec_wp| number}} / {{captab.aec_wp_reverse| number}}
+                      </span>
+                      <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                        {{captab.aec_wp_reverse | number}} / {{captab.aec_wp| number}}
+                      </span>
+                    </td>
+                    <td class="pt-2 pb-2">
+                      <span *ngIf="(tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound')">
+                        {{captab.aec_wp_hc| number}} / {{captab.aec_wp_hc_reverse| number}}
+                      </span>
+                      <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                        {{captab.aec_wp_hc_reverse| number}} / {{captab.aec_wp_hc| number}}
+                      </span>
+                    </td>
+                  </tr>
+                  <tr class="bg-dark-grey">
+                    <td colspan="4">
+                      <div class="bg-table-light-grey">Estimated Out-of-Scope Deduction</div>
+                    </td>
+                    <td>
+                      <div class="bg-table-light-grey">
+                        <span *ngIf="(tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound')">
+                          {{captab.out_of_scope| number}}% / {{captab.out_of_scope_reverse| number
+                          }}%
+                        </span>
+                        <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                          {{captab.out_of_scope_reverse| number}}% / {{captab.out_of_scope| number}}%
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="bg-table-light-grey">&nbsp;</div>
+                    </td>
+                    <td>
+                      <div class="bg-table-light-grey">&nbsp;</div>
+                    </td>
+                  </tr>
+                  <tr class="bg-dark-grey">
+                    <td colspan="8" class="pt-2 pb-2"></td>
+                  </tr>
+                  <!-- new line -->
+                  <tr class="bg-dark-grey">
+                    <td colspan="5" class="pt-2 pb-2">
+                      Annual Effective Capacity (Adjusted)
+                    </td>
+                    <td class="pt-2 pb-2">
+                      <span *ngIf="(tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound')">
+                        {{captab.aec_wp_ofs| number}} / {{captab.aec_wp_reverse_ofs| number}}
+                      </span>
+                      <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                        {{captab.aec_wp_reverse_ofs| number}} / {{captab.aec_wp_ofs| number}}
+                      </span>
+                    </td>
+                    <td class="pt-2 pb-2">
+                      <span *ngIf="(tradeRouteNameDir === 'Eastbound' || tradeRouteNameDir === 'Northbound')">
+                        {{captab.aec_wp_hc_ofsv| number}} / {{captab.aec_wp_hc_reverse_ofs| number}}
+                      </span>
+                      <span *ngIf="tradeRouteNameDir === 'Westbound' || tradeRouteNameDir === 'Southbound'">
+                        {{captab.aec_wp_hc_reverse_ofs| number}} / {{captab.aec_wp_hc_ofs| number}}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- newyyy -->
+    </div>
+  </div>
+  <app-footer></app-footer>
+</div>

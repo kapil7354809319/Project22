@@ -1,0 +1,2139 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg serviceform" data-widget="main-content">
+  <div class="container-fluid">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-6 col-12">
+          <h1 class="m-0">Manage {{ ServiceType }} Service ({{ tabActive }})</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12 text-right"></div>
+        <!-- /.col -->
+      </div>
+    </div>
+    <!-- Page Content -->
+    <div class="row m-0">
+      <!-- view load on default service page -->
+      <div class="col-12" *ngIf="year == ''">
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link nav-links" (click)="removeFragmentFromUrl('Add')" data-toggle="tab" href="#addnew"
+              role="tab">Add New</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-links active" (click)="removeFragmentFromUrl('Search')" data-toggle="tab"
+              href="#search" role="tab">Search</a>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane tab-panes" id="addnew" role="tabpanel">
+            <form class="form-horizontal row" method="post" [formGroup]="serviceForm" (ngSubmit)="onSubmit()">
+              <div class="col-md-12 col-12">
+                <div class="form-group row">
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Service Name*</label>
+                    <input type="hidden" formControlName="object_source" name="object_source" />
+                    <input type="text" class="form-control custom-form-control" placeholder=""
+                      formControlName="service_name" (input)="onFormCheckValid(false)" />
+                    <div *ngIf="
+                        serviceForm
+                          ?.get('service_name')
+                          ?.hasError('required') &&
+                        serviceForm?.get('service_name')?.touched
+                      ">
+                      <span class="error-message">Service Name is required</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Service Frequency*</label>
+                    <input type="text" class="form-control custom-form-control" placeholder=""
+                      formControlName="service_frequency" readonly />
+                    <div *ngIf="
+                        serviceForm
+                          ?.get('service_frequency')
+                          ?.hasError('required') &&
+                        serviceForm?.get('service_frequency')?.touched
+                      ">
+                      <span class="error-message">Service Frequency is required</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Performa Frequency*</label>
+                    <input type="text" class="form-control custom-form-control" placeholder=""
+                      formControlName="Performa_frequency" maxlength="2" (input)="onFormCheckValid(false)" />
+                    <div *ngIf="
+                        serviceForm
+                          ?.get('Performa_frequency')
+                          ?.hasError('required') &&
+                        serviceForm?.get('Performa_frequency')?.touched
+                      ">
+                      <span class="error-message">Performa Frequency is required</span>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Round Voyage Date Difference</label>
+                    <input type="text" class="form-control custom-form-control" placeholder="" value="{{totalNumberOfDays}}" readonly />
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Round Voyage Start Date*</label>
+                    <mat-form-field>
+                      <input matInput (input)="setToDateMin()" (dateChange)="dateValueChanged()" [readonly]="true"
+                        [matDatepicker]="picker2" formControlName="round_voyage_start_date"
+                        (input)="onFormCheckValid(false)" class="form-control custom-form-control" />
+                      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                      <mat-datepicker #picker2></mat-datepicker>
+                    </mat-form-field>
+                    <div *ngIf="
+                        serviceForm
+                          ?.get('round_voyage_start_date')
+                          ?.hasError('required') &&
+                        serviceForm?.get('round_voyage_start_date')?.touched
+                      ">
+                      <span class="error-message">Round Voyage Start Date is required</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Round Voyage End Date*</label>
+                    <mat-form-field>
+                      <input matInput [min]="
+                          serviceForm.get('round_voyage_start_date')?.value
+                        " (dateChange)="dateValueChanged()" [readonly]="true" [matDatepicker]="picker1"
+                        formControlName="round_voyage_end_date" class="form-control custom-form-control"
+                        (input)="onFormCheckValid(false)" />
+                      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                      <mat-datepicker #picker1></mat-datepicker>
+                    </mat-form-field>
+                    <div *ngIf="
+                        serviceForm
+                          ?.get('round_voyage_end_date')
+                          ?.hasError('required') &&
+                        serviceForm?.get('round_voyage_end_date')?.touched
+                      ">
+                      <span class="error-message">Round Voyage End Date is required</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Alliance</label>
+                    <select class="form-control custom-form-control" name="alliance" id="alliance_id"
+                      formControlName="alliance" (change)="handleAllianceChange($event)">
+                      <option value="">Select</option>
+                      <option *ngFor="let alliance of allianceList" [value]="alliance.alliance_id">
+                        {{ alliance.alliance_name }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Service Code*</label>
+                    <input (input)="onFormCheckValid(false)" type="text" class="form-control custom-form-control"
+                      placeholder="" formControlName="service_code" (keyup)="serviceCodeChange()" />
+                    <div *ngIf="
+                        serviceForm
+                          ?.get('service_code')
+                          ?.hasError('required') &&
+                        serviceForm?.get('service_code')?.touched
+                      ">
+                      <span class="error-message">Service Code is required</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Service Start Date*</label>
+                    <mat-form-field>
+                      <input matInput id="targetdate" [readonly]="true" [matDatepicker]="picker3"
+                        formControlName="service_start_date" (input)="onFormCheckValid(false)"
+                        class="form-control custom-form-control" />
+                      <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+                      <mat-datepicker #picker3></mat-datepicker>
+                    </mat-form-field>
+                    <div *ngIf="
+                        serviceForm
+                          ?.get('service_start_date')
+                          ?.hasError('required') &&
+                        serviceForm?.get('service_start_date')?.touched
+                      ">
+                      <span class="error-message">Service Start Date is required</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Drewry Reference Code *</label>
+                    <div class="position-relative">
+                      <input type="text" class="form-control custom-form-control" readonly
+                        formControlName="drewry_reference" (input)="onFormCheckValid(false)" />
+                      <span class="removecode"><i *ngIf="!rcdshow && rcdcode" class="fa fa-window-close"
+                          aria-hidden="true" (click)="resetRcdCode()"></i>
+                      </span>
+                    </div>
+                    <span class="spincode">
+                      <a class="getrcdcode" (click)="createRcdCode()">Get RCD Code
+                        <i *ngIf="rcdshow" class="fa fa-spinner fa-spin"></i>
+                      </a>
+                    </span>
+                    <div *ngIf="
+                        serviceForm
+                          ?.get('drewry_reference')
+                          ?.hasError('required') &&
+                        serviceForm?.get('drewry_reference')?.touched
+                      ">
+                      <span class="error-message">Drewry Reference is required</span>
+                    </div>
+                    <div *ngIf="
+                        serviceForm
+                          ?.get('drewry_reference')
+                          ?.hasError('minlength') &&
+                        serviceForm?.get('drewry_reference')?.touched
+                      ">
+                      <span class="error-message">Drewry Reference minimum 6 character/digits long</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Service Status*</label>
+                    <select (change)="onFormCheckValid(false)" class="form-control custom-form-control"
+                      name="service_status" id="service_status_id" formControlName="service_status"
+                      [innerHTML]="serviceStatusList"></select>
+                    <div *ngIf="
+                        serviceForm
+                          ?.get('service_status')
+                          ?.hasError('required') &&
+                        serviceForm?.get('service_status')?.touched
+                      ">
+                      <span class="error-message">Service Status is required</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Service Type*</label>
+                    <select (change)="onFormCheckValid(false)" class="form-control custom-form-control"
+                      name="service_type" id="service_type_id" formControlName="service_type">
+                      <option value="">Select</option>
+                      <option *ngFor="let servicetype of serviceTypeList" [value]="servicetype.service_type_id">
+                        {{ servicetype.service_type_name }}
+                      </option>
+                    </select>
+                    <div *ngIf="
+                        serviceForm
+                          ?.get('service_type')
+                          ?.hasError('required') &&
+                        serviceForm?.get('service_type')?.touched
+                      ">
+                      <span class="error-message">Service Type is required</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Routing</label>
+                    <select class="form-control custom-form-control" name="canal" id="canal_id"
+                      formControlName="canal_id">
+                      <option value="">Select</option>
+                      <option *ngFor="let routing of routingList" [value]="routing.canal_id">
+                        {{ routing.canal_name }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-12 mb-10px col-12">
+                  <div class ="row">
+                  <div class="col-md-6 mb-10px col-12">
+                    <label class="control-label">Remarks*</label>
+                    <textarea class="form-control custom-form-control" placeholder="" formControlName="remarks"
+                      (keyup)="onFormCheckValid(false)"></textarea>
+                    <div *ngIf="
+                        serviceForm?.get('remarks')?.hasError('required') &&
+                        serviceForm?.get('remarks')?.touched
+                      ">
+                      <span class="error-message">Remarks is required</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12">
+                    <label class="control-label">Wayport % Comments</label>
+                    <textarea class="form-control custom-form-control" placeholder=""
+                      formControlName="wayport_comments"></textarea>
+                  </div>
+                </div>
+                </div>
+                </div>
+              </div>
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button class="btn btn-yellow text-uppercase fw-bold mr-2" (click)="onFormCheckValid()" type="button"
+                    [class.addValidButton]="topform === 'valid'">
+                    VALIDATE
+                  </button>
+                  <button class="btn btn-yellow text-uppercase fw-bold" (click)="resetForm()" type="button">
+                    Reset
+                  </button>
+                </div>
+              </div>
+              <div class="col-lg-12 mb-3">
+                <ul class="nav nav-tabs" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#trade_routes" role="tab">Service Port / Trade
+                      Routes</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#aliases" role="tab">Service aliases / Vessels</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="col-lg-12 dark-fields">
+                <div class="tab-content panel panel-white">
+                  <div class="tab-pane active" id="trade_routes" role="tabpanel">
+                    <table class="table" formArrayName="servicePort">
+                      <thead>
+                        <tr>
+                          <th>Port</th>
+                          <th>Arrival Days</th>
+                          <th>Departure Days</th>
+                          <th>Arrival Day</th>
+                          <th>Departure Day</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="
+                            let portService of servicePort().controls;
+                            let i = index
+                          " [formGroupName]="i" class="port-multiselect" >
+                          <td>
+                            <ng-multiselect-dropdown placeholder="Port" formControlName="port"
+                              (onSelect)="onItemSelect(i)" (onDeSelect)="onItemDeSelect(i)"
+                              class="form-control custom-form-control custom-accordion"
+                              [settings]="regionToTagsSettings" [data]="port">
+                            </ng-multiselect-dropdown>
+                            <input type="hidden" formControlName="port_up" name="port_up" />
+                            <div class="text-danger" *ngIf="
+                                portService
+                                  ?.get('port')
+                                  ?.hasError('required') &&
+                                portService?.get('port')?.touched
+                              ">
+                              Port is required.
+                            </div>
+                          </td>
+                          <td>
+                            <input type="text" class="form-control custom-form-control" name="arrival_days"
+                              formControlName="arrival_days" (input)="onInput($event, i, 'arrival_days')" />
+                            <div class="text-danger" *ngIf="
+                                portService
+                                  ?.get('arrival_days')
+                                  ?.hasError('required') &&
+                                portService?.get('arrival_days')?.touched
+                              ">
+                              Arrival Days is required.
+                            </div>
+                            <div *ngIf="
+                                portService
+                                  .get('arrival_days')
+                                  ?.hasError('invalidArrivalDays') &&
+                                errorDetails[i] != false
+                              ">
+                              <div class="text-danger">
+                                Service Round Voyage Days ({{
+                                errorDetails[i].totalNumberOfDays
+                                }}) and Port Maximum Arrival Days ({{
+                                errorDetails[i].days
+                                }}) Should be Equal!
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <input type="text" class="form-control custom-form-control" name="departure_days"
+                              formControlName="departure_days" (input)="onInput($event, i, 'departure_days')" />
+                            <div class="text-danger" *ngIf="
+                                portService
+                                  ?.get('departure_days')
+                                  ?.hasError('required') &&
+                                portService?.get('departure_days')?.touched
+                              ">
+                              Departure Days is required.
+                            </div>
+                            <div *ngIf="
+                                portService
+                                  .get('departure_days')
+                                  ?.hasError('invalidDepartureDays')
+                              ">
+                              <div class="text-danger">
+                                Port Departure Days Can not be less than port
+                                arrival days
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <select class="form-control custom-form-control" name="arrival_day" id="arrival_day"
+                              formControlName="arrival_day">
+                              <option value="">Select</option>
+                              <option *ngFor="let day of weekdays" [value]="day">
+                                {{ day }}
+                              </option>
+                            </select>
+                            <div class="text-danger" *ngIf="
+                                portService
+                                  ?.get('arrival_day')
+                                  ?.hasError('required') &&
+                                portService?.get('arrival_day')?.touched
+                              ">
+                              Arrival Day is required.
+                            </div>
+                          </td>
+                          <td>
+                            <select class="form-control custom-form-control" name="departure_day" id="departure_day"
+                              formControlName="departure_day">
+                              <option value="">Select</option>
+                              <option *ngFor="let day of weekdays" [value]="day">
+                                {{ day }}
+                              </option>
+                            </select>
+                            <div class="text-danger" *ngIf="
+                                portService
+                                  ?.get('departure_day')
+                                  ?.hasError('required') &&
+                                portService?.get('departure_day')?.touched
+                              ">
+                              Departure Days is required.
+                            </div>
+                          </td>
+                          <td>
+                            <i *ngIf="servicePort().controls.length > 1" class="fa fa-trash removerow"
+                              aria-hidden="true" (click)="removePort(i)"></i>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colspan="5" class="pt-0 pb-0">
+                            <div class="firstlastPort">
+                              <div *ngIf="lastPort">
+                                <span class="error-message">First and Last ports arrival and departure
+                                  days differance should be same.
+                                </span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div class="col-12 mb-4">
+                      <div class="form-group">
+                        <button class="btn btn-yellow text-uppercase fw-semibold mr-2" type="button"
+                          (click)="addPort()">
+                          Add
+                        </button>
+                      </div>
+                    </div>
+                    <table class="table table-striped dynamic-table" *ngIf="tradeRouteList && tradeRouteList.length > 0"
+                      formArrayName="tradeService">
+                      <thead>
+                        <tr>
+                          <th>Primary</th>
+                          <th>Trade Route Name</th>
+                          <th>Valid</th>
+                          <th>Way Port %</th>
+                          <th>Out of Scope %</th>
+                          <th>Dwt Adjustment %</th>
+                          <th>High Cube Adjustment %</th>
+                          <th>Vessel Deployment File</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="
+                            let tradeRoute of tradeRouteList;
+                            let i = index
+                          " [formGroupName]="i">
+                          <td>
+                            <input type="checkbox" formControlName="service_primary_trade_route"
+                              (change)="onCheckboxChange(i)" />
+                            <input name="service_trade_route_name" formControlName="service_trade_route_name"
+                              type="hidden" />
+                            <input name="service_trade_route" formControlName="service_trade_route" type="hidden" />
+                          </td>
+                          <td>
+                            {{ tradeRoute.trade_route_name }}
+                          </td>
+                          <td>
+                            <select class="form-control" formControlName="valid">
+                              <option value="">Select</option>
+                              <option value="Yes">Y</option>
+                              <option value="No">N</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input type="text" formControlName="way_port" (keyup)="onKeyUp($event)"
+                              class="form-control custom-form-control" />
+                          </td>
+                          <td>
+                            <input type="text" formControlName="out_of_scope" class="form-control custom-form-control"
+                              readonly />
+                          </td>
+                          <td>
+                            <input type="text" formControlName="dwt_adjustment" class="form-control custom-form-control"
+                              readonly />
+                          </td>
+                          <td>
+                            <input type="text" formControlName="high_cube_adjustment"
+                              class="form-control custom-form-control" readonly />
+                          </td>
+                          <td>
+                            <input type="checkbox" formControlName="vessel_deployment_flag" />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div class="col-12 mb-4">
+                      <div class="form-group">
+                        <button class="btn btn-yellow text-uppercase fw-semibold mr-2" type="button"
+                          (click)="servicePostValid()" [class.addValidButton]="portServiceform === 'valid'">
+                          Validate
+                        </button>
+                        <button class="btn btn-yellow text-uppercase fw-bold" type="button" (click)="resetFormPort()">
+                          Reset
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="tab-pane" id="aliases" role="tabpanel">
+                    <table class="table" formArrayName="serviceAlias">
+                      <thead>
+                        <tr>
+                          <th>Operator</th>
+                          <th>Alias Name</th>
+                          <th>Schedule Hyperlink</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="
+                            let alias of serviceAlias().controls;
+                            let ii = index
+                          " [formGroupName]="ii">
+                          <td>
+                            <ng-multiselect-dropdown placeholder="Operator" formControlName="operator"
+                              class="form-control custom-form-control custom-accordion"
+                              [settings]="operatorTagsSettings" [data]="operator" (onSelect)="onItemOperator()"
+                              (onDeSelect)="onItemOperator()">
+                            </ng-multiselect-dropdown>
+                            <div class="text-danger" *ngIf="
+                                alias?.get('operator')?.hasError('required') &&
+                                alias?.get('operator')?.touched
+                              ">
+                              Operator Name is required.
+                            </div>
+                          </td>
+                          <td>
+                            <input type="text" class="form-control custom-form-control" placeholder=""
+                              formControlName="alias_name" (input)="serviceVesselValid(false)" />
+                            <div class="text-danger" *ngIf="
+                                alias
+                                  ?.get('alias_name')
+                                  ?.hasError('required') &&
+                                alias?.get('alias_name')?.touched
+                              ">
+                              Alias Name is required.
+                            </div>
+                          </td>
+                          <td>
+                            <input type="text" class="form-control custom-form-control" placeholder=""
+                              formControlName="schedule_hyperlink" />
+                          </td>
+                          <td>
+                            <i *ngIf="serviceAlias().controls.length > 1" class="fa fa-trash removerow"
+                              aria-hidden="true" (click)="removeAlias(ii)"></i>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div class="col-12 mb-4">
+                      <div class="form-group">
+                        <button class="btn btn-yellow text-uppercase fw-semibold mr-2" type="button"
+                          (click)="addAlias()">
+                          Add alias
+                        </button>
+                      </div>
+                    </div>
+
+                    <table class="table" formArrayName="serviceVessel">
+                      <thead>
+                        <tr>
+                          <th>Vessel Name</th>
+                          <th>Teu Capacity</th>
+                          <th>Operator</th>
+                          <th>Ownership Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="
+                            let isserviceVessel of serviceVessel().controls;
+                            let iii = index
+                          " [formGroupName]="iii">
+                          <td>
+                            <input type="hidden" class="form-control custom-form-control vessel_operator" placeholder=""
+                              formControlName="vessel" readonly />
+                            <input type="text" class="form-control custom-form-control vessel_operator" placeholder=""
+                              formControlName="vessel" *ngIf="
+                                isserviceVessel?.get('addedInput')?.value ==
+                                'select'
+                              " readonly />
+                            <ng-multiselect-dropdown placeholder="Vessel" formControlName="vessel_name" *ngIf="
+                                isserviceVessel?.get('addedInput')?.value !=
+                                'select'
+                              " (onSelect)="onItemVessel(iii)" (onDeSelect)="onItemVessel(iii)"
+                              class="form-control custom-form-control custom-accordion" [settings]="vesselTagsSettings"
+                              [data]="vessel" (onFilterChange)="onFilterVesselChange($event)">
+                            </ng-multiselect-dropdown>
+
+                            <div class="text-danger" *ngIf="
+                                isserviceVessel
+                                  ?.get('vessel_name')
+                                  ?.hasError('required') &&
+                                isserviceVessel?.get('vessel_name')?.touched
+                              ">
+                              Vessel Name is required.
+                            </div>
+                          </td>
+                          <td>
+                            <input type="text" class="form-control custom-form-control" placeholder=""
+                              formControlName="teu_capacity" readonly />
+                          </td>
+                          <td>
+                            <input type="text" class="form-control custom-form-control" *ngIf="
+                                isserviceVessel.get('addedInput')?.value !=
+                                'select'
+                              " formControlName="vessel_operator" readonly />
+                            <select *ngIf="
+                                isserviceVessel.get('addedInput')?.value ==
+                                'select'
+                              " (change)="valueChanged()" formControlName="vessel_operator"
+                              class="form-control custom-form-control">
+                              <option value="Unknown">Unknown</option>
+                              <option *ngFor="let vesselOperator of selectVesselOperators" [value]="vesselOperator">
+                                {{ vesselOperator }}
+                              </option>
+                            </select>
+                          </td>
+                          <td>
+                            <input type="text" class="form-control custom-form-control" placeholder=""
+                              formControlName="ownership_status" readonly />
+                          </td>
+                          <td>
+                            <i *ngIf="serviceVessel().controls.length > 1" class="fa fa-trash removerow"
+                              aria-hidden="true" (click)="removeVessel(iii)"></i>
+                          </td>
+                        </tr>
+                        <tr *ngIf="isDuplicate">
+                          <td class="pt-0 pb-0" colspan="5">
+                            <div>
+                              <span class="error-message">
+                                Duplicate entry found for vessel Name.</span>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <div class="col-12 mb-4">
+                      <div class="form-group forbtn">
+                        <button class="btn btn-yellow text-uppercase fw-bold mr-2" type="button" (click)="addVessel()">
+                          Add Vessel
+                        </button>
+                        <button class="btn btn-yellow text-uppercase fw-bold mr-2" (click)="missedVoyage()"
+                          type="button">
+                          Add Missed Voyage
+                        </button>
+                        <button class="btn btn-yellow text-uppercase fw-bold mr-2" (click)="addVesselTBN()"
+                          type="button">
+                          Add TBN
+                        </button>
+                        <button class="btn btn-yellow text-uppercase fw-bold" type="button" (click)="phasedOut()">
+                          Add Phased Out
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="col-12 mb-4">
+                      <div class="form-group">
+                        <button class="btn btn-yellow text-uppercase fw-semibold mr-2" type="button"
+                          (click)="serviceVesselValid()" [class.addValidButton]="vesselForm === 'valid'">
+                          Validate
+                        </button>
+                        <button class="btn btn-yellow text-uppercase fw-bold" type="button" (click)="resetFormVessel()">
+                          Reset
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12 mb-4" *ngIf="
+                      topform == 'valid' &&
+                      portServiceform == 'valid' &&
+                      vesselForm == 'valid'
+                    ">
+                    <hr />
+                    <div class="form-group">
+                      <button class="btn btn-yellow text-uppercase fw-semibold mr-2" type="submit">
+                        Save
+                      </button>
+                      <button class="btn btn-yellow text-uppercase fw-bold" type="button" (click)="resetAll()">
+                        Reset
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="tab-pane tab-panes active" id="search" role="tabpanel">
+            <form class="form-horizontal row" method="post" [formGroup]="serviceSearchForm" (ngSubmit)="onSearch()">
+              <div class="col-md-12 col-12">
+                <div class="form-group row">
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Service Name</label>
+                    <input type="hidden" formControlName="search" />
+                    <input type="text" class="form-control custom-form-control" formControlName="service_name" />
+                  </div>
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Alliance</label>
+                    <select class="form-control custom-form-control" name="alliance" id="alliance_id"
+                      formControlName="alliance" (change)="handleAllianceChange($event)">
+                      <option value="">Select</option>
+                      <option *ngFor="let alliance of allianceList" [value]="alliance.alliance_id">
+                        {{ alliance.alliance_name }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Frequency</label>
+                    <select class="form-control custom-form-control" name="service_frequency" id="service_frequency"
+                      formControlName="service_frequency">
+                      <option value="">Select</option>
+                      <option *ngFor="let servicefrequency of serviceFrequency"
+                        [value]="servicefrequency.service_frequency">
+                        {{ servicefrequency.service_frequency }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Service Code</label>
+                    <input type="text" formControlName="service_code" class="form-control custom-form-control"
+                      placeholder="" />
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Drewry Reference Code</label>
+                    <input type="text" formControlName="drewry_service_name" class="form-control custom-form-control"
+                      placeholder="RCD002" />
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Service Status</label>
+                    <select class="form-control custom-form-control" name="service_status" id="service_status_id"
+                      formControlName="service_status" [innerHTML]="serviceStatusList"></select>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Service Type</label>
+                    <select class="form-control custom-form-control" name="service_type" id="service_type_id"
+                      formControlName="service_type">
+                      <option value="">Select</option>
+                      <option *ngFor="let servicetype of serviceTypeList" [value]="servicetype.service_type_id">
+                        {{ servicetype.service_type_name }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Routing</label>
+                    <select class="form-control custom-form-control" name="canal" id="canal_id"
+                      formControlName="canal_id">
+                      <option value="">Select</option>
+                      <option *ngFor="let routing of routingList" [value]="routing.canal_id">
+                        {{ routing.canal_name }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Trade Route</label>
+                    <select class="form-control custom-form-control" name="trade_route" id="trade_route_id"
+                      formControlName="trade_route">
+                      <option value="">Select</option>
+                      <option *ngFor="let service_trade_route of serviceTradeRoute"
+                        [value]="service_trade_route.trade_route_name">
+                        {{ service_trade_route.trade_route_name }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button class="btn btn-yellow text-uppercase fw-semibold mr-2" type="submit">
+                    SEARCH
+                  </button>
+                  <button class="btn btn-yellow text-uppercase fw-semibold" (click)="resetSearchForm()" type="button">
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-12 mt-2" #scrollTarget id="scrollTarget">
+                <div class="panel panel-white h-100">
+                  Service List
+                  <div class="panel-heading d-inline-block float-right d-flex align-items-center">
+                    <button (click)="addServiceToArchive()" *ngIf="checkedCount > 0 || checkedAll > 0" type="button"
+                      class="btn btn-yellow text-uppercase fw-semibold mr-2">
+                      Add service to archive
+                    </button>
+                    <form class="form-horizontal" [formGroup]="serviceSearchBox">
+                      <div class="d-flex">
+                        <div class="align-items-center mr-3">
+                          <select (change)="otherSearch()" class="form-control search-group" name="service_status"
+                            id="service_status_id" formControlName="service_status"
+                            [innerHTML]="serviceStatusFilter"></select>
+                        </div>
+                        <div class="search-group">
+                          <svg class="svg-inline--fa fa-search fa-w-16 text-grey" aria-hidden="true" data-prefix="fa"
+                            data-icon="search" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                            data-fa-i2svg="">
+                            <path fill="currentColor"
+                              d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z">
+                            </path>
+                          </svg>
+                          <input type="text" class="f-12" placeholder="Search Here" (keyup)="otherSearch()"
+                            formControlName="searching" />
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+
+                  <div class="panel-body table-responsive pt-3">
+                    <form method="post" [formGroup]="serviceCheckboxForm">
+                      <table class="table table-striped" formArrayName="serviceCheckbox">
+                        <thead>
+                          <tr>
+                            <th>S.NO</th>
+                            <th (click)="sortData('service_name')">
+                              Service
+                              <i class="fas fa-sort" [ngClass]="{
+                                  'fa-sort-up':
+                                    sortedColumn === 'service_name' &&
+                                    sortDirection === 'asc',
+                                  'fa-sort-down':
+                                    sortedColumn === 'service_name' &&
+                                    sortDirection === 'desc'
+                                }"></i>
+                            </th>
+                            <th (click)="sortData('service_code')">
+                              Service Code
+                              <i class="fas fa-sort" [ngClass]="{
+                                  'fa-sort-up':
+                                    sortedColumn === 'service_code' &&
+                                    sortDirection === 'asc',
+                                  'fa-sort-down':
+                                    sortedColumn === 'service_code' &&
+                                    sortDirection === 'desc'
+                                }"></i>
+                            </th>
+                            <th (click)="sortData('update_date')">
+                              Last Updated
+                              <i class="fas fa-sort" [ngClass]="{
+                                  'fa-sort-up':
+                                    sortedColumn === 'update_date' &&
+                                    sortDirection === 'asc',
+                                  'fa-sort-down':
+                                    sortedColumn === 'update_date' &&
+                                    sortDirection === 'desc'
+                                }"></i>
+                            </th>
+                            <th (click)="sortData('service_frequency')">
+                              Frequency
+                              <i class="fas fa-sort" [ngClass]="{
+                                  'fa-sort-up':
+                                    sortedColumn === 'service_frequency' &&
+                                    sortDirection === 'asc',
+                                  'fa-sort-down':
+                                    sortedColumn === 'service_frequency' &&
+                                    sortDirection === 'desc'
+                                }"></i>
+                            </th>
+                            <th (click)="sortData('service_round_voyage_days')">
+                              Round Voyage Days
+                              <i class="fas fa-sort" [ngClass]="{
+                                  'fa-sort-up':
+                                    sortedColumn ===
+                                      'service_round_voyage_days' &&
+                                    sortDirection === 'asc',
+                                  'fa-sort-down':
+                                    sortedColumn ===
+                                      'service_round_voyage_days' &&
+                                    sortDirection === 'desc'
+                                }"></i>
+                            </th>
+                            <th (click)="sortData('no_of_vessel')">
+                              No Of Vessel
+                              <i class="fas fa-sort" [ngClass]="{
+                                  'fa-sort-up':
+                                    sortedColumn === 'no_of_vessel' &&
+                                    sortDirection === 'asc',
+                                  'fa-sort-down':
+                                    sortedColumn === 'no_of_vessel' &&
+                                    sortDirection === 'desc'
+                                }"></i>
+                            </th>
+                            <th (click)="sortData('service_status')">
+                              Service Status
+                              <i class="fas fa-sort" [ngClass]="{
+                                  'fa-sort-up':
+                                    sortedColumn === 'service_status' &&
+                                    sortDirection === 'asc',
+                                  'fa-sort-down':
+                                    sortedColumn === 'service_status' &&
+                                    sortDirection === 'desc'
+                                }"></i>
+                            </th>
+                            <th (click)="sortData('performa_frequency')">
+                              Performa Frequency
+                              <i class="fas fa-sort" [ngClass]="{
+                                  'fa-sort-up':
+                                    sortedColumn === 'performa_frequency' &&
+                                    sortDirection === 'asc',
+                                  'fa-sort-down':
+                                    sortedColumn === 'performa_frequency' &&
+                                    sortDirection === 'desc'
+                                }"></i>
+                            </th>
+                            <th class="text-right">
+                              Action
+                              <input type="checkbox" (change)="toggleAll($event)" />
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="
+                              let service of serviceList;
+                              let index = index
+                            " [formGroupName]="index">
+                            <td class="py-1 lh-28">
+                              {{ index + fromStart.from }}.
+                            </td>
+                            <td class="py-2 lh-28">
+                              {{ service.service_name }}
+                            </td>
+                            <td class="py-2 lh-28">
+                              {{ service.service_code }}
+                            </td>
+                            <td class="py-2 lh-28">
+                              {{ service.update_date | date : "dd-MMM-yyyy" }}
+                            </td>
+                            <td class="py-2 lh-28">
+                              {{ service.service_frequency }}
+                            </td>
+                            <td class="py-2 lh-28">
+                              {{ service.service_round_voyage_days }}
+                            </td>
+                            <td class="py-2 lh-28">
+                              {{ service.no_of_vessel }}
+                            </td>
+                            <td class="py-2 lh-28">
+                              <ng-container *ngIf="service.service_status === 1">Active</ng-container>
+                              <ng-container *ngIf="service.service_status === 2">Inactive</ng-container>
+                              <ng-container *ngIf="service.service_status === 3">Suspended</ng-container>
+                              <ng-container *ngIf="service.service_status === 4">Shelved</ng-container>
+                              <ng-container *ngIf="service.service_status === 5">In Service</ng-container>
+                            </td>
+                            <td class="py-2 lh-28">
+                              {{ service.performa_frequency }}
+                            </td>
+                            <td class="text-right lh-28 py-2 d-flex service-action" style="width: 145px">
+                              <a class="text-black"><span title="view" (click)="viewData(service.current_service_id)"><i
+                                    class="fa fa-eye"></i></span></a>
+
+                              <a class="text-black"><span title="edit" (click)="editSelect(service.current_service_id ?? service.archived_service_id)"><i aria-hidden="true" class="fa fa-edit"></i></span></a>
+
+                              <a class="text-black"><span title="delete" (click)="
+                                    deleteData(
+                                      service.current_service_id ??
+                                        service.archived_service_id,
+                                      service.service_name
+                                    )
+                                  "><i aria-hidden="true" class="fa fa-trash"></i></span></a>
+                              <a class="text-black" [routerLink]="[
+                                  '/administrator/service-log-list',
+                                  service?.service_id
+                                ]"><span title="logs">
+                                  <i aria-hidden="true" class="fa fa-history"></i> </span></a>
+                              <input class="ml-auto" type="checkbox" [checked]="selectedAll"
+                                formControlName="checkboxinput" (change)="
+                                  toggleSingle(
+                                    $event,
+                                    service.current_service_id ??
+                                      service.archived_service_id
+                                  )
+                                " />
+                              <input type="hidden" [checked]="selectedAll" formControlName="serviceId"
+                                [(ngModel)]="service.current_service_id" />
+                            </td>
+                          </tr>
+                          <tr *ngIf="serviceList && serviceList.length === 0">
+                            <td colspan="4">
+                              <strong>No records found</strong>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </form>
+                  </div>
+                  <div class="table-paggination">
+                    <div class="page-counter">
+                      Showing
+                      <select class="" [(ngModel)]="per_page" (change)="onPerPageChange($event)">
+                        <option *ngFor="let value of getPerPageCount" [value]="value">
+                          {{ value }}
+                        </option>
+                      </select>
+                      of {{ total }} entries
+                    </div>
+                    <div class="custom-paggination float-right">
+                      <ul>
+                        <li *ngFor="
+                            let pagination of pagination;
+                            let index = index
+                          ">
+                          <ng-container *ngIf="pagination.label !== '...'; else emptyLabel">
+                            <a [innerHTML]="pagination.label" [ngClass]="{
+                                active:
+                                  pagination.label == fromStart.current_page,
+                                disabled: pagination.url == null
+                              }" (click)="changePagination(pagination.url)"></a>
+                          </ng-container>
+                          <ng-template #emptyLabel>
+                            <a>{{ pagination.label }}</a>
+                          </ng-template>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- view load on Archive Edit servie when select YEAR and MONTH -->
+      <div class="col-12" *ngIf="year > 0">
+        <div class="row">
+          <div class="col-12 mt-2" #scrollTarget id="scrollTarget">
+            <div class="panel panel-white h-100">
+              Service List
+              <div class="panel-heading d-inline-block float-right d-flex align-items-center">
+                <button (click)="addServiceToArchive()" *ngIf="checkedCount > 0 || checkedAll > 0" type="button"
+                  class="btn btn-yellow text-uppercase fw-semibold mr-2">
+                  Add service to archive
+                </button>
+                <form class="form-horizontal" [formGroup]="serviceSearchBox">
+                  <div class="d-flex">
+                    <div class="align-items-center mr-3">
+                      <select (change)="otherSearch()" class="form-control search-group" name="service_status"
+                        id="service_status_id" formControlName="service_status"
+                        [innerHTML]="serviceStatusFilter"></select>
+                    </div>
+                    <div class="search-group">
+                      <svg class="svg-inline--fa fa-search fa-w-16 text-grey" aria-hidden="true" data-prefix="fa"
+                        data-icon="search" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                        data-fa-i2svg="">
+                        <path fill="currentColor"
+                          d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z">
+                        </path>
+                      </svg>
+                      <input type="text" class="f-12" placeholder="Search Here" (keyup)="otherSearch()"
+                        formControlName="searching" />
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div class="panel-body table-responsive pt-3">
+                <form method="post" [formGroup]="serviceCheckboxForm">
+                  <table class="table table-striped" formArrayName="serviceCheckbox">
+                    <thead>
+                      <tr>
+                        <th>S.NO</th>
+                        <th (click)="sortData('service_name')">
+                          Service
+                          <i class="fas fa-sort" [ngClass]="{
+                              'fa-sort-up':
+                                sortedColumn === 'service_name' &&
+                                sortDirection === 'asc',
+                              'fa-sort-down':
+                                sortedColumn === 'service_name' &&
+                                sortDirection === 'desc'
+                            }"></i>
+                        </th>
+                        <th (click)="sortData('service_code')">
+                          Service Code
+                          <i class="fas fa-sort" [ngClass]="{
+                              'fa-sort-up':
+                                sortedColumn === 'service_code' &&
+                                sortDirection === 'asc',
+                              'fa-sort-down':
+                                sortedColumn === 'service_code' &&
+                                sortDirection === 'desc'
+                            }"></i>
+                        </th>
+                        <th (click)="sortData('update_date')">
+                          Last Updated
+                          <i class="fas fa-sort" [ngClass]="{
+                              'fa-sort-up':
+                                sortedColumn === 'update_date' &&
+                                sortDirection === 'asc',
+                              'fa-sort-down':
+                                sortedColumn === 'update_date' &&
+                                sortDirection === 'desc'
+                            }"></i>
+                        </th>
+                        <th (click)="sortData('service_frequency')">
+                          Frequency
+                          <i class="fas fa-sort" [ngClass]="{
+                              'fa-sort-up':
+                                sortedColumn === 'service_frequency' &&
+                                sortDirection === 'asc',
+                              'fa-sort-down':
+                                sortedColumn === 'service_frequency' &&
+                                sortDirection === 'desc'
+                            }"></i>
+                        </th>
+                        <th (click)="sortData('service_round_voyage_days')">
+                          Round Voyage Days
+                          <i class="fas fa-sort" [ngClass]="{
+                              'fa-sort-up':
+                                sortedColumn === 'service_round_voyage_days' &&
+                                sortDirection === 'asc',
+                              'fa-sort-down':
+                                sortedColumn === 'service_round_voyage_days' &&
+                                sortDirection === 'desc'
+                            }"></i>
+                        </th>
+                        <th (click)="sortData('no_of_vessel')">
+                          No Of Vessel
+                          <i class="fas fa-sort" [ngClass]="{
+                              'fa-sort-up':
+                                sortedColumn === 'no_of_vessel' &&
+                                sortDirection === 'asc',
+                              'fa-sort-down':
+                                sortedColumn === 'no_of_vessel' &&
+                                sortDirection === 'desc'
+                            }"></i>
+                        </th>
+                        <th (click)="sortData('service_type_name')">
+                          Service Type
+                          <i class="fas fa-sort" [ngClass]="{
+                              'fa-sort-up':
+                                sortedColumn === 'service_type_name' &&
+                                sortDirection === 'asc',
+                              'fa-sort-down':
+                                sortedColumn === 'service_type_name' &&
+                                sortDirection === 'desc'
+                            }"></i>
+                        </th>
+                        <th (click)="sortData('performa_frequency')">
+                          Performa Frequency
+                          <i class="fas fa-sort" [ngClass]="{
+                              'fa-sort-up':
+                                sortedColumn === 'performa_frequency' &&
+                                sortDirection === 'asc',
+                              'fa-sort-down':
+                                sortedColumn === 'performa_frequency' &&
+                                sortDirection === 'desc'
+                            }"></i>
+                        </th>
+                        <th class="text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let service of serviceList; let index = index" [formGroupName]="index">
+                        <td class="py-1 lh-28">
+                          {{ index + fromStart.from }}.
+                        </td>
+                        <td class="py-2 lh-28">
+                          {{ service.service_name }}
+                        </td>
+                        <td class="py-2 lh-28">
+                          {{ service.service_code }}
+                        </td>
+                        <td class="py-2 lh-28">
+                          {{ service.last_updated_on | date : "dd-MMM-yyyy" }}
+                        </td>
+                        <td class="py-2 lh-28">
+                          {{ service.service_frequency }}
+                        </td>
+                        <td class="py-2 lh-28">
+                          {{ service.service_round_voyage_days }}
+                        </td>
+                        <td class="py-2 lh-28">
+                          {{ service.no_of_vessel }}
+                        </td>
+                        <td class="py-2 lh-28">
+                          {{ service.servicetype.service_type_name }}
+                        </td>
+                        <td class="py-2 lh-28">
+                          {{ service.performa_frequency }}
+                        </td>
+                        <td class="text-right lh-28 py-2 d-flex service-action justify-content-end"
+                          style="width: 145px">
+                          <a class="text-black"><span title="view" (click)="viewData(service.archived_service_id)"><i
+                                class="fa fa-eye"></i></span></a>
+
+                          <a class="text-black"><span title="edit" (click)="editSelect(service.archived_service_id)"><i
+                                aria-hidden="true" class="fa fa-edit"></i></span></a>
+
+                          <a class="text-black"><span title="delete" (click)="
+                                deleteData(
+                                  service.archived_service_id,
+                                  service.service_name
+                                )
+                              "><i aria-hidden="true" class="fa fa-trash"></i></span></a>
+                          <a class="text-black" [routerLink]="[
+                              '/administrator/service-log-list',
+                              service?.service_id
+                            ]" [queryParams]="{ log_type: 'archive' }"><span title="logs">
+                              <i aria-hidden="true" class="fa fa-history"></i>
+                            </span>
+                          </a>
+                        </td>
+                      </tr>
+                      <tr *ngIf="serviceList && serviceList.length === 0">
+                        <td colspan="4">
+                          <strong>No records found</strong>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </form>
+              </div>
+              <div class="table-paggination">
+                <div class="page-counter">
+                  Showing
+                  <select class="" [(ngModel)]="per_page" (change)="onPerPageChange($event)">
+                    <option *ngFor="let value of getPerPageCount" [value]="value">
+                      {{ value }}
+                    </option>
+                  </select>
+                  of {{ total }} entries
+                </div>
+                <div class="custom-paggination float-right">
+                  <ul>
+                    <li *ngFor="let pagination of pagination; let index = index">
+                      <ng-container *ngIf="pagination.label !== '...'; else emptyLabel">
+                        <a [innerHTML]="pagination.label" [ngClass]="{
+                            active: pagination.label == fromStart.current_page,
+                            disabled: pagination.url == null
+                          }" (click)="changePagination(pagination.url)"></a>
+                      </ng-container>
+                      <ng-template #emptyLabel>
+                        <a>{{ pagination.label }}</a>
+                      </ng-template>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>
+
+<!-- Shift Modal Start -->
+<div class="modal fade bs-example-modal-new" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <!-- Modal Content: begins -->
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="gridSystemModalLabel">Ships Details</h4>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <div class="body-message">
+          <div class="row">
+            <div class="col-md-12">
+              <h2 class="f-16 mt-2 mb-3">Busan (North Asia)</h2>
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <tr>
+                    <th class="f-12">Ports & Regions</th>
+                    <th class="f-12">Porto Kagio</th>
+                    <th class="f-12">
+                      Seamax Norwalk <span class="d-block f-12">7,471 T</span>
+                    </th>
+                    <th class="f-12">
+                      GSL Tegea
+                      <span class="d-block f-12">5,514 T</span>
+                    </th>
+                    <th class="f-12">
+                      GSL Violetta
+                      <span class="d-block f-12">5,514 T</span>
+                    </th>
+                    <th class="f-12">
+                      Maersk Kalamata
+                      <span class="d-block f-12">6,246 T</span>
+                    </th>
+                    <th class="f-12">
+                      E.R. CANADA
+                      <span class="d-block f-12">5,762 T</span>
+                    </th>
+                    <th class="f-12">
+                      GOOD PROSPECT
+                      <span class="d-block f-12">6,350 T</span>
+                    </th>
+                  </tr>
+                  <tr>
+                    <td><span class="f-12">Busan (North Asia)</span></td>
+                    <td><span class="td-tag">07 Aug</span></td>
+                    <td><span class="td-tag td-tag-red">25 Aug</span></td>
+                    <td><span class="td-tag">01 Sep</span></td>
+                    <td><span class="td-tag">08 Sep</span></td>
+                    <td></td>
+                    <td><span class="td-tag">26 Sep</span></td>
+                    <td><span class="td-tag">03 Oct</span></td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary text-white" data-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+    <!-- Modal Content: ends -->
+  </div>
+</div>
+<!-- Shift Modal End -->
+<div id="myModal" class="modal fade editModal service-view" tabindex="-1" role="dialog" data-backdrop="static">
+  <form class="form-horizontal row" method="post" [formGroup]="serviceDataForm" (ngSubmit)="onSaveData()">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Service  View</h5>
+          <button type="button" class="close" (click)="closeModal()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" *ngFor="let serviceObject of serviceViewObject">
+          <div class="col-12 mt-2">
+            <input type="hidden" formControlName="sendServiceObject" [(ngModel)]="serializeData" />
+            <input type="hidden" formControlName="newVessel" [(ngModel)]="newVessels" />
+            <input type="hidden" formControlName="id_for_edit" />
+
+            <div class="panel panel-white h-100 service-classification-table">
+              <div class="panel-body table-responsive pt-3">
+                <table class="table" align="left" id="add_class_box">
+                  <tbody>
+                    <tr>
+                      <td align="right">
+                        <label>Service Name:</label>
+                        <input type="hidden" formControlName="service_name" [(ngModel)]="serviceObject.service_name" />
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.service_name }}
+                          <a>
+                            <img width="25" src="../assets/images/news_icon.png" title="News" />
+                          </a>
+                        </b>
+                      </td>
+                      <td align="right">
+                        <label>Service Frequency:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.service_frequency }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Round Voyage Start Date:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.service_start_date_current }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Round Voyage End Date:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.service_end_date_current }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Service Alliance:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>
+                          {{ serviceObject.allianceArray[0].alliance_name }}
+                          <input type="hidden" formControlName="alliance" [(ngModel)]="
+                              serviceObject.allianceArray[0].alliance_id
+                            " />
+                        </b>
+                      </td>
+                      <td align="right">
+                        <label>Service Code:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.service_code }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Service Starting Date:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.starting_date_attribute }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Service End Date:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b></b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Drewry Reference Code:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.service_drewry_reference_name }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Service Status:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.service_status_name }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Service Type:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.service_type_name }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Service Routing:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.canal_name }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Total Vessel:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <input type="hidden" formControlName="total_vessel" [(ngModel)]="
+                            serviceObject.serviceVessels.total_vessels
+                          " />
+                        <b>{{ serviceObject.serviceVessels.total_vessels }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Active Vessel:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <input type="hidden" formControlName="active_vessel" [(ngModel)]="
+                            serviceObject.serviceVessels.no_of_active_vessels
+                          " />
+                        <b>{{
+                          serviceObject.serviceVessels.no_of_active_vessels
+                          }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Missed Vessel:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <input type="hidden" formControlName="missed_vessel" [(ngModel)]="
+                            serviceObject.serviceVessels.no_of_missed_vessels
+                          " />
+                        <b>{{
+                          serviceObject.serviceVessels.no_of_missed_vessels
+                          }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Round Voyage Days:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <input type="hidden" formControlName="round_voyage_days"
+                          [(ngModel)]="serviceObject.service_round_voyage_days" />
+                        <b>{{ serviceObject.service_round_voyage_days }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Average Capacity:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <input type="hidden" formControlName="average_capacity" [(ngModel)]="
+                            serviceObject.service_average_vessel_size
+                          " />
+                        <b>{{ serviceObject.service_average_vessel_size }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Remarks:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <input type="hidden" formControlName="remarks" [(ngModel)]="serviceObject.service_remarks" />
+                        <b>{{ serviceObject.service_remarks }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">Performa Frequencty:</td>
+                      <td class="fieldbox">
+                        <input type="hidden" formControlName="performa_frequency"
+                          [(ngModel)]="serviceObject.performa_frequency" />
+                        <b>{{ serviceObject.performa_frequency }}</b>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2">
+            <div class="panel panel-white h-100 service-classification-table">
+              <div class="panel-heading d-inline-block float-left">
+                Service Ports
+              </div>
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Port Name</th>
+                      <th>Arrival Days</th>
+                      <th>Departure Days</th>
+                      <th>Arrival Day</th>
+                      <th>Departute Day</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="table_row_1" *ngFor="
+                        let port of serviceObject.servicePorts.ServicePortArray
+                      ">
+                      <td class="service_name_class"
+                        title="Port Departure Days Can not be less than port arrival days;">
+                        {{ port.port_name }}
+                      </td>
+                      <td>{{ port.arrival_days }}</td>
+                      <td>{{ port.departure_days }}</td>
+                      <td>{{ port.arrival_day }}</td>
+                      <td>{{ port.departure_day }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2">
+            <div class="panel panel-white h-100 service-classification-table">
+              <div class="panel-heading d-inline-block float-left">
+                Service Trade Routes
+              </div>
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Primary</th>
+                      <th>Trade Route Name</th>
+                      <th title="123">Way Port Percentage %</th>
+                      <th>Out of Scope %</th>
+                      <th>Dwt Adjustment %</th>
+                      <th>High Cube Adjustment %</th>
+                      <th>Vessel Development</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="table_row_1" *ngFor="
+                        let tradeRoutes of serviceObject.serviceTradeRoutes
+                          .ServiceTradeRouteArray
+                      ">
+                      <td>
+                        <div *ngIf="
+                            tradeRoutes.current_service_trade_route_id
+                              .service_primary_trade_route;
+                            else elseBlock
+                          ">
+                          YES
+                        </div>
+                        <ng-template #elseBlock> NO </ng-template>
+                      </td>
+                      <td class="service_name_class" title="">
+                        {{
+                        tradeRoutes.current_service_trade_route_id
+                        .service_trade_route_name
+                        }}
+                      </td>
+                      <td>
+                        {{
+                        tradeRoutes.current_service_trade_route_id.way_port
+                        }}
+                      </td>
+                      <td>
+                        {{
+                        tradeRoutes.current_service_trade_route_id
+                        .out_of_scope
+                        }}
+                      </td>
+                      <td>
+                        {{
+                        tradeRoutes.current_service_trade_route_id
+                        .dwt_adjustment
+                        }}
+                      </td>
+                      <td>
+                        {{
+                        tradeRoutes.current_service_trade_route_id
+                        .high_cube_adjustment
+                        }}
+                      </td>
+                      <td>
+                        <div *ngIf="
+                            tradeRoutes.current_service_trade_route_id
+                              .vessel_deployment_flag;
+                            else elseBlockShow
+                          ">
+                          YES
+                        </div>
+                        <ng-template #elseBlockShow> NO </ng-template>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2">
+            <div class="panel panel-white h-100 service-classification-table">
+              <div class="panel-heading d-inline-block float-left">
+                Operator Detail
+              </div>
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Operator Name</th>
+                      <th>Alias Name</th>
+                      <th>Schedule Hyperlink</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="table_row_1" *ngFor="
+                        let aliases of serviceObject.serviceAliases
+                          .ServiceAliasArray
+                      ">
+                      <td>{{ aliases.operator_name }}</td>
+                      <td>{{ aliases.alias_name }}</td>
+                      <td>{{ aliases.schedule_hyperlink }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2">
+            <div class="panel panel-white h-100 service-classification-table">
+              <div class="panel-heading d-inline-block float-left">
+                Service Vessels
+              </div>
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Vessel Name</th>
+                      <th>Teu Capacity</th>
+                      <th>Operator Name</th>
+                      <th>IMO No.</th>
+                      <th>Ownership Status</th>
+                      <th>Move To</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngIf="
+                        serviceObject.serviceVessels.ServiceVesselArray.length >
+                          0;
+                        else noDataBlock
+                      ">
+                      <tr class="table_row_1" *ngFor="
+                          let serviceVessel of serviceObject.serviceVessels
+                            .ServiceVesselArray
+                        ">
+                        <td>{{ serviceVessel.vessel_name }}</td>
+                        <td>{{ serviceVessel.teu_capacity }}</td>
+                        <td>{{ serviceVessel.operator_name }}</td>
+                        <td>{{ serviceVessel.IMO_no }}</td>
+                        <td>{{ serviceVessel.ownership_status }}</td>
+                        <td>{{ serviceVessel.move_to_service }}</td>
+                      </tr>
+                    </ng-container>
+                    <ng-template #noDataBlock>
+                      <tr>
+                        <td colspan="6" align="center">
+                          You should choose at least a single vessel.
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2">
+            <div class="panel panel-white h-100 service-classification-table">
+              <div class="panel-heading d-inline-block float-left">
+                Service Operators
+              </div>
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Operator Name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="table_row_1" *ngFor="
+                        let serviceOperator of serviceObject.serviceOperators.serviceOperatorsArray">
+                      <td>{{ serviceOperator }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2 text-center">
+            <button class="btn btn-yellow text-uppercase fw-bold mr-2" type="submit">
+              SAVE
+            </button>
+            <button class="btn btn-yellow text-uppercase fw-bold mr-2" (click)="closeModal()" type="button">
+              BACK
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- View service Modal start -->
+<div id="viewServiceModal" class="modal fade editModal service-view" tabindex="-1" role="dialog" data-backdrop="static">
+  <form class="form-horizontal row" method="post" [formGroup]="serviceDataForm" (ngSubmit)="onSaveData()">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Service {{ ServiceType }} View</h5>
+          <button type="button" class="close" (click)="closeServiceModal()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" *ngFor="let serviceObject of serviceViewObjectBtn">
+          <div class="col-12 mt-2">
+            <div class="panel panel-white h-100 service-classification-table">
+              <div class="panel-body table-responsive pt-3">
+                <table class="table" align="left" id="add_class_box">
+                  <tbody>
+                    <tr>
+                      <td align="right">
+                        <label>Service Name:</label>
+                        <input type="hidden" formControlName="service_name" [(ngModel)]="serviceObject.service_name" />
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.service_name }}
+                          <a>
+                            <img width="25" src="../assets/images/news_icon.png" title="News" />
+                          </a>
+                        </b>
+                      </td>
+                      <td align="right">
+                        <label>Service Frequency:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.service_frequency }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Round Voyage Start Date:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.service_start_date_current }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Round Voyage End Date:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.service_end_date_current }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Service Alliance:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>
+                          {{
+                          serviceObject.serviceAlliance.ServiceAllianceArray
+                          .alliance_name
+                          }}
+                        </b>
+                      </td>
+                      <td align="right">
+                        <label>Service Code:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.service_code }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Service Starting Date:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.starting_date_attribute }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Service End Date:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b></b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Drewry Reference Code:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.service_drewry_reference_name }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Service Status:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.service_status_name }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Service Type:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.service_type_name }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Service Routing:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject.canal_name }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Total Vessel:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <input type="hidden" formControlName="total_vessel" [(ngModel)]="
+                            serviceObject.serviceVessels.total_vessels
+                          " />
+                        <b>{{ serviceObject.serviceVessels.total_vessels }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Active Vessel:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <input type="hidden" formControlName="active_vessel" [(ngModel)]="
+                            serviceObject.serviceVessels.no_of_active_vessels
+                          " />
+                        <b>{{
+                          serviceObject.serviceVessels.no_of_active_vessels
+                          }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Missed Vessel:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <input type="hidden" formControlName="missed_vessel" [(ngModel)]="
+                            serviceObject.serviceVessels.no_of_missed_vessels
+                          " />
+                        <b>{{
+                          serviceObject.serviceVessels.no_of_missed_vessels
+                          }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Round Voyage Days:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <input type="hidden" formControlName="round_voyage_days"
+                          [(ngModel)]="serviceObject.service_round_voyage_days" />
+                        <b>{{ serviceObject.service_round_voyage_days }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Average Capacity:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <input type="hidden" formControlName="average_capacity" [(ngModel)]="
+                            serviceObject.service_average_vessel_size
+                          " />
+                        <b>{{ serviceObject.service_average_vessel_size }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Remarks:</label>
+                      </td>
+                      <td class="fieldbox" width="300px">
+                        <input type="hidden" formControlName="remarks" [(ngModel)]="serviceObject.service_remarks" />
+                        <b>{{ serviceObject.service_remarks }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">Performa Frequencty:</td>
+                      <td class="fieldbox">
+                        <input type="hidden" formControlName="performa_frequency"
+                          [(ngModel)]="serviceObject.performa_frequency" />
+                        <b>{{ serviceObject.performa_frequency }}</b>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2">
+            <div class="panel panel-white h-100 service-classification-table">
+              <div class="panel-heading d-inline-block float-left">
+                Service Ports
+              </div>
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Port Name</th>
+                      <th>Arrival Days</th>
+                      <th>Departure Days</th>
+                      <th>Arrival Day</th>
+                      <th>Departute Day</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="table_row_1" *ngFor="
+                        let port of serviceObject.servicePorts.ServicePortArray
+                      ">
+                      <td class="service_name_class"
+                        title="Port Departure Days Can not be less than port arrival days;">
+                        {{ port.port_name }}
+                      </td>
+                      <td>{{ port.arrival_days }}</td>
+                      <td>{{ port.departure_days }}</td>
+                      <td>{{ port.arrival_day }}</td>
+                      <td>{{ port.departure_day }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2">
+            <div class="panel panel-white h-100 service-classification-table">
+              <div class="panel-heading d-inline-block float-left">
+                Service Trade Routes
+              </div>
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Primary</th>
+                      <th>Trade Route Name</th>
+                      <th title="123">Way Port Percentage %</th>
+                      <th>Out of Scope %</th>
+                      <th>Dwt Adjustment %</th>
+                      <th>High Cube Adjustment %</th>
+                      <th>Vessel Development</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="table_row_1" *ngFor="
+                        let tradeRoutes of serviceObject.serviceTradeRoutes
+                          .ServiceTradeRouteArray
+                      ">
+                      <td>
+                        <div *ngIf="
+                            tradeRoutes.service_primary_trade_route == 'Yes';
+                            else elseBlock
+                          ">
+                          YES
+                        </div>
+                        <ng-template #elseBlock> NO </ng-template>
+                      </td>
+                      <td class="service_name_class" title="">
+                        {{ tradeRoutes.trade_route_name }}
+                      </td>
+                      <td>
+                        {{ tradeRoutes.wayport_percentage }}
+                      </td>
+                      <td>
+                        {{ tradeRoutes.out_of_scope }}
+                      </td>
+                      <td>
+                        {{ tradeRoutes.dwt_adjustment }}
+                      </td>
+                      <td>
+                        {{ tradeRoutes.high_cube_adjustment }}
+                      </td>
+                      <td>
+                        <div *ngIf="
+                            tradeRoutes.vessel_deployment_flag === 'Yes';
+                            else elseBlockShow
+                          ">
+                          YES
+                        </div>
+                        <ng-template #elseBlockShow> NO </ng-template>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2">
+            <div class="panel panel-white h-100 service-classification-table">
+              <div class="panel-heading d-inline-block float-left">
+                Operator Detail
+              </div>
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Operator Name</th>
+                      <th>Alias Name</th>
+                      <th>Schedule Hyperlink</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="table_row_1" *ngFor="
+                        let aliases of serviceObject.serviceAliases
+                          .ServiceAliasArray
+                      ">
+                      <td>{{ aliases.operator_name }}</td>
+                      <td>{{ aliases.alias_name }}</td>
+                      <td>{{ aliases.schedule_hyperlink }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2">
+            <div class="panel panel-white h-100 service-classification-table">
+              <div class="panel-heading d-inline-block float-left">
+                Service Vessels
+              </div>
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Vessel Name</th>
+                      <th>Teu Capacity</th>
+                      <th>Operator Name</th>
+                      <th>IMO No.</th>
+                      <th>Ownership Status</th>
+                      <th>Move To</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngIf="
+                        serviceObject.serviceVessels.ServiceVesselArray.length >
+                          0;
+                        else noDataBlock
+                      ">
+                      <tr class="table_row_1" *ngFor="
+                          let serviceVessel of serviceObject.serviceVessels
+                            .ServiceVesselArray
+                        ">
+                        <td>{{ serviceVessel.vessel_name }}</td>
+                        <td>{{ serviceVessel.teu_capacity }}</td>
+                        <td>{{ serviceVessel.operator_name }}</td>
+                        <td>{{ serviceVessel.IMO_no }}</td>
+                        <td>{{ serviceVessel.ownership_status }}</td>
+                        <td>{{ serviceVessel.move_to_service }}</td>
+                      </tr>
+                    </ng-container>
+                    <ng-template #noDataBlock>
+                      <tr>
+                        <td colspan="6" align="center">
+                          You should choose at least a single vessel.
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2">
+            <div class="panel panel-white h-100 service-classification-table">
+              <div class="panel-heading d-inline-block float-left">
+                Service Operators
+              </div>
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Operator Name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="table_row_1" *ngFor="
+                        let serviceOperator of serviceObject.serviceOperators
+                          .serviceOperatorsArray
+                      ">
+                      <td>{{ serviceOperator }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2 text-center">
+            <button class="btn btn-yellow text-uppercase fw-bold mr-2" type="button"
+              (click)="editSelect(serviceObject.service_id)">
+              EDIT
+            </button>
+            <button class="btn btn-yellow text-uppercase fw-bold mr-2" (click)="closeServiceModal()" type="button">
+              BACK
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

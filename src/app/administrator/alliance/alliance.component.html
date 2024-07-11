@@ -1,0 +1,555 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+  <div class="container-fluid">
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-12 col-12">
+          <h1 class="m-0">Manage Alliance ({{ tabActive }})</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12 text-right"></div>
+        <!-- /.col -->
+      </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="row m-0">
+      <div class="col-12">
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item">
+            <a
+              (click)="tabChange('Add')"
+              class="nav-link active"
+              data-toggle="tab"
+              href="#addnew"
+              role="tab"
+              >Add New</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              (click)="tabChange('Search')"
+              class="nav-link"
+              data-toggle="tab"
+              href="#search"
+              role="tab"
+              >Search</a
+            >
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="addnew" role="tabpanel">
+            <form
+              class="form-horizontal row"
+              method="post"
+              [formGroup]="allianceForm"
+              (ngSubmit)="onSubmit()"
+            >
+              <div class="col-md-5 col-12">
+                <div class="form-group row">
+                  <div class="col-md-12 col-12">
+                    <label class="control-label">Alliance Name*</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="alliance_name"
+                    />
+                    <div
+                      *ngIf="
+                        allianceForm
+                          ?.get('alliance_name')
+                          ?.hasError('required') &&
+                        allianceForm?.get('alliance_name')?.touched
+                      "
+                    >
+                      <span class="error-message"
+                        >Alliance Name is required</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 mb-5">
+                <div class="multiselect row">
+                  <div class="holder col-md-5">
+                    <label class="control-label">All Operators</label>
+                    <form [formGroup]="form">
+                      <input type="text" formControlName="filterText" placeholder="Search operators" class="form-control custom-form-control">
+                    </form>
+                    <select multiple="multiple" id="select1">
+                      <option *ngFor="let operator of filteredOperatorList" [value]="operator.operator_id">
+                        {{ operator.operator_name }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-2">
+                    <a (click)="moveToRight()" id="add" class="m-1 btn btn-yellow text-uppercase fw-bold">To Right</a>
+                    <a (click)="moveToLeft()" id="remove" class="m-1 btn btn-yellow text-uppercase fw-bold">To Left</a>
+                  </div>
+                  <div class="holder col-md-5">
+                    <label class="control-label">Allocated Operators</label>
+                    <select multiple="multiple" id="select2">
+                      <option *ngFor="let operator of allocatedOperators" [value]="operator.operator_id">
+                        {{ operator.operator_name }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- <div class="col-12 mb-5">
+                <div class="multiselect row">
+                  <div class="holder col-md-5">
+                    <label class="control-label">All Operators</label>
+                    <select multiple="multiple" id="select1">
+                      <option
+                        *ngFor="let operator of operatorList"
+                        [value]="operator.operator_id"
+                      >
+                        {{ operator.operator_name }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-2">
+                    <a
+                      id="add"
+                      class="m-1 btn btn-yellow text-uppercase fw-bold"
+                      >To Right</a
+                    >
+                    <a
+                      id="remove"
+                      class="m-1 btn btn-yellow text-uppercase fw-bold"
+                      >To Left</a
+                    >
+                  </div>
+                  <div class="holder col-md-5">
+                    <label class="control-label">Allocated Operators</label>
+                    <select multiple="multiple" id="select2" #mySelect></select>
+                  </div>
+                </div>
+              </div> -->
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold mr-2 checkbutton"
+                    type="submit"
+                  >
+                    Add New
+                  </button>
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold"
+                    (click)="resetForm()"
+                    type="button"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="tab-pane" id="search" role="tabpanel">
+            <form
+              class="form-horizontal row"
+              [formGroup]="allianceSearchForm"
+              (ngSubmit)="onSearch()"
+            >
+              <div class="col-md-5 col-12">
+                <div class="form-group row">
+                  <div class="col-md-12 col-12">
+                    <label class="control-label">Alliance Name</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      formControlName="alliance_name"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 mb-5">
+                <div class="multiselect row">
+                  <div class="holder col-md-5">
+                    <label class="control-label">All Operators</label>
+                    <select multiple="multiple" id="select3">
+                      <option
+                        *ngFor="let operator of operatorList"
+                        [value]="operator.operator_id"
+                      >
+                        {{ operator.operator_name }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-2">
+                    <a
+                      id="added1"
+                      class="m-1 btn btn-yellow text-uppercase fw-bold"
+                      >To Right</a
+                    >
+                    <a
+                      id="removed1"
+                      class="m-1 btn btn-yellow text-uppercase fw-bold"
+                      >To Left</a
+                    >
+                  </div>
+
+                  <div class="holder col-md-5">
+                    <label class="control-label">Allocated Operators</label>
+                    <select
+                      multiple="multiple"
+                      id="select4"
+                      #mySelectSearch
+                    ></select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold mr-2"
+                    type="submit"
+                  >
+                    Search
+                  </button>
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold"
+                    type="button"
+                    (click)="resetSearchForm()"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 mt-2">
+        <div class="panel panel-white h-100">
+          <div class="panel-heading d-inline-block float-left">
+            Alliance List
+          </div>
+          <div class="d-inline-block float-right text-right">
+            <form class="form-horizontal" [formGroup]="allianceSearchForm">
+              <div class="search-group">
+                <svg
+                  class="svg-inline--fa fa-search fa-w-16 text-grey"
+                  aria-hidden="true"
+                  data-prefix="fa"
+                  data-icon="search"
+                  role="img"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                  data-fa-i2svg=""
+                >
+                  <path
+                    fill="currentColor"
+                    d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"
+                  ></path>
+                </svg>
+                <!-- <i class="fa fa-search text-grey" aria-hidden="true"></i> -->
+                <input
+                  type="text"
+                  class="f-12"
+                  placeholder="Search Here"
+                  (keyup)="onSearch()"
+                  formControlName="alliance_name"
+                />
+              </div>
+            </form>
+          </div>
+          <div class="panel-body table-responsive pt-3">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>S.NO</th>
+                  <th (click)="sortData('alliance_name')">
+                    Alliance Name
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'alliance_name' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'alliance_name' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th class="text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let alliance of allianceList; let index = index">
+                  <td class="py-1 lh-28">{{ index + fromStart.from }}.</td>
+                  <td class="py-2 lh-28">{{ alliance.alliance_name }}</td>
+                  <td class="text-right lh-28 py-2">
+                    <button
+                      class="btn btn-transparent btn-sm my-0"
+                      (click)="viewData(alliance.alliance_id)"
+                    >
+                      View
+                    </button>
+                    <button
+                      (click)="editSelect(alliance.alliance_id)"
+                      class="btn btn-blue btn-sm my-0 px-3"
+                      style="background-color: #97bfe480; color: #132e67"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      (click)="
+                        deleteData(alliance.alliance_id, alliance.alliance_name)
+                      "
+                      class="btn btn-transparent btn-sm my-0"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="allianceList && allianceList.length === 0">
+                  <td colspan="4"><strong>No records found</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-paggination">
+            <div class="page-counter">
+              Showing
+              <select
+                class=""
+                [(ngModel)]="per_page"
+                (change)="onPerPageChange($event)"
+              >
+                <option *ngFor="let value of getPerPageCount" [value]="value">
+                  {{ value }}
+                </option>
+              </select>
+              of {{ total }} entries
+            </div>
+            <div class="custom-paggination float-right">
+              <ul>
+                <li *ngFor="let pagination of pagination; let index = index">
+                  <ng-container
+                    *ngIf="pagination.label !== '...'; else emptyLabel"
+                  >
+                    <a
+                      [innerHTML]="pagination.label"
+                      [ngClass]="{
+                        active: pagination.label == fromStart.current_page,
+                        disabled: pagination.url == null
+                      }"
+                      (click)="changePagination(pagination.url)"
+                    ></a>
+                  </ng-container>
+                  <ng-template #emptyLabel>
+                    <a>{{ pagination.label }}</a>
+                  </ng-template>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>
+
+<div
+  id="myModal"
+  class="modal fade editModal"
+  tabindex="-1"
+  role="dialog"
+  data-backdrop="static"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Alliance</h5>
+        <button type="button" class="close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form
+          class="form-horizontal row"
+          method="post"
+          [formGroup]="allianceForm"
+          (ngSubmit)="onUpdate()"
+          *ngIf="editListData && editListData.length > 0"
+        >
+          <div class="col-md-12 col-12" *ngFor="let editList of editListData">
+            <div class="col-md-5 col-12">
+              <div class="form-group row">
+                <div class="col-md-12 col-12">
+                  <label class="control-label">Alliance Name*</label>
+                  <input
+                    type="hidden"
+                    formControlName="id"
+                    [(ngModel)]="editList.alliance_id"
+                  />
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="alliance_name"
+                    [(ngModel)]="editList.alliance_name"
+                  />
+                  <div
+                    *ngIf="
+                      allianceForm
+                        ?.get('alliance_name')
+                        ?.hasError('required') &&
+                      allianceForm?.get('alliance_name')?.touched
+                    "
+                  >
+                    <span class="error-message">Alliance Name is required</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 mb-5">
+              <div class="multiselect row">
+                <div class="holder col-md-5">
+                  <label class="control-label">All Operators</label>
+                  <form [formGroup]="Editform">
+                    <input type="text" formControlName="filterText" placeholder="Search operators" class="form-control custom-form-control">
+                  </form>
+                  <select multiple="multiple" id="myoption" class="select1">
+                    <option
+                      *ngFor="let operator of filteredOperatorListEdit"
+                      [value]="operator.operator_id"
+                    >
+                      {{ operator.operator_name }}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <a (click)="moveToRightEdit()" id="add" class="m-1 btn btn-yellow text-uppercase fw-bold">To Right</a>
+                  <a (click)="moveToLeftEdit()" id="remove" class="m-1 btn btn-yellow text-uppercase fw-bold">To Left</a>
+                  <!-- <a
+                    id="add"
+                    class="add m-1 btn btn-yellow text-uppercase fw-bold"
+                    >To Right</a
+                  >
+                  <a
+                    id="remove"
+                    class="remove m-1 btn btn-yellow text-uppercase fw-bold"
+                    >To Left</a
+                  > -->
+                </div>
+                <div class="holder col-md-5">
+                  <label class="control-label">Allocated Operators</label>
+                  <select
+                    multiple="multiple"
+                    id="myoption2"
+                    #mySelectEdit
+                    class="select2"
+                  >
+                    <option
+                      *ngFor="let operator of editList.allianceoperators"
+                      [value]="operator.operator_id"
+                    >
+                      {{ operator.operator_name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 mb-4">
+              <div class="form-group">
+                <button
+                  class="btn btn-yellow text-uppercase fw-bold mr-2"
+                  type="submit"
+                  [disabled]="allianceForm.invalid"
+                >
+                  Save
+                </button>
+                <button
+                  class="btn btn-yellow text-uppercase fw-bold"
+                  (click)="closeModal()"
+                  type="button"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  id="viewModal"
+  class="modal fade editModal"
+  tabindex="-1"
+  role="dialog"
+  data-backdrop="static"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">View Alliance</h5>
+        <button type="button" class="close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div
+          class="form-horizontal row"
+          *ngIf="editListData && editListData.length > 0"
+        >
+          <div class="col-md-12 col-12" *ngFor="let editList of editListData">
+            <div class="col-md-12 viewallince">
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-md-6">
+                    <label class="control-label">Alliance Name :-</label>
+                  </div>
+                  <div class="col-md-6">
+                    <span>{{ editList.alliance_name }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12 mb-5">
+              <div class="multiselect">
+                <div class="holder row">
+                  <div class="col-md-6">
+                    <label class="control-label">Operators :-</label>
+                  </div>
+                  <div class="col-md-6">
+                    <span *ngFor="let operator of editList.allianceoperators">
+                      {{ operator.operator_name }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 mb-4">
+              <div class="form-group">
+                <button
+                  class="btn btn-yellow text-uppercase fw-bold"
+                  (click)="closeModal()"
+                  type="button"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

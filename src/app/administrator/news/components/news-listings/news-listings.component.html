@@ -1,0 +1,187 @@
+<div class="col-md-12 mt-2">
+  <div class="panel panel-white h-100">
+    <div class="panel-heading d-inline-block float-left">News List</div>
+    <div class="d-inline-block float-right text-right">
+      <form
+        class="form-horizontal row"
+        method="post"
+        [formGroup]="NewsSearchBox"
+      >
+        <div class="search-group">
+          <svg
+            class="svg-inline--fa fa-search fa-w-16 text-grey"
+            aria-hidden="true"
+            data-prefix="fa"
+            data-icon="search"
+            role="img"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 512 512"
+            data-fa-i2svg=""
+          >
+            <path
+              fill="currentColor"
+              d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"
+            ></path>
+          </svg>
+          <input
+            type="text"
+            class="f-12"
+            placeholder="Search Here"
+            (keyup)="onSearch()"
+            formControlName="searching"
+          />
+        </div>
+      </form>
+    </div>
+    <div class="panel-body table-responsive pt-3">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>S. No</th>
+            <th (click)="sortData('news_title')">
+              Title &amp; Tags
+              <i
+                class="fas fa-sort"
+                [ngClass]="{
+                  'fa-sort-up':
+                    sortedColumn === 'news_title' && sortDirection === 'asc',
+                  'fa-sort-down':
+                    sortedColumn === 'news_title' && sortDirection === 'desc'
+                }"
+              ></i>
+            </th>
+            <th (click)="sortData('source')">
+              Source
+              <i
+                class="fas fa-sort"
+                [ngClass]="{
+                  'fa-sort-up':
+                    sortedColumn === 'source' && sortDirection === 'asc',
+                  'fa-sort-down':
+                    sortedColumn === 'source' && sortDirection === 'desc'
+                }"
+              ></i>
+            </th>
+            <th (click)="sortData('created_date')">
+              Date &amp; Time
+              <i
+                class="fas fa-sort"
+                [ngClass]="{
+                  'fa-sort-up':
+                    sortedColumn === 'created_date' && sortDirection === 'asc',
+                  'fa-sort-down':
+                    sortedColumn === 'created_date' && sortDirection === 'desc'
+                }"
+              ></i>
+            </th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let news of newsList; let index = index">
+            <td>{{ index + fromStart.from }}.</td>
+            <td width="50%">
+              <div>
+                <a
+                  [routerLink]="['news-detail', news.news_id]"
+                  class="text-blue"
+                  >{{ news.news_title }}</a
+                >
+                <span class="text-sub d-block">
+                  {{ news.services ? news.services + ", " : "" }}
+                  {{ news.operators ? news.operators + ", " : "" }}
+                  {{ news.trades ? news.trades + ", " : "" }}
+                  {{ news.ports ? news.ports + ", " : "" }}
+                  {{ news.regions ? news.regions + ", " : "" }}
+                </span>
+              </div>
+            </td>
+            <td>
+              {{ news.source
+              }}<span class="d-block">{{ news.source_link }}</span>
+            </td>
+            <td>{{ news.created_date | date : "dd-MMM-yyyy" }}</td>
+            <td class="text-center action">
+              <a [routerLink]="['news-detail', news.news_id]" class="text-black"
+                ><span><i class="fa fa-eye"></i></span
+              ></a>
+              <a (click)="editSelect(news.news_id)" class="text-black"
+                ><span><i class="fa fa-edit" aria-hidden="true"></i></span
+              ></a>
+              <a
+                *ngIf="news.is_active == 0"
+                title="Active"
+                (click)="statusUpdate(news.news_id, news.is_active, 'active')"
+                class="text-black statusactive"
+                ><span
+                  ><i class="fa fa-check-circle" aria-hidden="true"></i></span
+              ></a>
+              <a
+                *ngIf="news.is_active == 1"
+                title="Inactive"
+                (click)="statusUpdate(news.news_id, news.is_active, 'active')"
+                class="text-black statusinactive"
+                ><span
+                  ><i class="fa fa-check-circle" aria-hidden="true"></i></span
+              ></a>
+              <a
+                *ngIf="news.status == 'Done'"
+                title="Done"
+                (click)="statusUpdate(news.news_id, news.status, 'status')"
+                class="text-black statusdone"
+                ><span
+                  ><i class="fa fa-check-circle" aria-hidden="true"></i></span
+              ></a>
+              <a
+                *ngIf="news.status == 'Pending'"
+                title="Pending"
+                (click)="statusUpdate(news.news_id, news.status, 'status')"
+                class="text-black statuspending"
+                ><span
+                  ><i class="fa fa-check-circle" aria-hidden="true"></i></span
+              ></a>
+            </td>
+          </tr>
+          <tr *ngIf="newsList && newsList.length === 0">
+            <td colspan="5"><strong>No records found</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-paggination">
+      <div class="page-counter">
+        Showing
+        <select
+          class=""
+          [(ngModel)]="per_page"
+          (change)="onPerPageChange($event)"
+        >
+          <option *ngFor="let value of getPerPageCount" [value]="value">
+            {{ value }}
+          </option>
+        </select>
+        of {{ total }} entries
+      </div>
+      <div class="custom-paggination float-right">
+        <ul>
+          <li *ngFor="let pagination of pagination; let index = index">
+            <ng-container *ngIf="pagination.label !== '...'; else emptyLabel">
+              <a
+                [innerHTML]="pagination.label"
+                [ngClass]="{
+                  active: pagination.label == fromStart.current_page,
+                  disabled: pagination.url == null
+                }"
+                (click)="changePagination(pagination.url)"
+              ></a>
+            </ng-container>
+            <ng-template #emptyLabel>
+              <a>{{ pagination.label }}</a>
+            </ng-template>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

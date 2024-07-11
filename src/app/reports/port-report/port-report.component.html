@@ -1,0 +1,253 @@
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+    <div class="container-fluid">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="row page-header" id="stickyHeader">
+                <div class="col-md-4 col-12">
+                    <h1 class="m-0">Port Report</h1>
+                </div><!-- /.col -->
+                <div class="col-md-8 col-12 text-right">
+
+                </div><!-- /.col -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <form class="form-horizontal row">
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+                            <div class="col-md-3 mb-10px col-12">
+                                <!-- <div class="col-md-3 mb-10px col-12 mx-auto"> -->
+                                <label class="control-label">Select Year</label>
+                                <select class="form-control custom-form-control">
+                                    <option value="">Select Year</option>
+                                    <option value="">2023</option>
+                                    <option value="">2022</option>
+                                    <option value="">2021</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <label class="control-label">Select Month</label>
+                                <select class="form-control custom-form-control">
+                                    <option value="">Month</option>
+                                    <option value="1">Jan </option>
+                                    <option value="2">Feb </option>
+                                    <option value="3">March </option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <label class="control-label">Select Port</label>
+                                <select class="form-control custom-form-control">
+                                    <option value="">Select</option>
+                                    <option value="">Aarhus</option>
+                                    <option value="1">Aden </option>
+                                    <option value="2">Ningbo </option>
+                                    <option value="3">Busan </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ///// -->
+                    <div class="col-12 mb-4">
+                        <div class="form-group">
+                            <button (click)="toggleContent()" class="btn btn-yellow text-uppercase fw-semibold mr-2"
+                                type="button">Details
+                            </button>
+                            <button class="btn fw-semibold text-decoration-underline" type="button">Clear
+                                Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-12 mt-2">
+                <div *ngIf="showContent" class="panel panel-white h-100">
+                    <div class="panel-heading d-inline-block float-left">Aarhus-Scandinavia & Baltic</div>
+                    <!-- <div class="d-inline-block float-right"></div> -->
+                    <div class="d-flex justify-content-end">
+                        <form class="form-horizontal">
+                            <div class="search-group bg-transparent pl-0">
+                                <button class="btn btn-secondary text-center">Export To Excel</button>
+                                <!-- <button class="btn btn-secondary text-center ml-2">Export with Excel</button> -->
+                            </div>
+                        </form>
+
+                        <form class="search-group bg-transparent pl-0" action="excel_export_action.php" method="post">
+                            <div class="search-group bg-transparent pl-0">
+                                <button class="btn btn-secondary text-center ml-2">Export To Excel with Ships</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="panel-body table-responsive pt-3">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Service Name</th>
+                                    <th>Total Ships </th>
+                                    <th>Active Ships</th>
+                                    <th>Missed Ships</th>
+                                    <th>Frequency <span class="d-block">(Days)</span>
+                                    </th>
+                                    <th>Round Voyage</th>
+                                    <th>Total ship TEU capacit</th>
+                                    <th>Average Capacity<span class="d-block">(Total Ships)</span></th>
+                                    <th>Average Capacity<span class="d-block">(Active Ships)</span></th>
+                                    <th>Maximum ship TEU</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-dark-grey">
+                                    <td class="pt-2 pb-2">
+                                        Total Services <span class="text-mute-blue"> : 5
+                                        </span>
+                                    </td>
+                                    <td class="pt-2 pb-2">40</td>
+                                    <td class="pt-2 pb-2">38</td>
+                                    <td>2</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>521,720</td>
+                                    <td>13,043</td>
+                                    <td>13,729</td>
+                                    <td>20,568</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="http://staging.drewryrcd.com/view_service?archived_service_id=2069"
+                                            target="_blank">
+                                            2M - AE5/Albatross <span class="text-muted">(ETE) - <span
+                                                    class="text-mute-blue">Port Rotation</span></span>
+                                        </a>
+                                    </td>
+                                    <td>12</td>
+                                    <td>12</td>
+                                    <td>0</td>
+                                    <td>7</td>
+                                    <td>84</td>
+                                    <td>227,582</td>
+                                    <td>18,965</td>
+                                    <td>18,965</td>
+                                    <td>20,568</td>
+                                </tr>
+                                <tr>
+                                    <td>2M - AE20/Dragon <span class="text-mute-blue">Port
+                                            Rotation</span></td>
+                                    <td>12</td>
+                                    <td>12</td>
+                                    <td>0</td>
+                                    <td>7</td>
+                                    <td>84</td>
+                                    <td>227,582</td>
+                                    <td>18,965</td>
+                                    <td>18,965</td>
+                                    <td>20,568</td>
+                                </tr>
+                                <tr>
+                                    <td>HDS Lines - HDM Loop <span class="text-mute-blue">Port Rotation</span>
+                                    <td>12</td>
+                                    <td>12</td>
+                                    <td>0</td>
+                                    <td>7</td>
+                                    <td>84</td>
+                                    <td>227,582</td>
+                                    <td>18,965</td>
+                                    <td>18,965</td>
+                                    <td>20,568</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <!-- <table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Service Name</th>
+      <th>Total Ships </th>
+      <th>Active Ships</th>
+      <th>Missed Ships</th>
+      <th>Frequency <span class="d-block">(Days)</span></th>
+      <th>Round Voyage</th>
+      <th>Total ship TEU capacit</th>
+      <th>Average Capacity<span class="d-block">(Total Ships)</span></th>
+      <th>Average Capacity<span class="d-block">(Active Ships)</span></th>
+      <th>Maximum ship TEU</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let row of dummyData">
+      <td>{{ row['Service Name'] }}</td>
+      <td>{{ row['Total Ships'] }}</td>
+      <td>{{ row['Active Ships'] }}</td>
+      <td>{{ row['Missed Ships'] }}</td>
+      <td>{{ row['Frequency (Days)'] }}</td>
+      <td>{{ row['Round Voyage'] }}</td>
+      <td>{{ row['Total ship TEU capacity'] }}</td>
+      <td>{{ row['Average Capacity (Total Ships)'] }}</td>
+      <td>{{ row['Average Capacity (Active Ships)'] }}</td>
+      <td>{{ row['Maximum ship TEU'] }}</td>
+    </tr>
+ <tr *ngFor="let service of filteredServices">
+      <td>{{ service['Service Name'] }}</td>
+      <td>{{ service['Total Ships'] }}</td>
+      <td>{{ service['Active Ships'] }}</td>
+      <td>{{ service['Missed Ships'] }}</td>
+      <td>{{ service['Frequency (Days)'] }}</td>
+      <td>{{ service['Round Voyage'] }}</td>
+      <td>{{ service['Total ship TEU capacity'] }}</td>
+      <td>{{ service['Average Capacity (Total Ships)'] }}</td>
+      <td>{{ service['Average Capacity (Active Ships)'] }}</td>
+      <td>{{ service['Maximum ship TEU'] }}</td>
+    </tr>
+
+  </tbody>
+</table> -->
+
+                    </div>
+                    <div class="table-paggination">
+                        <div class="page-counter">Showing
+                            <select class="">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                                <option value="50">50</option>
+                            </select>
+                            of 34 entries
+                        </div>
+                        <div class="custom-paggination float-right">
+                            <ul>
+                                <li class="disabled"><a class="" href="#"><svg
+                                            class="svg-inline--fa fa-angle-left fa-w-8 mr-1 mt-3px" aria-hidden="true"
+                                            data-prefix="fa" data-icon="angle-left" role="img"
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg="">
+                                            <path fill="currentColor"
+                                                d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z">
+                                            </path>
+                                        </svg><!-- <i class="fa fa-angle-left mr-1 mt-3px" aria-hidden="true"></i> --><span
+                                            class="float-right">Prev</span></a></li>
+                                <li><a class="active" href="#">1</a></li>
+                                <li><a href="#">2</a></li>
+                                <li><a href="#">3</a></li>
+                                <li><a href="#">4</a></li>
+                                <li><a href="#"><span class="float-left">Next</span> <svg
+                                            class="svg-inline--fa fa-angle-right fa-w-8 ml-1 mt-3px" aria-hidden="true"
+                                            data-prefix="fa" data-icon="angle-right" role="img"
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg="">
+                                            <path fill="currentColor"
+                                                d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z">
+                                            </path>
+                                        </svg><!-- <i class="fa fa-angle-right ml-1 mt-3px" aria-hidden="true"></i> --></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

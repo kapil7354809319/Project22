@@ -1,0 +1,118 @@
+<app-data-loader *ngIf="(loading | async)"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+  <div class="container-fluid monthly-archive">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-4 col-12">
+          <h1 class="m-0">Manage Archived Relay</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12 text-right"></div>
+        <!-- /.col -->
+      </div>
+    </div>
+    <div class="row m-0">
+      <div class="col-md-12">
+        <form class="form-horizontal row addsearchform" method="post" [formGroup]="manageRelayForm">
+          <div class="col-md-12 col-12">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="form-group row">
+                  <div class="col-md-6 mb-10px pr-md-2 col-12 mb-2">
+                    <label class="control-label">Select Archived Year*</label>
+                    <select class="form-control custom-form-control" (change)="onChangeYear()"
+                      formControlName="archivedYear">
+                      <option value="">Select</option>
+                      <option *ngFor="let years of years" [value]="years.year">
+                        {{ years.year }}
+                      </option>
+                    </select>
+                    <div *ngIf="
+                        manageRelayForm
+                          ?.get('archivedYear')
+                          ?.hasError('required') &&
+                        manageRelayForm?.get('archivedYear')?.touched
+                      ">
+                      <span class="error-message">Archived Year is required</span>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-10px pr-md-2 col-12 mb-2">
+                    <label class="control-label">Select Archived Month</label>
+                    <select class="form-control custom-form-control" formControlName="archivedMonth"
+                      (change)="monthChange()">
+                      <option value="">Select</option>
+                      <option *ngFor="let month of months" [value]="month.month">
+                        {{ month.month }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="panel panel-white h-100" *ngIf="manageRelay">
+        <div class="panel-heading">Archived Relay List</div>
+        <div class="panel-body table-responsive pt-3">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Trade Route</th>
+                <th>Eastbound %</th>
+                <th>Westbound %</th>
+                <th>Northbound %</th>
+                <th>Southbound %</th>
+                <th class="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let relay of manageRelay; let index = index">
+                <td class="py-2 lh-28">
+                  {{ relay.trade_route_data.trade_route_name }}
+                </td>
+                <td class="py-2 lh-28">
+                  <input *ngIf="relay.eb_wayport != '0.00'" id="eb_wayport_{{ relay.id }}" type="number"
+                    class="form-control custom-form-control custom-input-gry" [(ngModel)]="relay.eb_wayport" />
+                  <input *ngIf="relay.eb_wayport == '0.00'" type="text" id="eb_wayport_{{ relay.id }}" readonly disabled
+                    class="form-control custom-form-control custom-input-gry" />
+                </td>
+                <td class="py-2 lh-28">
+                  <input *ngIf="relay.wb_wayport != '0.00'" id="wb_wayport_{{ relay.id }}" type="number"
+                    class="form-control custom-form-control custom-input-gry" [(ngModel)]="relay.wb_wayport" />
+                  <input *ngIf="relay.wb_wayport == '0.00'" type="text" id="wb_wayport_{{ relay.id }}" readonly disabled
+                    class="form-control custom-form-control custom-input-gry" />
+                </td>
+                <td class="py-2 lh-28">
+                  <input *ngIf="relay.nb_wayport != '0.00'" id="nb_wayport_{{ relay.id }}" type="number"
+                    class="form-control custom-form-control custom-input-gry" [(ngModel)]="relay.nb_wayport" />
+                  <input *ngIf="relay.nb_wayport == '0.00'" type="text" id="nb_wayport_{{ relay.id }}" readonly disabled
+                    class="form-control custom-form-control custom-input-gry" />
+                </td>
+                <td class="py-2 lh-28">
+                  <input *ngIf="relay.sb_wayport != '0.00'" id="sb_wayport_{{ relay.id }}" type="number"
+                    class="form-control custom-form-control custom-input-gry" [(ngModel)]="relay.sb_wayport" />
+                  <input *ngIf="relay.sb_wayport == '0.00'" type="text" id="sb_wayport_{{ relay.id }}" readonly disabled
+                    class="form-control custom-form-control custom-input-gry" />
+                </td>
+                <td class="text-right lh-28 py-2">
+                  <button (click)="updateArchiveRelay(relay.id)" class="btn btn-blue btn-sm my-0 px-3"
+                    style="background-color: #97bfe480; color: #132e67">
+                    Update
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="manageRelay && manageRelay.length === 0">
+                <td colspan="4"><strong>No records found</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>

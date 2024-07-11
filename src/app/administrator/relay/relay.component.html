@@ -1,0 +1,378 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg relay-page" data-widget="main-content">
+  <div class="container-fluid">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-4 col-12">
+          <h1 class="m-0">Manage Relay</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12 text-right"></div>
+        <!-- /.col -->
+      </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="row m-0">
+      <div class="col-12">
+        <form
+          class="form-horizontal row mb-4"
+          method="post"
+          [formGroup]="relayForm"
+        >
+          <div class="col-md-5 col-12">
+            <div class="form-group row">
+              <div class="col-md-6 col-12">
+                <label class="control-label">Trade Route*</label>
+                <select
+                  class="form-control custom-form-control"
+                  (change)="getServiceListOnChange()"
+                  formControlName="trade_route_id"
+                  id="trade_route_id"
+                >
+                  <option value="">Select</option>
+                  <option
+                    *ngFor="let tradeRoute of tradeRouteList"
+                    [value]="tradeRoute.trade_route_id"
+                  >
+                    {{ tradeRoute.trade_route_name }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="
+                    relayForm?.get('trade_route_id')?.hasError('required') &&
+                    relayForm?.get('trade_route_id')?.touched
+                  "
+                >
+                  <span class="error-message">Trade Route is required</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- <div class="col-12 mb-4">
+                        <div class="form-group">
+                            <button class="btn btn-yellow text-uppercase fw-bold mr-2" type="submit"
+                                [disabled]="relayForm.invalid">Add New</button>
+                            <button class="btn btn-yellow text-uppercase fw-bold" type="button"
+                                (click)="resetForm()">Cancel</button>
+                        </div>
+                    </div> -->
+        </form>
+      </div>
+      <div class="col-12" *ngIf="showList">
+        <form name="add_service_relay" method="post" (ngSubmit)="onSubmit()">
+          <input
+            type="hidden"
+            name="edit_relay_id"
+            [(ngModel)]="relayTotalList.fetch_relay.id"
+          />
+          <input
+            type="hidden"
+            name="direction"
+            [(ngModel)]="relayTotalList.trade_route_name_dir"
+          />
+          <div class="panel-white panel mb-3">
+            <table class="relay w-100 table">
+              <thead>
+                <tr class="relay-subtotal">
+                  <th>
+                    <span class="panel-heading">Sub Total (In TEU) </span>
+                  </th>
+                  <th width="15%">
+                    <span class="panel-heading">{{
+                      relayTotalList.subtotal_eb
+                    }}</span>
+                    <input
+                      type="hidden"
+                      name="sub_total_wp"
+                      class="sub_total_wp"
+                      [(ngModel)]="relayTotalList.sub_total_wp"
+                    />
+                  </th>
+                  <th width="15%">
+                    <span class="panel-heading">{{
+                      relayTotalList.subtotal_wb
+                    }}</span>
+                    <input
+                      type="hidden"
+                      name="sub_total_wp_reverse"
+                      class="sub_total_wp_reverse"
+                      [(ngModel)]="relayTotalList.sub_total_wp_reverse"
+                    />
+                  </th>
+                  <th width="15%">
+                    <span class="panel-heading">{{
+                      relayTotalList.subtotal_nb
+                    }}</span>
+                  </th>
+                  <th width="15%">
+                    <span class="panel-heading">{{
+                      relayTotalList.subtotal_sb
+                    }}</span>
+                  </th>
+                  <th width="10%">
+                    &nbsp;
+                    <input
+                      type="hidden"
+                      name="relay_trade_route"
+                      [(ngModel)]="relayTotalList.trade_route_id"
+                    />
+                  </th>
+                </tr>
+
+                <tr>
+                  <th width="30%">&nbsp;</th>
+                  <th width="15%">Eastbound %</th>
+                  <th width="15%">Westbound %</th>
+                  <th width="15%">Northbound %</th>
+                  <th width="15%">Southbound %</th>
+                  <th width="10%">Action</th>
+                </tr>
+              </thead>
+              <tr>
+                <td>&nbsp;</td>
+                <td>
+                  <input
+                    type="text"
+                    name="eb_wayport"
+                    [(ngModel)]="relayTotalList?.fetch_relay.eb_wayport"
+                    [disabled]="
+                      relayTotalList.trade_route.diable_eb === 'disabled'
+                    "
+                    class="form-control custom-form-control custom-input-gry"
+                    (keyup)="onKeyUp($event, 'diable_eb')"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    name="wb_wayport"
+                    [(ngModel)]="relayTotalList?.fetch_relay.wb_wayport"
+                    [disabled]="
+                      relayTotalList.trade_route.diable_wb === 'disabled'
+                    "
+                    class="form-control custom-form-control custom-input-gry"
+                    (keyup)="onKeyUp($event, 'diable_wb')"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    name="nb_wayport"
+                    [(ngModel)]="relayTotalList?.fetch_relay.nb_wayport"
+                    [disabled]="
+                      relayTotalList.trade_route.diable_nb === 'disabled'
+                    "
+                    class="form-control custom-form-control custom-input-gry"
+                    (keyup)="onKeyUp($event, 'diable_nb')"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    name="sb_wayport"
+                    [(ngModel)]="relayTotalList?.fetch_relay.sb_wayport"
+                    [disabled]="
+                      relayTotalList.trade_route.diable_sb === 'disabled'
+                    "
+                    class="form-control custom-form-control custom-input-gry"
+                    (keyup)="onKeyUp($event, 'diable_sb')"
+                  />
+                </td>
+                <td align="left">
+                  <button
+                    *ngIf="relayTotalList.fetch_relay.id == ''"
+                    class="btn btn-yellow text-uppercase fw-bold mr-2"
+                    type="submit"
+                  >
+                    Save
+                  </button>
+                  <button
+                    *ngIf="relayTotalList.fetch_relay.id != ''"
+                    class="btn btn-yellow text-uppercase fw-bold mr-2"
+                    type="submit"
+                  >
+                    Update
+                  </button>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </form>
+      </div>
+
+      <div class="col-12 mt-2">
+        <div class="panel panel-white h-100">
+          <div class="panel-heading d-inline-block float-left">
+            Relay Trade Route List
+          </div>
+          <div class="panel-body table-responsive pt-3">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>S.NO</th>
+                  <th (click)="sortData('trade_route_name')">
+                    Trade Route
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'trade_route_name' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'trade_route_name' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th (click)="sortData('eb_wayport')">
+                    Eastbound
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'eb_wayport' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'eb_wayport' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th (click)="sortData('wb_wayport')">
+                    Westbound
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'wb_wayport' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'wb_wayport' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th (click)="sortData('nb_wayport')">
+                    Northbound
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'nb_wayport' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'nb_wayport' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th (click)="sortData('sb_wayport')">
+                    Southbound
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'sb_wayport' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'sb_wayport' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th class="text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let relay of relayList; let index = index">
+                  <td class="py-1 lh-28">{{ index + fromStart.from }}.</td>
+                  <td class="py-2 lh-28">
+                    {{ relay.traderoute.trade_route_name }}
+                  </td>
+                  <td class="py-2 lh-28">
+                    <span *ngIf="relay.eb_wayport > 0"
+                      >{{ relay.eb_wayport }}%</span
+                    >
+                  </td>
+                  <td class="py-2 lh-28">
+                    <span *ngIf="relay.wb_wayport > 0"
+                      >{{ relay.wb_wayport }}%</span
+                    >
+                  </td>
+                  <td class="py-2 lh-28">
+                    <span *ngIf="relay.nb_wayport > 0"
+                      >{{ relay.nb_wayport }}%</span
+                    >
+                  </td>
+                  <td class="py-2 lh-28">
+                    <span *ngIf="relay.sb_wayport > 0"
+                      >{{ relay.sb_wayport }}%</span
+                    >
+                  </td>
+                  <td class="text-right lh-28 py-2">
+                    <button
+                      (click)="editSelect(relay.trade_route_id)"
+                      class="btn btn-blue btn-sm my-0 px-3"
+                      style="background-color: #97bfe480; color: #132e67"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      (click)="
+                        deleteData(relay.id, relay.traderoute.trade_route_name)
+                      "
+                      class="btn btn-transparent btn-sm my-0"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-paggination">
+            <div class="page-counter">
+              Showing
+              <select
+                class=""
+                [(ngModel)]="per_page"
+                (change)="onPerPageChange($event)"
+              >
+                <option *ngFor="let value of getPerPageCount" [value]="value">
+                  {{ value }}
+                </option>
+              </select>
+              of {{ total }} entries
+            </div>
+            <div class="custom-paggination float-right">
+              <ul>
+                <li *ngFor="let pagination of pagination; let index = index">
+                  <ng-container
+                    *ngIf="pagination.label !== '...'; else emptyLabel"
+                  >
+                    <a
+                      [innerHTML]="pagination.label"
+                      [ngClass]="{
+                        active: pagination.label == fromStart.current_page,
+                        disabled: pagination.url == null
+                      }"
+                      (click)="changePagination(pagination.url)"
+                    ></a>
+                  </ng-container>
+                  <ng-template #emptyLabel>
+                    <a>{{ pagination.label }}</a>
+                  </ng-template>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>

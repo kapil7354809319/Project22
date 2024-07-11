@@ -1,0 +1,10 @@
+<div class="scrolling-div">
+  <div class="inner_lates">
+    <ul class="recent-news-list pl-0">
+      <li *ngFor="let news of recentNewsData">
+        <a class="news_list" id="32" [routerLink]="['/administrator/news/news-detail',news.news_id]">{{news.news_title}}</a>
+        <span class="lists-date-and-time">{{ news.created_date | date: 'yyyy-MM-dd HH:mm:ss' }}</span>
+      </li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+  <div class="container-fluid">
+    <!-- News Listing Start -->
+    <app-news-form (loaderEvent)="onLoaderEvent($event)"></app-news-form>
+    <app-news-listings
+      class="w-100"
+      (loaderEvent)="onLoaderEvent($event)"
+    ></app-news-listings>
+  </div>
+  <app-footer></app-footer>
+</div>

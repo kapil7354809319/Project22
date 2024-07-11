@@ -1,0 +1,171 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+    <div class="container-fluid">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="row page-header" id="stickyHeader">
+                <div class="col-md-12 col-12">
+                    <h1 class="m-0">Route Capacity Timeseries</h1>
+                </div><!-- /.col -->
+                <div class="col-md-8 col-12 text-right">
+                </div><!-- /.col -->
+            </div>
+        </div>
+        <div class="row m-0">
+            <div class="col-md-12">
+                <form class="form-horizontal row" [formGroup]="searchForm">
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+                        </div>
+                    </div>
+                    <!-- "FROM" AND "TO" NEW FORMAT------
+                    <div class="col-md-12 col-12 mt-2">
+                        <div class="form-group row">                            
+                            <div class="col-md-4 col-12">
+                                <h6 class="m-0">From</h6>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+                         
+                            <div class="col-md-3 mb-10px col-12">
+                                <div class="col-md-3 mb-10px col-12 mx-auto">///
+                                    <label class="control-label">Year</label>
+                                    <select class="form-control custom-form-control">
+                                        <option value="">Select Year</option>
+                                        <option value="">2023</option>
+                                        <option value="">2022</option>
+                                        <option value="">2021</option>
+                                    </select>
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                    <div class="col-md-3 mb-10px col-12 mx-auto">///
+                                        <label class="control-label">Month</label>
+                                        <select class="form-control custom-form-control">
+                                            <option value="">Select Month</option>
+                                            <option value="">Jan</option>
+                                            <option value="">Feb</option>
+                                            <option value="">March</option>
+                                        </select>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-12 mt-2">
+                        <div class="form-group row">
+                            
+                            <div class="col-md-4 col-12">
+                                <h6 class="m-0">To</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">                         
+                            <div class="col-md-3 mb-10px col-12">
+                                <div class="col-md-3 mb-10px col-12 mx-auto">///
+                                    <label class="control-label">Year</label>
+                                    <select class="form-control custom-form-control">
+                                        <option value="">Select Year</option>
+                                        <option value="">2023</option>
+                                        <option value="">2022</option>
+                                        <option value="">2021</option>
+                                    </select>
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                    <div class="col-md-3 mb-10px col-12 mx-auto">///
+                                        <label class="control-label">Month</label>
+                                        <select class="form-control custom-form-control">
+                                            <option value="">Select Month</option>
+                                            <option value="">Jan</option>
+                                            <option value="">Feb</option>
+                                            <option value="">March</option>
+                                        </select>
+                            </div>                            
+                        </div>
+                    </div>
+
+                   ----- END -->
+
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+                            <div class="col-md-2 mb-10px col-12 mt-4">
+                                From :
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <!-- <div class="col-md-3 mb-10px col-12 mx-auto"> -->
+                                <label class="control-label">Year</label>
+                                <select class="form-control custom-form-control" formControlName="fromYear" (change)="changeToDropDownValueForFromMonths()">
+                                    <option value="">Select Year</option>
+                                    <option *ngFor="let year of getLastYear()">{{year}}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <!-- <div class="col-md-3 mb-10px col-12 mx-auto"> -->
+                                <label class="control-label">Month</label>
+                                <select class="form-control custom-form-control" formControlName="fromMonth">
+                                    <option value="">Select Month</option>
+                                    <option *ngFor="let month of fromMonths;let i = index" [value]="i+1">{{month}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+                            <div class="col-md-2 mb-10px col-12 mt-4">
+                                To :
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <!-- <div class="col-md-3 mb-10px col-12 mx-auto"> -->
+                                <label class="control-label">Year</label>
+                                <select class="form-control custom-form-control"  formControlName="toYear" (change)="changeToDropDownValue()">
+                                    <option value="">Select Year</option>
+                                    <option *ngFor="let year of getLastYear()">{{year}}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <!-- <div class="col-md-3 mb-10px col-12 mx-auto"> -->
+                                <label class="control-label">Month</label>
+                                <select class="form-control custom-form-control" formControlName="toMonth" (change)="getValue($event)">
+                                    <option value="">Select Month</option>
+                                    <option *ngFor="let month of toMonths; let i = index" [value]="i+1">{{month}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+                            <div class="col-md-2 mb-10px col-12 mt-4">
+                                Trade Route:
+                            </div>
+                            <div class="col-md-3 pr-md-2 col-12">
+                                <label class="control-label">Ports</label>
+                                <ng-multiselect-dropdown
+                                  [placeholder]="'Select Ports'"
+                                  [settings]="dropdownSettings"
+                                  [data]="reports"
+                                  formControlName="routeFront"
+                                  (onDeSelect)="onDeselectRoute($event)"
+                                  (onSelect)="onItemSelectRoute($event)"
+                                  (onSelectAll)="onSelectAllRoute($event)"
+                                  
+                                  (onDeSelectAll)="onSelectAllRoute($event)"
+                                >
+                                </ng-multiselect-dropdown>
+                              </div>
+                
+                        </div>
+                    </div>
+                    <!-- ///// -->
+                    <div class="col-12 mb-4 mt-2">
+                        <div class="form-group">
+                            <button (click)="export()" class="btn btn-yellow text-uppercase fw-semibold mr-2"
+                                type="button">Details
+                            </button>
+                            <button class="btn fw-semibold text-decoration-underline" type="button" (click)="clear()">Clear
+                                Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>

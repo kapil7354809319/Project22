@@ -1,0 +1,114 @@
+<app-data-loader *ngIf="(loading | async)"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+    <div class="container-fluid monthly-archive">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="row page-header" id="stickyHeader">
+                <div class="col-md-4 col-12">
+                    <h1 class="m-0">Monthly Archive</h1>
+                </div><!-- /.col -->
+                <div class="col-md-8 col-12 text-right">
+
+                </div><!-- /.col -->
+            </div>
+        </div>
+        <div class="row m-0">
+            <div class="col-md-12">
+                <form class="form-horizontal row addsearchform" enctype='multipart/form-data' method="post"
+                    [formGroup]="monthlyArchiveForm" (ngSubmit)="onSubmit()">
+                    <div class="col-md-12 col-12">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group row">
+                                    <div class="col-md-6 mb-10px pr-md-2 col-12 mb-2">
+                                        <label class="control-label">Date*</label>
+                                        <mat-form-field>
+                                            <input matInput [readonly]="true" [matDatepicker]="picker"
+                                                formControlName="date" class="">
+                                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker></mat-datepicker>
+                                        </mat-form-field>
+                                        <div
+                                            *ngIf="monthlyArchiveForm?.get('date')?.hasError('required') && monthlyArchiveForm?.get('date')?.touched">
+                                            <span class="error-message">Date is required</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-4">
+                        <div class="form-group">
+                            <button class="btn btn-yellow text-uppercase fw-bold mr-2"
+                                [disabled]="monthlyArchiveForm.invalid" type="submit">Archive Service</button>
+                            <button class="btn btn-yellow text-uppercase fw-bold" type="button"
+                                (click)="resetForm()">Reset</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-12 mt-2">
+                <div class="panel panel-white h-100">
+                    <div class="panel-heading">
+                        Monthly Archive List
+                    </div>
+                    <div class="panel-body table-responsive pt-3">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Archive Month</th>
+                                    <th>Archive Date and Time</th>
+                                    <th>Archive By </th>
+                                    <th>Comments</th>
+                                    <th class="text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let archive of archiveLogsList; let index = index">
+                                    <td class="py-1 lh-28">{{archive.archive_month | date:'MMMM yyyy' }}</td>
+                                    <td class="py-2 lh-28">{{archive.archive_date_time}}</td>
+                                    <td class="py-2 lh-28">{{archive.archive_by_user_name}}</td>
+                                    <td class="py-2 lh-28">{{archive.archive_comments}}</td>
+                                    <td class="text-right lh-28 py-2">
+                                        <button
+                                            (click)="deleteData(archive.service_archive_log_id, archive.archive_month)"
+                                            class="btn btn-transparent btn-sm my-0">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="archiveLogsList && archiveLogsList.length === 0">
+                                    <td colspan="4"><strong>No records found</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-paggination">
+                        <div class="page-counter">
+                            Showing
+                            <select [(ngModel)]="per_page" (change)="onPerPageChange($event)">
+                                <option *ngFor="let value of [10, 20, 30, 40, 50]" [value]="value">{{ value }}
+                                </option>
+                            </select>
+                            of {{total}} entries
+                        </div>
+                        <div class="custom-paggination float-right">
+                            <ul>
+                                <li *ngFor="let pagination of pagination; let index=index">
+                                    <ng-container *ngIf="pagination.label !== '...'; else emptyLabel">
+                                        <a [innerHTML]="pagination.label"
+                                            [ngClass]="{'active': pagination.label == fromStart.current_page, 'disabled':  pagination.url == null}"
+                                            (click)="changePagination(pagination.url)"></a>
+                                    </ng-container>
+                                    <ng-template #emptyLabel>
+                                        <a>{{pagination.label}}</a>
+                                    </ng-template>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <app-footer></app-footer>
+    </div>
+</div>

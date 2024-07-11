@@ -1,0 +1,356 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg subtrade-main" data-widget="main-content">
+  <div class="container-fluid">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-4 col-12">
+          <h1 class="m-0">Manage Sub trade</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12 text-right"></div>
+        <!-- /.col -->
+      </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="row m-0">
+      <div class="col-12">
+        <form
+          class="form-horizontal row"
+          [formGroup]="subTradeForm"
+          (ngSubmit)="onSubmit()"
+        >
+          <div class="col-md-6 col-12">
+            <div class="form-group row">
+              <div class="col-md-6 pr-md-2 col-12">
+                <label class="control-label">Region From*</label>
+                <select
+                  class="form-control custom-form-control"
+                  formControlName="region_from"
+                  id="region"
+                >
+                  <option value="">Select</option>
+                  <option
+                    *ngFor="let region of regionList"
+                    [value]="region.region_id"
+                  >
+                    {{ region.region_name }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="
+                    subTradeForm?.get('region_from')?.hasError('required') &&
+                    subTradeForm?.get('region_from')?.touched
+                  "
+                >
+                  <span class="error-message">Region From is required</span>
+                </div>
+              </div>
+
+              <div class="col-md-6 pr-md-2 col-12">
+                <label class="control-label">Region To*</label>
+                <select
+                  class="form-control custom-form-control"
+                  formControlName="region_to"
+                  id="region"
+                >
+                  <option value="">Select</option>
+                  <option
+                    *ngFor="let region of regionList"
+                    [value]="region.region_id"
+                  >
+                    {{ region.region_name }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="
+                    subTradeForm?.get('region_to')?.hasError('required') &&
+                    subTradeForm?.get('region_to')?.touched
+                  "
+                >
+                  <span class="error-message">Region To is required</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mb-4">
+            <div class="form-group">
+              <button
+                class="btn btn-yellow text-uppercase fw-bold mr-2"
+                type="submit"
+              >
+                Add New
+              </button>
+              <button
+                class="btn btn-yellow text-uppercase fw-bold"
+                (click)="resetForm()"
+                type="button"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="col-12 mt-2">
+        <div class="panel panel-white h-100">
+          <div class="panel-heading d-inline-block float-left">Sub-Trade</div>
+          <form class="form-horizontal" [formGroup]="subTradeSearchForm">
+            <div class="d-inline-block float-right text-right">
+              <div class="multiselectblock d-md-flex">
+                <ng-multiselect-dropdown
+                  placeholder="Region From"
+                  class="form-control custom-form-control custom-accordion"
+                  (onSelect)="onItemSelect()"
+                  (onDeSelect)="onItemSelect()"
+                  [settings]="regionFromTagsSettings"
+                  formControlName="regionfroms"
+                  [data]="regionFrom"
+                >
+                </ng-multiselect-dropdown>
+                <ng-multiselect-dropdown
+                  placeholder="Region To"
+                  formControlName="regiontos"
+                  (onSelect)="onItemSelect()"
+                  (onDeSelect)="onItemSelect()"
+                  class="form-control custom-form-control custom-accordion"
+                  [settings]="regionToTagsSettings"
+                  [data]="regionTo"
+                >
+                </ng-multiselect-dropdown>
+              </div>
+            </div>
+          </form>
+
+          <div class="panel-body table-responsive pt-5">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>S.NO</th>
+                  <th (click)="sortData('trade_name')">
+                    Sub-trade
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'trade_name' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'trade_name' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th (click)="sortData('form_region_name')">
+                    Region From
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'form_region_name' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'form_region_name' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th (click)="sortData('to_region_name')">
+                    Region To
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'to_region_name.' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'to_region_name' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th class="text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let subTrade of subTradeList; let index = index">
+                  <td class="py-1 lh-28">{{ index + fromStart.from }}.</td>
+                  <td class="py-2 lh-28">{{ subTrade?.trade_name }}</td>
+                  <td class="py-2 lh-28">
+                    {{ subTrade?.from_region?.region_name }}
+                  </td>
+                  <td>{{ subTrade?.to_region?.region_name }}</td>
+                  <td class="text-right lh-28 py-2">
+                    <button
+                      (click)="editSelect(subTrade.trade_id)"
+                      class="btn btn-blue btn-sm my-0 px-3"
+                      style="background-color: #97bfe480; color: #132e67"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      (click)="
+                        deleteData(subTrade.trade_id, subTrade.trade_name)
+                      "
+                      class="btn btn-transparent btn-sm my-0"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="subTradeList && subTradeList.length === 0">
+                  <td colspan="4"><strong>No records found</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-paggination">
+            <div class="page-counter">
+              Showing
+              <select
+                class=""
+                [(ngModel)]="per_page"
+                (change)="onPerPageChange($event)"
+              >
+                <option *ngFor="let value of getPerPageCount" [value]="value">
+                  {{ value }}
+                </option>
+              </select>
+              of {{ total }} entries
+            </div>
+            <div class="custom-paggination float-right">
+              <ul>
+                <li *ngFor="let pagination of pagination; let index = index">
+                  <ng-container
+                    *ngIf="pagination.label !== '...'; else emptyLabel"
+                  >
+                    <a
+                      [innerHTML]="pagination.label"
+                      [ngClass]="{
+                        active: pagination.label == fromStart.current_page,
+                        disabled: pagination.url == null
+                      }"
+                      (click)="changePagination(pagination.url)"
+                    ></a>
+                  </ng-container>
+                  <ng-template #emptyLabel>
+                    <a>{{ pagination.label }}</a>
+                  </ng-template>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>
+<div
+  id="myModal"
+  class="modal fade editModal"
+  tabindex="-1"
+  role="dialog"
+  data-backdrop="static"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Sub-Trade</h5>
+        <button type="button" class="close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form
+          class="form-horizontal row"
+          [formGroup]="subTradeForm"
+          (ngSubmit)="onUpdate()"
+          *ngIf="editListData && editListData.length > 0"
+        >
+          <div class="col-md-12 col-12" *ngFor="let editList of editListData">
+            <div class="form-group row">
+              <div class="col-md-6 pr-md-2 col-12">
+                <input
+                  type="hidden"
+                  formControlName="id"
+                  [(ngModel)]="editList.trade_id"
+                />
+                <label class="control-label">Region From*</label>
+                <select
+                  class="form-control custom-form-control"
+                  formControlName="region_from"
+                  id="region"
+                  [(ngModel)]="editList.region_from"
+                >
+                  <option value="">Select</option>
+                  <option
+                    *ngFor="let region of regionList"
+                    [value]="region.region_id"
+                  >
+                    {{ region.region_name }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="
+                    subTradeForm?.get('region_from')?.hasError('required') &&
+                    subTradeForm?.get('region_from')?.touched
+                  "
+                >
+                  <span class="error-message">Region From is required</span>
+                </div>
+              </div>
+
+              <div class="col-md-6 pr-md-2 col-12">
+                <label class="control-label">Region To*</label>
+                <select
+                  class="form-control custom-form-control"
+                  formControlName="region_to"
+                  [(ngModel)]="editList.region_to"
+                  id="region"
+                >
+                  <option value="">Select</option>
+                  <option
+                    *ngFor="let region of regionList"
+                    [value]="region.region_id"
+                  >
+                    {{ region.region_name }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="
+                    subTradeForm?.get('region_to')?.hasError('required') &&
+                    subTradeForm?.get('region_to')?.touched
+                  "
+                >
+                  <span class="error-message">Region To is required</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mb-4">
+            <div class="form-group">
+              <button
+                class="btn btn-yellow text-uppercase fw-bold mr-2"
+                type="submit"
+                [disabled]="subTradeForm.invalid"
+              >
+                Save
+              </button>
+              <button
+                (click)="closeModal()"
+                class="btn btn-yellow text-uppercase fw-bold"
+                type="button"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

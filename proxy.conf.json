@@ -1,0 +1,10 @@
+{
+  "/stagingusersmgr/authenticationapi/verifyUser": {
+    "target": "http://drewryportal.com",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/stagingusersmgr/authenticationapi/verifyUser": "/stagingusersmgr/authenticationapi/verifyUser"
+    }
+  }
+}

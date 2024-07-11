@@ -1,0 +1,538 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+    <div class="container-fluid">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="row page-header" id="stickyHeader">
+                <div class="col-md-12 col-12">
+                    <h1 class="m-0">Ship Capacity by Port and Trade Route</h1>
+                </div><!-- /.col -->
+                <div class="col-md-8 col-12 text-right">
+                </div><!-- /.col -->
+            </div>
+        </div>
+        <div class="row m-0">
+            <div class="col-md-12">
+                <form class="form-horizontal row" method="post" [formGroup]="shipCapacityForm" (ngSubmit)="ArchiveDataForPortCapacity()">
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+
+                            <div class="col-md-3 mb-10px col-12 d-flex">
+                                <input type="radio" id="report-one" name="report-group"
+                                    (change)="toggleFormControls('option1')" [checked]="selectedOption === 'option1'" />
+                                <label class="control-label ml-2" for="report-one">Port Summary Report</label>
+                            </div>
+                            <div class="col-md-3 mb-10px pr-md-2 col-12 d-flex">
+                                <input type="radio" id="report-two" name="report-group"
+                                    (change)="toggleFormControls('option2')" [checked]="selectedOption === 'option2'" />
+                                <label class="control-label ml-2" for="report-two">Port Detailed Report</label>
+                            </div>
+                            <div class="col-md-3 mb-10px pr-md-2 col-12 d-flex">
+                                <input type="radio" id="report-three" name="report-group"
+                                    (change)="toggleFormControls('option3')" [checked]="selectedOption === 'option3'" />
+                                <label class="control-label ml-2" for="report-three">Get Connectivity Index</label>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-12" *ngIf="selectedOption === 'option2'">
+                        <div class="form-group row">
+                            <div class="col-md-3 mb-10px col-12">
+                                <!-- <div class="col-md-3 mb-10px col-12 mx-auto"> -->
+                                <label class="control-label">Region</label>
+                                <select class="form-control custom-form-control" formControlName="region_id"
+                                    id="routing" (change)="getPort()">
+                                    <option value="">Select</option>
+                                    <option *ngFor="let region of regionList" [value]="region.region_id">
+                                        {{ region.region_name }}
+                                    </option>
+                                </select>
+                                <div *ngIf="
+                                    shipCapacityForm?.get('region_id')?.hasError('required') &&
+                                    shipCapacityForm?.get('region_id')?.touched
+                                    ">
+                                    <span class="error-message">Please select region</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <mat-form-field>
+                                    <mat-label>Port</mat-label>
+                                    <mat-select placeholder="Ports" formControlName="ports" multiple>
+                                        <mat-option *ngFor="let port of PortList"
+                                            [value]="port.port_name">{{port.port_name}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <div *ngIf="
+                                    shipCapacityForm?.get('ports')?.hasError('required') &&
+                                    shipCapacityForm?.get('ports')?.touched
+                                    ">
+                                    <span class="error-message">Please select ports</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-12" *ngIf="selectedOption === 'option2'">
+                        <div class="form-group row">
+                            <div class="col-md-3 mb-10px col-12 d-flex">
+                                Period:
+                            </div>
+                            <div class="col-md-3 mb-10px col-12 d-flex">
+                                <input type="radio" id="report-one" formControlName="period_label" value="monthly" />
+                                <label class="control-label ml-2" for="report-one">Monthly</label>
+                            </div>
+                            <div class="col-md-3 mb-10px pr-md-2 col-12 d-flex">
+                                <input type="radio" id="report-two" formControlName="period_label" value="quaterly" />
+                                <label class="control-label ml-2" for="report-two">Quaterly</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 col-12" *ngIf="selectedOption === 'option2'">
+                        <div class="form-group row">
+                            <div class="col-md-3 mb-10px col-12">
+                                <!-- <div *ngFor="let periodControl of periodArray.controls; let i=index" [formGroupName]="i">
+                                <input [formControlName]="i" type="text"  (keyup)="handleAutoSuggest(i, periodControl.value)">
+                                <ul *ngIf="PortList[i]?.length > 0">
+                                    <li *ngFor="let suggestion of PortList[i]" (click)="setSuggestion(i, suggestion)">{{ suggestion }}</li>
+                                </ul>
+                                </div> -->
+                                <div formArrayName="period" class="PortListData">
+                                    <div *ngFor="let periodControl of periodArray.controls; let i = index"
+                                        class="suggestion-container">
+                                        <input [formControlName]="i" type="text"
+                                            (keyup)="handleAutoSuggest(i, periodControl.value)"
+                                            class="form-control custom-form-control">
+                                        <ul *ngIf="PortList[i]?.length > 0" class="suggestion-list">
+                                            <li *ngFor="let suggestion of PortList[i]"
+                                                (click)="setSuggestion(i, suggestion)" class="suggestion-item">
+                                                {{ suggestion }}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <!-- <label class="control-label"></label>
+                                <input type="text" name="period[]">
+                                <input type="text" name="period[]">
+                                <input type="text" name="period[]">
+                                <input type="text" name="period[]"> -->
+                                <!-- <select class="form-control custom-form-control">
+                                    <option value="">Select Maximum five Port</option>
+                                    <option value="1">Argentia </option>
+                                    <option value="2">Baltimore </option>
+                                    <option value="3">Boston </option>
+                                </select> -->
+                            </div>
+                            <!-- <div class="col-md-3 mb-10px col-12">
+                                <label class="control-label"></label>
+                                <select class="form-control custom-form-control">
+                                    <option value="">Select Maximum five Port</option>
+                                    <option value="1">Argentia </option>
+                                    <option value="2">Baltimore </option>
+                                    <option value="3">Boston </option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <label class="control-label"></label>
+                                <select class="form-control custom-form-control">
+                                    <option value="">Select Maximum five Port</option>
+                                    <option value="1">Argentia </option>
+                                    <option value="2">Baltimore </option>
+                                    <option value="3">Boston </option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <label class="control-label"></label>
+                                <select class="form-control custom-form-control">
+                                    <option value="">Select Maximum five Port</option>
+                                    <option value="1">Argentia </option>
+                                    <option value="2">Baltimore </option>
+                                    <option value="3">Boston </option>
+                                </select>
+                            </div> -->
+                        </div>
+                    </div>
+                    <div class="col-12 mb-4">
+                        <div class="form-group">
+                            <input *ngIf="selectedOption !== 'option3' && selectedOption !== 'option1'" type="submit"
+                                class="btn btn-yellow text-uppercase fw-semibold mr-2"
+                                >
+ 
+                            <!-- <input *ngIf="
+                    selectedOption !== 'option3' && selectedOption !== 'option1'
+                    " type="submit" class="btn btn-yellow text-uppercase fw-semibold mr-2" /> -->
+                                <button *ngIf="
+                    selectedOption === 'option3' || selectedOption === 'option1'
+                    " (click)="export()" class="btn btn-yellow text-uppercase fw-semibold mr-2" type="button">
+                                    Download
+                                </button>
+                                <button *ngIf="selectedOption === 'option2'"
+                                    class="btn fw-semibold text-decoration-underline" type="button" (click)="clear()">
+                                    Clear Search
+                                </button>
+                            </div>
+                    </div>
+                </form>
+                <!-- ffff -->
+                <form *ngIf="data_report" class="form-horizontal row" method="post" [formGroup]="shipCapacityReportForm"
+                    (ngSubmit)="GenerateReport()">
+                    <table style="font-size: 13px; margin: 0 auto;" class="table">
+                        <tbody>
+                            <tr height="40" valign="top">
+                                <td style="padding: 2px 5px"></td>
+                                <td colspan="3">
+                                    <div class="data-head" style="font-size: 14px;">Tradelane wise service summary</div>
+                                </td>
+                            </tr>
+                            <tr valign="top" *ngFor="let port of data_report; let i = index">
+                                <td class="port-name" style="width: 110px;">
+                                    <div>{{ port.port_name }}</div>
+                                </td>
+                                <td>
+                                    <div class="table-top-header"
+                                        style="padding: 5px;text-align: center;font-weight: bold;font-size: 13px;background: #5091cd;color: white;">
+                                        No. of liner services</div>
+                                    <table class="full-wdth-tbl" cellpadding="0" cellspacing="0" style="width: 100%;">
+                                        <tbody>
+                                            <tr class="col-header" style="background: #eaf0f9;">
+                                                <td class="trade-route-name"
+                                                    style="color: #333;font-weight: bold !important; text-align: right; padding: 4px;">
+                                                    &nbsp;</td>
+                                                <td *ngFor="let period_arr of port.period_arr" class="period-data"
+                                                    style="padding: 4px;color: #333; text-align: right;font-weight: bold !important;">
+                                                    {{ period_arr }}</td>
+                                            </tr>
+                                            <tr *ngFor="let liner_service of port.liner_services">
+                                                <td class="trade-route-name" style="padding: 4px;">{{
+                                                    liner_service.trad_route_name }}</td>
+                                                <td class="period-data" style="text-align: right; padding: 4px;"
+                                                    *ngFor="let trad_route_value of liner_service.trad_route_value">
+                                                    {{trad_route_value}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="trade-route-name" style="padding: 4px;">Total</td>
+                                                <td class="period-data" style="text-align: right; padding: 4px;"
+                                                    *ngFor="let uniqueServiceCount of port.uniqueServiceCount">
+                                                    {{uniqueServiceCount}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                                <td style="width: 15px"></td>
+                                <td>
+                                    <div class="table-top-header"
+                                        style="padding: 4px;text-align: center;font-weight: bold;font-size: 13px;background: #5091cd;color: white;">
+                                        Avg Ship Size (teu)</div>
+                                    <table class="full-wdth-tbl" cellpadding="0" cellspacing="0" style="width: 100%;">
+                                        <tbody>
+
+                                            <tr class="col-header" style="background: #eaf0f9;">
+                                                <td style="color: #333;font-weight: bold !important; text-align: right;padding: 4px;"
+                                                    *ngFor="let period_arr of port.period_arr" class="period-data">{{
+                                                    period_arr }}</td>
+                                            </tr>
+                                            <tr *ngFor="let avg_ship_size of port.avg_ship_size.avg_ship_size_data">
+                                                <td class="period-data" style="padding: 4px; text-align: right;"
+                                                    *ngFor="let avg_ship_size_data of avg_ship_size">
+                                                    {{avg_ship_size_data}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="period-data" style="text-align: right; padding: 4px;"
+                                                    *ngFor="let unique_avg_teu of port.avg_ship_size.unique_avg_teu">
+                                                    {{unique_avg_teu}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                                <td style="width: 15px"></td>
+                                <td>
+                                    <div class="table-top-header"
+                                        style="padding: 5px;text-align: center;font-weight: bold;font-size: 13px;background: #5091cd;color: white;">
+                                        Max ship Size (teu)</div>
+                                    <table class="full-wdth-tbl" cellpadding="0" cellspacing="0" style="width: 100%;">
+                                        <tbody>
+                                            <tr class="col-header" style="background: #eaf0f9;">
+                                                <td style="color: #333;font-weight: bold !important; text-align: right;padding: 4px;"
+                                                    *ngFor="let period_arr of port.period_arr" class="period-data">{{
+                                                    period_arr }}</td>
+                                            </tr>
+                                            <tr *ngFor="let max_ship_size of port.max_ship_size.max_ship_size_data">
+                                                <td class="period-data" *ngFor="let max_ship_size_data of max_ship_size"
+                                                    style="padding: 4px; text-align: right;">{{max_ship_size_data}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="period-data" style="text-align: right; padding: 4px;"
+                                                    *ngFor="let unique_max_teu of port.max_ship_size.unique_max_teu">
+                                                    {{unique_max_teu}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                                <td class="chk-col">
+                                    <div>
+                                        <div *ngIf="port">
+                                            <input type="checkbox" name="selPorts[{{ port.port_name }}]"
+                                                (change)="onChange(port.port_name, $event)" value="{{ port.port_name }}"
+                                                class="portsName">
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="7">
+                                    <div style="height: 20px"></div>
+                                </td>
+                            </tr>
+                            <!-- Additional rows as per your design -->
+                            <tr height="30">
+                                <td colspan="7" align="center">
+                                    <div *ngIf="isGenerateReport_error"><span class="error-message">Please select
+                                            atleast one port</span></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="7" align="center">
+                                    <!-- <input type="submit" name="ship_object_submit"
+                                        value="Export to excel with Trade route - Port Detail" class="button-blue-rg"> -->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+                <!-- fff -->
+
+            </div>
+
+            <!-- /////---port rotation---//// -->
+            <div class="col-12 mt-2">
+                <div *ngIf="showContent" class="panel panel-white h-100">
+                    <div class="panel-heading" style="color: rgb(56, 55, 51); ">
+                        Port level service summary
+                    </div>
+                    <!-- <div class="panel-heading d-inline-block float-left">Port level service summary </div> -->
+
+                    <div class="d-flex justify-content-end">
+                        <form class="form-horizontal">
+                            <div class="search-group bg-transparent pl-0">
+                                <button class="btn btn-secondary text-center">Export To Excel</button>
+                                <!-- <button class="btn btn-secondary text-center ml-2">Export with Excel</button> -->
+                            </div>
+                        </form>
+                    </div>
+                    <div class="panel-body table-responsive pt-3">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th colspan="7" class="text-right">
+                                        No of linear service
+                                    </th>
+                                    <th colspan="6" class="text-right">
+                                        Avg Ship Size (teu)
+                                    </th>
+                                    <th colspan="7" class="text-right">
+                                        Max Ship Size (teu)
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>Port</th>
+                                    <th>Country</th>
+                                    <th>Region</th>
+                                    <th>3Q18</th>
+                                    <th>2Q18</th>
+                                    <th>1Q18</th>
+                                    <th>4Q18</th>
+                                    <th>3Q18</th>
+
+                                    <th></th>
+
+                                    <th>3Q18</th>
+                                    <th>2Q18</th>
+                                    <th>1Q18</th>
+                                    <th>4Q17</th>
+                                    <th>3Q17</th>
+
+                                    <th></th>
+
+                                    <th>3Q18</th>
+                                    <th>2Q18</th>
+                                    <th>1Q18</th>
+                                    <th>4Q17</th>
+                                    <th>3Q17</th>
+                                    <!-- <th class="text-right">Departure Days</th> -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Aarhus"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Denmark"}}</td>
+                                    <td class="py-2 lh-28">{{"Scandinavia&Baltic"}}</td>
+                                    <td class="py-2 lh-28">{{"1"}}</td>
+                                    <td class="py-2 lh-28">{{"1"}}</td>
+                                    <td class="py-2 lh-28">{{"1"}}</td>
+                                    <td class="py-2 lh-28">{{"1"}}</td>
+                                    <td class="py-2 lh-28">{{"1"}}</td>
+
+                                    <td></td>
+                                    <td class="py-2 lh-28">{{"19769"}}</td>
+                                    <td class="py-2 lh-28">{{"19847"}}</td>
+                                    <td class="py-2 lh-28">{{"19346"}}</td>
+                                    <td class="py-2 lh-28">{{"18853"}}</td>
+                                    <td class="py-2 lh-28">{{"18853"}}</td>
+
+                                    <td></td>
+                                    <td class="py-2 lh-28">{{"20568"}}</td>
+                                    <td class="py-2 lh-28">{{"20568"}}</td>
+                                    <td class="py-2 lh-28">{{"20568"}}</td>
+                                    <td class="py-2 lh-28">{{"20568"}}</td>
+                                    <td class="py-2 lh-28">{{"20568"}}</td>
+                                    <!-- <td class="text-right lh-28 py-2"> {{"Tuesday"}}</td> -->
+
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Abidjan"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Ivory Coast"}}</td>
+                                    <td class="py-2 lh-28">{{"West Africa"}}</td>
+                                    <td class="py-2 lh-28">{{"8"}}</td>
+                                    <td class="py-2 lh-28">{{"10"}}</td>
+                                    <td class="py-2 lh-28">{{"13"}}</td>
+                                    <td class="py-2 lh-28">{{"14"}}</td>
+                                    <td class="py-2 lh-28">{{"15"}}</td>
+
+                                    <td></td>
+                                    <td class="py-2 lh-28">{{"3309"}}</td>
+                                    <td class="py-2 lh-28">{{"3025"}}</td>
+                                    <td class="py-2 lh-28">{{"2939"}}</td>
+                                    <td class="py-2 lh-28">{{"2723"}}</td>
+                                    <td class="py-2 lh-28">{{"2916"}}</td>
+
+                                    <td></td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <!-- <td class="text-right lh-28 py-2"> {{"Tuesday"}}</td> -->
+
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Adelaide"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Australia"}}</td>
+                                    <td class="py-2 lh-28">{{"Oceania"}}</td>
+                                    <td class="py-2 lh-28">{{"8"}}</td>
+                                    <td class="py-2 lh-28">{{"10"}}</td>
+                                    <td class="py-2 lh-28">{{"13"}}</td>
+                                    <td class="py-2 lh-28">{{"14"}}</td>
+                                    <td class="py-2 lh-28">{{"15"}}</td>
+
+                                    <td></td>
+                                    <td class="py-2 lh-28">{{"3309"}}</td>
+                                    <td class="py-2 lh-28">{{"3025"}}</td>
+                                    <td class="py-2 lh-28">{{"2939"}}</td>
+                                    <td class="py-2 lh-28">{{"2723"}}</td>
+                                    <td class="py-2 lh-28">{{"2916"}}</td>
+
+                                    <td></td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <!-- <td class="text-right lh-28 py-2"> {{"Tuesday"}}</td> -->
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- ///////// -->
+
+                </div>
+            </div>
+
+            <!-- PORT DETAILD REPORT--Tradelane wise Service Summary -->
+
+            <div class="col-12 mt-2">
+                <div *ngIf="showContent" class="panel panel-white h-100">
+                    <div class="panel-heading" style="color: rgb(56, 55, 51); ">
+                        Tradelane wise Service Summary as on Monthly / Quaterly
+                    </div>
+                    <!-- <div class="panel-heading d-inline-block float-left">Port level service summary </div> -->
+
+                    <div class="d-flex justify-content-end">
+                        <form class="form-horizontal">
+                            <div class="search-group bg-transparent pl-0">
+                                <button class="btn btn-secondary text-center">Export To Excel</button>
+                                <!-- <button class="btn btn-secondary text-center ml-2">Export with Excel</button> -->
+                            </div>
+                        </form>
+                    </div>
+                    <div class="panel-body table-responsive pt-3">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Port</th>
+                                    <th>No of linear service</th>
+                                    <th>Monthly/Quaterly</th>
+                                    <th> Avg Ship Size (teu)</th>
+                                    <!-- <th>Max Ship Size (teu)</th> -->
+                                    <th>Max Ship Size (teu)</th>
+                                    <th class="text-right">
+                                        <label>
+                                            <input type="checkbox" name="yourCheckbox">
+                                        </label>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Ningbo"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Asia-East Africa"}}</td>
+                                    <td class="py-2 lh-28">{{"11"}}</td>
+                                    <td class="py-2 lh-28">{{"7,554"}}</td>
+                                    <td class="py-2 lh-28">{{"7,554"}}</td>
+                                    <!-- <td class="py-2 lh-28">{{"1"}}</td> -->
+                                    <td class="text-right lh-28 py-2"> {{""}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{""}}</label></td>
+                                    <td class="py-2 lh-28">{{"Asia-Med"}}</td>
+                                    <td class="py-2 lh-28">{{"28"}}</td>
+                                    <td class="py-2 lh-28">{{"12,446"}}</td>
+                                    <td class="py-2 lh-28">{{"20,568"}}</td>
+                                    <!-- <td class="py-2 lh-28">{{"8"}}</td> -->
+                                    <td class="text-right lh-28 py-2"> {{""}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{""}}</label></td>
+                                    <td class="py-2 lh-28">{{"Asia-Med"}}</td>
+                                    <td class="py-2 lh-28">{{"28"}}</td>
+                                    <td class="py-2 lh-28">{{"12,446"}}</td>
+                                    <td class="py-2 lh-28">{{"120,568"}}</td>
+                                    <!-- <td class="py-2 lh-28">{{"8"}}</td> -->
+                                    <td class="text-right lh-28 py-2"> {{""}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{""}}</label></td>
+                                    <td class="py-2 lh-28">{{"Asia-Med"}}</td>
+                                    <td class="py-2 lh-28">{{"28"}}</td>
+                                    <td class="py-2 lh-28">{{"12,446"}}</td>
+                                    <td class="py-2 lh-28">{{"20,568"}}</td>
+                                    <!-- <td class="py-2 lh-28">{{"8"}}</td> -->
+                                    <td class="text-right lh-28 py-2"> {{""}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{""}}</label></td>
+                                    <td class="py-2 lh-28"><label style="font-weight: bold;">{{"Total"}}</label></td>
+                                    <td class="py-2 lh-28">{{"113"}}</td>
+                                    <td class="py-2 lh-28">{{"8612"}}</td>
+                                    <td class="py-2 lh-28">{{"21,413"}}</td>
+                                    <!-- <td class="py-2 lh-28">{{"8"}}</td> -->
+                                    <td class="text-right lh-28 py-2"> {{""}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- ///////// -->
+                    <!-- PORT DETAILD REPORT-- -->
+
+                </div>
+            </div>
+        </div>

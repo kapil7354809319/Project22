@@ -1,0 +1,439 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+  <div class="container-fluid">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-4 col-12">
+          <h1 class="m-0">Manage Region ({{ tabActive }})</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12 text-right"></div>
+        <!-- /.col -->
+      </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="row m-0">
+      <div class="col-12">
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item">
+            <a
+              (click)="tabChange('Add')"
+              class="nav-link active"
+              data-toggle="tab"
+              href="#addnew"
+              role="tab"
+              >Add New</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              (click)="tabChange('Search')"
+              class="nav-link"
+              data-toggle="tab"
+              href="#search"
+              role="tab"
+              >Search</a
+            >
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane active" id="addnew" role="tabpanel">
+            <form
+              class="form-horizontal row"
+              method="post"
+              [formGroup]="regionForm"
+              (ngSubmit)="onSubmit()"
+            >
+              <div class="col-md-12 col-12">
+                <div class="form-group row">
+                  <div class="col-md-3 pr-md-2 col-12">
+                    <label class="control-label">Region Name *</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="region_name"
+                      id="region_name"
+                    />
+                    <div
+                      *ngIf="
+                        regionForm?.get('region_name')?.hasError('required') &&
+                        regionForm?.get('region_name')?.touched
+                      "
+                    >
+                      <span class="error-message">Region Name is required</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 pr-md-2 col-12 mb-10px">
+                    <label class="control-label">Super Region *</label>
+                    <select
+                      class="form-control custom-form-control"
+                      formControlName="super_region_id"
+                      id="super_region_id"
+                    >
+                      <option value="">Select Super Region</option>
+                      <option
+                        *ngFor="let supperRegion of supperRegionList"
+                        [value]="supperRegion.super_region_id"
+                      >
+                        {{ supperRegion.super_region_name }}
+                      </option>
+                    </select>
+                    <div
+                      *ngIf="
+                        regionForm
+                          ?.get('super_region_id')
+                          ?.hasError('required') &&
+                        regionForm?.get('super_region_id')?.touched
+                      "
+                    >
+                      <span class="error-message"
+                        >Super Region is required</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-md-6 pr-md-2 col-12 mb-10px">
+                    <label class="control-label">Description</label>
+                    <textarea
+                      id="w3review"
+                      name="w3review"
+                      rows="2"
+                      cols="40"
+                      formControlName="description"
+                      id="description"
+                      class="custom-form-control form-control"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold mr-2"
+                    type="submit"
+                  >
+                    Add New
+                  </button>
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold"
+                    (click)="resetForm()"
+                    type="button"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="tab-pane" id="search" role="tabpanel">
+            <form
+              class="form-horizontal row"
+              method="post"
+              [formGroup]="regionSearchForm"
+              (ngSubmit)="onSearch()"
+            >
+              <div class="col-md-12 col-12">
+                <div class="form-group row">
+                  <div class="col-md-3 pr-md-2 col-12">
+                    <label class="control-label">Region Name</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="region_name"
+                      id="region_name"
+                    />
+                  </div>
+
+                  <div class="col-md-3 pr-md-2 col-12 mb-10px">
+                    <label class="control-label">Super Region</label>
+                    <select
+                      class="form-control custom-form-control"
+                      formControlName="super_region_id"
+                      id="super_region_id"
+                    >
+                      <option value="">Select Super Region</option>
+                      <option
+                        *ngFor="let supperRegion of supperRegionList"
+                        [value]="supperRegion.super_region_id"
+                      >
+                        {{ supperRegion.super_region_name }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold mr-2"
+                    type="submit"
+                    [disabled]="regionSearchForm.invalid"
+                  >
+                    Search
+                  </button>
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold"
+                    (click)="resetSearchForm()"
+                    type="button"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 mt-2">
+        <div class="panel panel-white h-100">
+          <div class="panel-heading d-inline-block float-left">Region List</div>
+          <div class="d-inline-block float-right text-right">
+            <form class="form-horizontal">
+              <div class="search-group">
+                <!-- <svg class="svg-inline--fa fa-search fa-w-16 text-grey" aria-hidden="true"
+                                    data-prefix="fa" data-icon="search" role="img" xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 512 512" data-fa-i2svg="">
+                                    <path fill="currentColor"
+                                        d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z">
+                                    </path>
+                                </svg> -->
+                <!-- <i class="fa fa-search text-grey" aria-hidden="true"></i> -->
+                <!-- <input type="text" class="f-12" placeholder="Search port"> -->
+              </div>
+            </form>
+          </div>
+          <div class="panel-body table-responsive pt-3">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>S.NO</th>
+                  <th (click)="sortData('region_name')">
+                    Region Name
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'region_name' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'region_name' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th (click)="sortData('super_region_name')">
+                    Super Region Name
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'super_region_name' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'super_region_name' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th class="text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let region of regionList; let index = index">
+                  <td class="py-1 lh-28">{{ index + fromStart.from }}.</td>
+                  <td class="py-2 lh-28">{{ region.region_name }}</td>
+                  <td class="py-2 lh-28">
+                    {{ region.super_region.super_region_name }}
+                  </td>
+                  <td class="text-right lh-28 py-2">
+                    <button
+                      (click)="editSelect(region.region_id)"
+                      class="btn btn-blue btn-sm my-0 px-3"
+                      style="background-color: #97bfe480; color: #132e67"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      (click)="deleteData(region.region_id, region.region_name)"
+                      class="btn btn-transparent btn-sm my-0"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="regionList && regionList.length === 0">
+                  <td colspan="4"><strong>No records found</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-paggination">
+            <div class="page-counter">
+              Showing
+              <select
+                class=""
+                [(ngModel)]="per_page"
+                (change)="onPerPageChange($event)"
+              >
+                <option *ngFor="let value of getPerPageCount" [value]="value">
+                  {{ value }}
+                </option>
+              </select>
+              of {{ total }} entries
+            </div>
+            <div class="custom-paggination float-right">
+              <ul>
+                <li *ngFor="let pagination of pagination; let index = index">
+                  <ng-container
+                    *ngIf="pagination.label !== '...'; else emptyLabel"
+                  >
+                    <a
+                      [innerHTML]="pagination.label"
+                      [ngClass]="{
+                        active: pagination.label == fromStart.current_page,
+                        disabled: pagination.url == null
+                      }"
+                      (click)="changePagination(pagination.url)"
+                    ></a>
+                  </ng-container>
+                  <ng-template #emptyLabel>
+                    <a>{{ pagination.label }}</a>
+                  </ng-template>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>
+
+<div
+  id="myModal"
+  class="modal fade editModal"
+  tabindex="-1"
+  role="dialog"
+  data-backdrop="static"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Region</h5>
+        <button type="button" class="close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form
+          class="form-horizontal row"
+          method="post"
+          [formGroup]="regionForm"
+          (ngSubmit)="onUpdate()"
+          *ngIf="editListData && editListData.length > 0"
+        >
+          <div class="col-md-12 col-12" *ngFor="let editList of editListData">
+            <div class="form-group row">
+              <div class="col-md-6 col-12">
+                <label class="control-label">Region Name *</label>
+                <input
+                  type="hidden"
+                  formControlName="id"
+                  [(ngModel)]="editList.region_id"
+                />
+                <input
+                  type="text"
+                  class="form-control custom-form-control"
+                  placeholder=""
+                  formControlName="region_name"
+                  id="region_name"
+                  [(ngModel)]="editList.region_name"
+                />
+                <div
+                  *ngIf="
+                    regionForm?.get('region_name')?.hasError('required') &&
+                    regionForm?.get('region_name')?.touched
+                  "
+                >
+                  <span class="error-message">Region Name is required</span>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-12 mb-10px">
+                <label class="control-label">Super Region *</label>
+                <select
+                  class="form-control custom-form-control"
+                  formControlName="super_region_id"
+                  id="super_region_id"
+                  [(ngModel)]="editList.super_region_id"
+                >
+                  <option value="">Select Super Region</option>
+                  <option
+                    *ngFor="let supperRegion of supperRegionList"
+                    [value]="supperRegion.super_region_id"
+                  >
+                    {{ supperRegion.super_region_name }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="
+                    regionForm?.get('super_region_id')?.hasError('required') &&
+                    regionForm?.get('super_region_id')?.touched
+                  "
+                >
+                  <span class="error-message">Super Region is required</span>
+                </div>
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-md-12 col-12 mb-10px">
+                <label class="control-label">Description</label>
+                <textarea
+                  id="w3review"
+                  name="w3review"
+                  rows="2"
+                  cols="40"
+                  formControlName="description"
+                  id="description"
+                  class="custom-form-control form-control"
+                  [(ngModel)]="editList.description"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 mb-4">
+            <div class="form-group">
+              <button
+                class="btn btn-yellow text-uppercase fw-bold mr-2"
+                type="submit"
+                [disabled]="regionForm.invalid"
+              >
+                Save
+              </button>
+              <button
+                (click)="closeModal()"
+                class="btn btn-yellow text-uppercase fw-bold"
+                type="button"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="17.1" viewBox="0 0 18 17.1">
+  <g id="fav" transform="translate(0 -0.5)">
+    <g id="Core" transform="translate(0 0.5)">
+      <g id="star">
+        <path id="Shape" d="M9,13.746,14.562,17.1,13.09,10.774,18,6.52l-6.472-.555L9,0,6.472,5.964,0,6.52l4.909,4.254L3.438,17.1Z" fill="#042b5c" fill-rule="evenodd"/>
+      </g>
+    </g>
+  </g>
+</svg>

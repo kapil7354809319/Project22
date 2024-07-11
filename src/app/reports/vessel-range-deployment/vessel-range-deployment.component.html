@@ -1,0 +1,773 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+    <div class="container-fluid">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="row page-header" id="stickyHeader">
+                <div class="col-md-12 col-12">
+                    <h1 class="m-0">Vessel Range Deployment</h1>
+                </div><!-- /.col -->
+                <div class="col-md-8 col-12 text-right">
+
+                </div><!-- /.col -->
+            </div>
+        </div>
+        <div class="row m-0">
+            <div class="col-md-12">
+                <form class="form-horizontal row" [formGroup]="searchForm">
+
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+                            <div class="col-md-3 mb-10px col-12">
+                                <!-- <div class="col-md-3 mb-10px col-12 mx-auto"> -->
+                                <label class="control-label">Minimum Size(teu)</label>
+                                <input type="text" class="form-control custom-form-control" formControlName="min_teu"
+                                    placeholder="Default min available teu">
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <label class="control-label">Maximum size(teu)</label>
+                                <input type="text" class="form-control custom-form-control" formControlName="max_teu"
+                                    placeholder="Default max available teu">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-12 mt-2">
+                        <div class="form-group row">
+
+                            <div class="col-md-4 col-12">
+                                <h6 class="m-0">Define Your Time Range</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+                           <div class="col-md-3 mb-10px col-12 d-flex">
+                                <input type="radio" id="report-one" (change)="changeValidation()" name="time_range" value="time_series" formControlName="time_range"  />
+                                <label class="control-label ml-2" for="report-one">Time Series</label>
+                            </div>
+                            <div class="col-md-3 mb-10px pr-md-2 col-12 d-flex">
+                                <input type="radio" id="report-two" (change)="changeValidation()" name="time_range" formControlName="time_range" value="last_month"   />
+                                <label class="control-label ml-2" for="report-two">Last Month</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-12" *ngIf="searchForm.controls['time_range'].value === 'time_series'">
+                        <div class="form-group row">
+                            <div class="col-md-3 mb-10px col-12 d-flex">
+                                <input type="radio" id="report-three" name="period_format" (change)="changeValidation()"
+                                     value="monthly" formControlName="period_format"  />
+                                <label class="control-label ml-2" for="report-three">Monthly</label>
+                            </div>
+                            <div class="col-md-3 mb-10px pr-md-2 col-12 d-flex">
+                                <input type="radio" id="report-four" name="period_format" (change)="changeValidation()"
+                                    value="quarterly" formControlName="period_format" />
+                                <label class="control-label ml-2" for="report-four">Quaterly</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- "FROM' AND "TO" NEW FORMAT------
+                    <div class="col-md-12 col-12 mt-2">
+                        <div class="form-group row">
+                            
+                            <div class="col-md-4 col-12">
+                                <h6 class="m-0">From</h6>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+                         
+                            <div class="col-md-3 mb-10px col-12">
+                                <div class="col-md-3 mb-10px col-12 mx-auto">///
+                                    <label class="control-label">Year</label>
+                                    <select class="form-control custom-form-control">
+                                        <option value="">Select Year</option>
+                                        <option value="">2023</option>
+                                        <option value="">2022</option>
+                                        <option value="">2021</option>
+                                    </select>
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                    <div class="col-md-3 mb-10px col-12 mx-auto">///
+                                        <label class="control-label">Month</label>
+                                        <select class="form-control custom-form-control">
+                                            <option value="">Select Month</option>
+                                            <option value="">Jan</option>
+                                            <option value="">Feb</option>
+                                            <option value="">March</option>
+                                        </select>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 col-12 mt-2">
+                        <div class="form-group row">
+                            
+                            <div class="col-md-4 col-12">
+                                <h6 class="m-0">To</h6>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+                         
+                            <div class="col-md-3 mb-10px col-12">
+                                <div class="col-md-3 mb-10px col-12 mx-auto">///
+                                    <label class="control-label">Year</label>
+                                    <select class="form-control custom-form-control">
+                                        <option value="">Select Year</option>
+                                        <option value="">2023</option>
+                                        <option value="">2022</option>
+                                        <option value="">2021</option>
+                                    </select>
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                    <div class="col-md-3 mb-10px col-12 mx-auto">///
+                                        <label class="control-label">Month</label>
+                                        <select class="form-control custom-form-control">
+                                            <option value="">Select Month</option>
+                                            <option value="">Jan</option>
+                                            <option value="">Feb</option>
+                                            <option value="">March</option>
+                                        </select>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    
+                    ----END -->
+
+                    <div class="col-md-12 col-12" *ngIf="searchForm.controls['time_range'].value === 'time_series' && searchForm.controls['period_format'].value === 'monthly'">
+                        <div class="form-group row">
+
+                            <div class="col-md-3 mb-10px col-12 mt-4">
+                                From :
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <!-- <div class="col-md-3 mb-10px col-12 mx-auto"> -->
+                                <label class="control-label">Year</label>
+                                <select class="form-control custom-form-control" formControlName="from_year" (change)="changeToDropDownValueForFromMonths()">
+                                    <option value="">Select Year</option>
+                                    <option *ngFor="let year of years">{{year.year_val}}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <!-- <div class="col-md-3 mb-10px col-12 mx-auto"> -->
+                                <label class="control-label">Month</label>
+                                <select class="form-control custom-form-control" formControlName="from_month">
+                                    <option value="">Select Month</option>
+                                    
+                                    <option *ngFor="let month of fromMonths;let i = index" [value]="i+1">{{month}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-12" *ngIf="searchForm.controls['time_range'].value === 'time_series'  && searchForm.controls['period_format'].value === 'monthly'">
+                        <div class="form-group row">
+
+                            <div class="col-md-3 mb-10px col-12 mt-4">
+                                To :
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <!-- <div class="col-md-3 mb-10px col-12 mx-auto"> -->
+                                <label class="control-label">Year</label>
+                                <select class="form-control custom-form-control"  formControlName="to_year" (change)="changeToDropDownValue()">
+                                    <option value="">Select Year</option>
+                                    <option *ngFor="let year of years">{{year.year_val}}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <!-- <div class="col-md-3 mb-10px col-12 mx-auto"> -->
+                                <label class="control-label">Month</label>
+                                <select class="form-control custom-form-control" formControlName="to_month" >
+                                    <option value="">Select Month</option>
+                                    <option *ngFor="let month of toMonths; let i = index" [value]="i+1">{{month}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- quaters -->
+                    <div class="col-md-12 col-12" *ngIf="searchForm.controls['time_range'].value === 'time_series' && searchForm.controls['period_format'].value === 'quarterly'">
+                        <div class="form-group row">
+
+                            <div class="col-md-3 mb-10px col-12 mt-4">
+                                Quaters:
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <!-- <div class="col-md-3 mb-10px col-12 mx-auto"> -->
+                                <label class="control-label">Quaters</label>
+                                <select class="form-control custom-form-control" formControlName="select_quater">
+                                    <option value="">Select quaters</option>
+                                    <option *ngFor="let quater of quaters; let i = index" [value]="quater">{{quater}}</option>
+                                    
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- quaters End -->
+
+                    <div class="col-md-12 col-12 mt-4">
+                        <div class="form-group row">
+
+                            <div class="col-md-3 mb-10px col-12 d-flex">
+                                Report Required For:
+                            </div>
+                            <div class="col-md-3 mb-10px col-12 d-flex">
+                                <input type="radio" id="report-five" name="report_req" value="trade_routes" formControlName="report_req" />
+                                <label class="control-label ml-2" for="report-five">Trade Routes</label>
+                            </div>
+                            <div class="col-md-3 mb-10px pr-md-2 col-12 d-flex">
+                                <input type="radio" id="report-six" name="report_req" value="oprators" formControlName="report_req" />
+                                <label class="control-label ml-2" for="report-six">Operator</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ///// -->
+
+                    <div class="col-12 mb-4">
+                        <div class="form-group">
+                            <button (click)="export()" class="btn btn-yellow text-uppercase fw-semibold mr-2"
+                                type="button">Details
+                            </button>
+                            <button class="btn fw-semibold text-decoration-underline" type="button" (click)="clear()">Clear
+                                Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- /////---port Level---//// -->
+            <div class="col-12 mt-2">
+                <div *ngIf="showContent" class="panel panel-white h-100">
+                    <div class="panel-heading" style="color: rgb(56, 55, 51); ">
+                        Port level service summary
+                    </div>
+                    <!-- <div class="panel-heading d-inline-block float-left">Port level service summary </div> -->
+
+                    <div class="d-flex justify-content-end">
+                        <form class="form-horizontal">
+                            <div class="search-group bg-transparent pl-0">
+                                <button class="btn btn-secondary text-center">Export To Excel</button>
+                                <!-- <button class="btn btn-secondary text-center ml-2">Export with Excel</button> -->
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="panel-body table-responsive pt-3">
+
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th colspan="7" class="text-right">
+                                        No of linear service
+                                    </th>
+                                    <th colspan="6" class="text-right">
+                                        Avg Ship Size (teu)
+                                    </th>
+                                    <th colspan="7" class="text-right">
+                                        Max Ship Size (teu)
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>Port</th>
+                                    <th>Country</th>
+                                    <th>Region</th>
+                                    <th>3Q18</th>
+                                    <th>2Q18</th>
+                                    <th>1Q18</th>
+                                    <th>4Q18</th>
+                                    <th>3Q18</th>
+
+                                    <th></th>
+
+                                    <th>3Q18</th>
+                                    <th>2Q18</th>
+                                    <th>1Q18</th>
+                                    <th>4Q17</th>
+                                    <th>3Q17</th>
+
+                                    <th></th>
+
+                                    <th>3Q18</th>
+                                    <th>2Q18</th>
+                                    <th>1Q18</th>
+                                    <th>4Q17</th>
+                                    <th>3Q17</th>
+                                    <!-- <th class="text-right">Departure Days</th> -->
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Aarhus"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Denmark"}}</td>
+                                    <td class="py-2 lh-28">{{"Scandinavia&Baltic"}}</td>
+                                    <td class="py-2 lh-28">{{"1"}}</td>
+                                    <td class="py-2 lh-28">{{"1"}}</td>
+                                    <td class="py-2 lh-28">{{"1"}}</td>
+                                    <td class="py-2 lh-28">{{"1"}}</td>
+                                    <td class="py-2 lh-28">{{"1"}}</td>
+
+                                    <td></td>
+                                    <td class="py-2 lh-28">{{"19769"}}</td>
+                                    <td class="py-2 lh-28">{{"19847"}}</td>
+                                    <td class="py-2 lh-28">{{"19346"}}</td>
+                                    <td class="py-2 lh-28">{{"18853"}}</td>
+                                    <td class="py-2 lh-28">{{"18853"}}</td>
+
+                                    <td></td>
+                                    <td class="py-2 lh-28">{{"20568"}}</td>
+                                    <td class="py-2 lh-28">{{"20568"}}</td>
+                                    <td class="py-2 lh-28">{{"20568"}}</td>
+                                    <td class="py-2 lh-28">{{"20568"}}</td>
+                                    <td class="py-2 lh-28">{{"20568"}}</td>
+                                    <!-- <td class="text-right lh-28 py-2"> {{"Tuesday"}}</td> -->
+
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Abidjan"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Ivory Coast"}}</td>
+                                    <td class="py-2 lh-28">{{"West Africa"}}</td>
+                                    <td class="py-2 lh-28">{{"8"}}</td>
+                                    <td class="py-2 lh-28">{{"10"}}</td>
+                                    <td class="py-2 lh-28">{{"13"}}</td>
+                                    <td class="py-2 lh-28">{{"14"}}</td>
+                                    <td class="py-2 lh-28">{{"15"}}</td>
+
+                                    <td></td>
+                                    <td class="py-2 lh-28">{{"3309"}}</td>
+                                    <td class="py-2 lh-28">{{"3025"}}</td>
+                                    <td class="py-2 lh-28">{{"2939"}}</td>
+                                    <td class="py-2 lh-28">{{"2723"}}</td>
+                                    <td class="py-2 lh-28">{{"2916"}}</td>
+
+                                    <td></td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <!-- <td class="text-right lh-28 py-2"> {{"Tuesday"}}</td> -->
+
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Adelaide"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Australia"}}</td>
+                                    <td class="py-2 lh-28">{{"Oceania"}}</td>
+                                    <td class="py-2 lh-28">{{"8"}}</td>
+                                    <td class="py-2 lh-28">{{"10"}}</td>
+                                    <td class="py-2 lh-28">{{"13"}}</td>
+                                    <td class="py-2 lh-28">{{"14"}}</td>
+                                    <td class="py-2 lh-28">{{"15"}}</td>
+
+                                    <td></td>
+                                    <td class="py-2 lh-28">{{"3309"}}</td>
+                                    <td class="py-2 lh-28">{{"3025"}}</td>
+                                    <td class="py-2 lh-28">{{"2939"}}</td>
+                                    <td class="py-2 lh-28">{{"2723"}}</td>
+                                    <td class="py-2 lh-28">{{"2916"}}</td>
+
+                                    <td></td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <td class="py-2 lh-28">{{"4620"}}</td>
+                                    <!-- <td class="text-right lh-28 py-2"> {{"Tuesday"}}</td> -->
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- ///////// -->
+                </div>
+            </div>
+            <!-- Vessel range deploymenet--For trade routes(time series-monthly, for trade routes)-->
+
+
+            <div class="col-12 mt-2">
+                <div *ngIf="showContent" class="panel panel-white h-100">
+                    <div class="panel-heading" style="color: rgb(56, 55, 51); ">
+                        Vessel range Deploymenet for Trade Routes-Monthly
+                    </div>
+                    <!-- <div class="panel-heading d-inline-block float-left">Port level service summary </div> -->
+
+                    <div class="d-flex justify-content-end">
+                        <form class="form-horizontal">
+                            <div class="search-group bg-transparent pl-0">
+                                <button class="btn btn-secondary text-center">Export To Excel</button>
+                                <!-- <button class="btn btn-secondary text-center ml-2">Export with Excel</button> -->
+                            </div>
+                        </form>
+                    </div>
+                    <div class="panel-body table-responsive pt-3">
+
+
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Time Series</th>
+                                    <th>Trade Route</th>
+                                    <th class="text-right">
+                                        Teu Capacity
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Jan-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"other"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"1,34,77,157"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Jan-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Asia-Med"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"39,37,720"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Jan-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Asia-Middle East"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"37,74,392"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Jan-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Asia-WCNA"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"31,32,573"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Jan-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"South Asia-Europe"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"13,54,230"}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- ///////// -->
+                </div>
+            </div>
+            <!-- Vessel Range Deploymenet Report--end -->
+
+            <!-- Vessel range deploymenet--For trade routes(time series-monthly, for operator)-->
+
+            <div class="col-12 mt-2">
+                <div *ngIf="showContent" class="panel panel-white h-100">
+                    <div class="panel-heading" style="color: rgb(56, 55, 51); ">
+                        Vessel range Deploymenet for Operators-Monthly
+                    </div>
+                    <!-- <div class="panel-heading d-inline-block float-left">Port level service summary </div> -->
+
+                    <div class="d-flex justify-content-end">
+                        <form class="form-horizontal">
+                            <div class="search-group bg-transparent pl-0">
+                                <button class="btn btn-secondary text-center">Export To Excel</button>
+                                <!-- <button class="btn btn-secondary text-center ml-2">Export with Excel</button> -->
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="panel-body table-responsive pt-3">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Time Series</th>
+                                    <th>Oprator</th>
+                                    <th class="text-right">
+                                        Teu Capacity
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Jan-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Maersk"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"1,34,77,157"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Jan-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"other"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"39,37,720"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Jan-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"MSC"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"37,74,392"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Jan-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"CMA CGM"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"31,32,573"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Jan-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Evergreen"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"13,54,230"}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- ///////// -->
+
+                </div>
+            </div>
+            <!-- Vessel Range Deploymenet Report--end -->
+
+            <!-- Vessel range deploymenet--For trade routes(time series-Quaterly, for Opertor)-->
+
+            <div class="col-12 mt-2">
+                <div *ngIf="showContent" class="panel panel-white h-100">
+                    <div class="panel-heading" style="color: rgb(56, 55, 51); ">
+                        Vessel range Deploymenet for Operator-Quaterly
+                    </div>
+                    <!-- <div class="panel-heading d-inline-block float-left">Port level service summary </div> -->
+
+                    <div class="d-flex justify-content-end">
+                        <form class="form-horizontal">
+                            <div class="search-group bg-transparent pl-0">
+                                <button class="btn btn-secondary text-center">Export To Excel</button>
+                                <!-- <button class="btn btn-secondary text-center ml-2">Export with Excel</button> -->
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="panel-body table-responsive pt-3">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Time Series</th>
+                                    <th>Oprator</th>
+                                    <th class="text-right">
+                                        Teu Capacity
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"3Q17"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Maersk"}}</td>
+
+                                    <td class="text-right lh-28 py-2"> {{"1,34,77,157"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"3Q17"}}</label></td>
+                                    <td class="py-2 lh-28">{{"other"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"39,37,720"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"3Q17"}}</label></td>
+                                    <td class="py-2 lh-28">{{"MSC"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"37,74,392"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"3Q17"}}</label></td>
+                                    <td class="py-2 lh-28">{{"CMA CGM"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"31,32,573"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"3Q17"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Evergreen"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"13,54,230"}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- ///////// -->
+
+                </div>
+            </div>
+            <!-- Vessel Range Deploymenet Report--end -->
+
+            <!-- Vessel range deploymenet--For trade routes(time series-Quaterly, for trade routes)-->
+            <div class="col-12 mt-2">
+                <div *ngIf="showContent" class="panel panel-white h-100">
+                    <div class="panel-heading" style="color: rgb(56, 55, 51); ">
+                        Vessel range Deploymenet for Trade Routes-Quaterly
+                    </div>
+                    <!-- <div class="panel-heading d-inline-block float-left">Port level service summary </div> -->
+
+                    <div class="d-flex justify-content-end">
+                        <form class="form-horizontal">
+                            <div class="search-group bg-transparent pl-0">
+                                <button class="btn btn-secondary text-center">Export To Excel</button>
+                                <!-- <button class="btn btn-secondary text-center ml-2">Export with Excel</button> -->
+                            </div>
+                        </form>
+                    </div>
+                    <div class="panel-body table-responsive pt-3">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Time Series</th>
+                                    <th>Trade Route</th>
+                                    <th class="text-right">
+                                        Teu Capacity
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"3Q17"}}</label></td>
+                                    <td class="py-2 lh-28">{{"other"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"1,34,77,157"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"3Q17"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Asia-Med"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"39,37,720"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"3Q17"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Asia-Middle East"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"37,74,392"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"3Q17"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Asia-WCNA"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"31,32,573"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"3Q17"}}</label></td>
+                                    <td class="py-2 lh-28">{{"South Asia-Europe"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"13,54,230"}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- ///////// -->
+                </div>
+            </div>
+            <!-- Vessel Range Deploymenet Report--end -->
+
+            <!-- Vessel range deploymenet--For trade routes(time series-Last Month, for trade routes)-->
+
+            <div class="col-12 mt-2">
+                <div *ngIf="showContent" class="panel panel-white h-100">
+                    <div class="panel-heading" style="color: rgb(56, 55, 51); ">
+                        Vessel range Deploymenet for Trade Routes-Last Month
+                    </div>
+                    <!-- <div class="panel-heading d-inline-block float-left">Port level service summary </div> -->
+
+                    <div class="d-flex justify-content-end">
+                        <form class="form-horizontal">
+                            <div class="search-group bg-transparent pl-0">
+                                <button class="btn btn-secondary text-center">Export To Excel</button>
+                                <!-- <button class="btn btn-secondary text-center ml-2">Export with Excel</button> -->
+                            </div>
+                        </form>
+                    </div>
+                    <div class="panel-body table-responsive pt-3">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Time Series</th>
+                                    <th>Trade Route</th>
+                                    <th class="text-right">
+                                        Teu Capacity
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Oct-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"other"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Oct-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Asia-Med"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"39,37,720"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Oct-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Asia-Middle East"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"37,74,392"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Oct-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Asia-WCNA"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"31,32,573"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Oct-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"South Asia-Europe"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"13,54,230"}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- ///////// -->
+                </div>
+            </div>
+            <!-- Vessel Range Deploymenet Report--end -->
+
+            <!-- Vessel range deploymenet--For trade routes(time series-Last Month, for Opertor)-->
+            <div class="col-12 mt-2">
+                <div *ngIf="showContent" class="panel panel-white h-100">
+                    <div class="panel-heading" style="color: rgb(56, 55, 51); ">
+                        Vessel range Deploymenet for Operator-Last Month
+                    </div>
+                    <!-- <div class="panel-heading d-inline-block float-left">Port level service summary </div> -->
+
+                    <div class="d-flex justify-content-end">
+                        <form class="form-horizontal">
+                            <div class="search-group bg-transparent pl-0">
+                                <button class="btn btn-secondary text-center">Export To Excel</button>
+                                <!-- <button class="btn btn-secondary text-center ml-2">Export with Excel</button> -->
+                            </div>
+                        </form>
+                    </div>
+                    <div class="panel-body table-responsive pt-3">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Time Series</th>
+                                    <th>Oprator</th>
+                                    <th class="text-right">
+                                        Teu Capacity
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Oct-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Maersk"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"1,34,77,157"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Oct-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"other"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"39,37,720"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Oct-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"MSC"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"37,74,392"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Oct-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"CMA CGM"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"31,32,573"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{"Oct-2018"}}</label></td>
+                                    <td class="py-2 lh-28">{{"Evergreen"}}</td>
+                                    <td class="text-right lh-28 py-2"> {{"13,54,230"}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- ///////// -->
+                </div>
+            </div>
+            <!-- Vessel Range Deploymenet Report--end -->
+        </div>

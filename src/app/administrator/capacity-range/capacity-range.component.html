@@ -1,0 +1,442 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+  <div class="container-fluid">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-4 col-12">
+          <h1 class="m-0">Manage Range List</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12 text-right"></div>
+        <!-- /.col -->
+      </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="row m-0">
+      <div class="col-12">
+        <form
+          class="form-horizontal row"
+          method="post"
+          [formGroup]="capacityRangeForm"
+          (ngSubmit)="onSubmit()"
+        >
+          <div class="col-md-5 col-12">
+            <div class="form-group row">
+              <div class="col-md-6 col-12">
+                <label class="control-label">From Range*</label>
+                <input
+                  type="text"
+                  class="form-control custom-form-control"
+                  placeholder=""
+                  formControlName="from_range"
+                />
+                <div
+                  *ngIf="
+                    capacityRangeForm
+                      ?.get('from_range')
+                      ?.hasError('required') &&
+                    capacityRangeForm?.get('from_range')?.touched
+                  "
+                >
+                  <span class="error-message">From Range is required</span>
+                </div>
+                <div
+                  *ngIf="
+                    capacityRangeForm.get('from_range')?.hasError('pattern') &&
+                    capacityRangeForm.get('from_range')?.touched
+                  "
+                >
+                  <span class="error-message"
+                    >Please enter only numeric values.</span
+                  >
+                </div>
+                <div
+                  *ngIf="
+                    capacityRangeForm
+                      .get('from_range')
+                      ?.hasError('maxlength') &&
+                    capacityRangeForm?.get('to_range')?.touched
+                  "
+                >
+                  <span class="error-message"
+                    >Maximum length exceeded (6 Digit).</span
+                  >
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <label class="control-label">To Range*</label>
+                <input
+                  type="text"
+                  class="form-control custom-form-control"
+                  placeholder=""
+                  formControlName="to_range"
+                />
+                <div
+                  *ngIf="
+                    capacityRangeForm?.get('to_range')?.hasError('required') &&
+                    capacityRangeForm?.get('to_range')?.touched
+                  "
+                >
+                  <span class="error-message">To Range is required</span>
+                </div>
+                <div
+                  *ngIf="
+                    capacityRangeForm.get('to_range')?.hasError('pattern') &&
+                    capacityRangeForm.get('to_range')?.touched
+                  "
+                >
+                  <span class="error-message"
+                    >Please enter only numeric values.</span
+                  >
+                </div>
+                <div
+                  *ngIf="
+                    capacityRangeForm.get('to_range')?.hasError('maxlength') &&
+                    capacityRangeForm?.get('to_range')?.touched
+                  "
+                >
+                  <span class="error-message"
+                    >Maximum length exceeded (6 Digit).</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 mb-4">
+            <div class="form-group">
+              <button
+                class="btn btn-yellow text-uppercase fw-bold mr-2"
+                type="submit"
+              >
+                Add New
+              </button>
+              <button
+                class="btn btn-yellow text-uppercase fw-bold"
+                type="button"
+                (click)="resetForm()"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="col-12 mt-2">
+        <div class="panel panel-white h-100">
+          <div class="panel-heading d-inline-block float-left">
+            Capacity Range List
+          </div>
+          <div class="d-inline-block float-right text-right">
+            <form
+              class="form-horizontal"
+              method="post"
+              [formGroup]="capacitySearchForm"
+            >
+              <div class="search-group">
+                <svg
+                  class="svg-inline--fa fa-search fa-w-16 text-grey"
+                  aria-hidden="true"
+                  data-prefix="fa"
+                  data-icon="search"
+                  role="img"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                  data-fa-i2svg=""
+                >
+                  <path
+                    fill="currentColor"
+                    d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"
+                  ></path>
+                </svg>
+                <input
+                  type="text"
+                  class="f-12"
+                  placeholder="Search Here"
+                  (keyup)="onSearch()"
+                  formControlName="searching"
+                />
+              </div>
+            </form>
+          </div>
+          <div class="panel-body table-responsive pt-3">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>S.NO</th>
+                  <th (click)="sortData('teu_capacity_range')">Range
+                    <i
+                    class="fas fa-sort"
+                    [ngClass]="{
+                      'fa-sort-up':
+                        sortedColumn === 'teu_capacity_range' &&
+                        sortDirection === 'asc',
+                      'fa-sort-down':
+                        sortedColumn === 'teu_capacity_range' &&
+                        sortDirection === 'desc'
+                    }"
+                  ></i>
+
+
+                  </th>
+                  <th (click)="sortData('from_range')">
+                    From
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'from_range' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'from_range' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th (click)="sortData('to_range')">
+                    To
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'to_range' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'to_range' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th class="text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let capacityRange of capacityRangeList;
+                    let index = index
+                  "
+                >
+                  <td class="py-1 lh-28">{{ index + fromStart.from }}.</td>
+                  <td class="py-2 lh-28">
+                    {{ capacityRange.teu_capacity_range }}
+                  </td>
+                  <td class="py-2 lh-28">{{ capacityRange.from_range }}</td>
+                  <td class="py-2 lh-28">{{ capacityRange.to_range }}</td>
+                  <td class="text-right lh-28 py-2">
+                    <button
+                      (click)="editSelect(capacityRange.teucapacity_range_id)"
+                      class="btn btn-blue btn-sm my-0 px-3"
+                      style="background-color: #97bfe480; color: #132e67"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      (click)="
+                        deleteData(
+                          capacityRange.teucapacity_range_id,
+                          capacityRange.teu_capacity_range
+                        )
+                      "
+                      class="btn btn-transparent btn-sm my-0"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="capacityRangeList && capacityRangeList.length === 0">
+                  <td colspan="4"><strong>No records found</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-paggination">
+            <div class="page-counter">
+              Showing
+              <select
+                class=""
+                [(ngModel)]="per_page"
+                (change)="onPerPageChange($event)"
+              >
+                <option *ngFor="let value of getPerPageCount" [value]="value">
+                  {{ value }}
+                </option>
+              </select>
+              of {{ total }} entries
+            </div>
+            <div class="custom-paggination float-right">
+              <ul>
+                <li *ngFor="let pagination of pagination; let index = index">
+                  <ng-container
+                    *ngIf="pagination.label !== '...'; else emptyLabel"
+                  >
+                    <a
+                      [innerHTML]="pagination.label"
+                      [ngClass]="{
+                        active: pagination.label == fromStart.current_page,
+                        disabled: pagination.url == null
+                      }"
+                      (click)="changePagination(pagination.url)"
+                    ></a>
+                  </ng-container>
+                  <ng-template #emptyLabel>
+                    <a>{{ pagination.label }}</a>
+                  </ng-template>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>
+
+<div
+  id="myModal"
+  class="modal fade editModal"
+  tabindex="-1"
+  role="dialog"
+  data-backdrop="static"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Source</h5>
+        <button type="button" class="close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form
+          class="form-horizontal"
+          method="post"
+          [formGroup]="capacityRangeForm"
+          (ngSubmit)="onUpdate()"
+          *ngIf="editListData && editListData.length > 0"
+        >
+          <div *ngFor="let editList of editListData">
+            <div class="col-md-12 col-12">
+              <div class="form-group row">
+                <div class="col-md-6 col-12">
+                  <label class="control-label">From Range*</label>
+                  <input
+                    type="hidden"
+                    formControlName="id"
+                    [(ngModel)]="editList.teucapacity_range_id"
+                  />
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="from_range"
+                    [(ngModel)]="editList.from_range"
+                  />
+                  <div
+                    *ngIf="
+                      capacityRangeForm
+                        ?.get('from_range')
+                        ?.hasError('required') &&
+                      capacityRangeForm?.get('from_range')?.touched
+                    "
+                  >
+                    <span class="error-message">From Range is required</span>
+                  </div>
+                  <div
+                    *ngIf="
+                      capacityRangeForm
+                        .get('from_range')
+                        ?.hasError('pattern') &&
+                      capacityRangeForm.get('from_range')?.touched
+                    "
+                  >
+                    <span class="error-message"
+                      >Please enter only numeric values.</span
+                    >
+                  </div>
+                  <div
+                    *ngIf="
+                      capacityRangeForm
+                        .get('from_range')
+                        ?.hasError('maxlength') &&
+                      capacityRangeForm?.get('to_range')?.touched
+                    "
+                  >
+                    <span class="error-message"
+                      >Maximum length exceeded (6 Digit).</span
+                    >
+                  </div>
+                </div>
+                <div class="col-md-6 col-12">
+                  <label class="control-label">To Range*</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="to_range"
+                    [(ngModel)]="editList.to_range"
+                  />
+                  <div
+                    *ngIf="
+                      capacityRangeForm
+                        ?.get('to_range')
+                        ?.hasError('required') &&
+                      capacityRangeForm?.get('to_range')?.touched
+                    "
+                  >
+                    <span class="error-message">To Range is required</span>
+                  </div>
+                  <div
+                    *ngIf="
+                      capacityRangeForm.get('to_range')?.hasError('pattern') &&
+                      capacityRangeForm.get('to_range')?.touched
+                    "
+                  >
+                    <span class="error-message"
+                      >Please enter only numeric values.</span
+                    >
+                  </div>
+                  <div
+                    *ngIf="
+                      capacityRangeForm
+                        .get('to_range')
+                        ?.hasError('maxlength') &&
+                      capacityRangeForm?.get('to_range')?.touched
+                    "
+                  >
+                    <span class="error-message"
+                      >Maximum length exceeded (6 Digit).</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 mb-4">
+              <div class="form-group">
+                <button
+                  class="btn btn-yellow text-uppercase fw-bold mr-2"
+                  type="submit"
+                  [disabled]="capacityRangeForm.invalid"
+                >
+                  Save
+                </button>
+                <button
+                  class="btn btn-yellow text-uppercase fw-bold"
+                  type="button"
+                  (click)="closeModal()"
+                >
+                  close
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

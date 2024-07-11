@@ -1,0 +1,185 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+    <div class="container-fluid">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="row page-header" id="stickyHeader">
+                <div class="col-md-12 col-12">
+                    <h1 class="m-0">Vessel History Report</h1>
+                </div><!-- /.col -->
+                <div class="col-md-8 col-12 text-right">
+
+                </div><!-- /.col -->
+            </div>
+        </div>
+        <div class="row m-0">
+            <div class="col-md-12">
+                <form class="form-horizontal row" [formGroup]="searchForm">
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+                            <div class="col-md-2 mb-10px col-12 mt-4">
+                                IMO Number:
+                            </div>
+                            <div class="col-md-6 mb-10px col-12">
+                                <input type="text" placeholder="Pick one" class="form-control custom-form-control" aria-label="Number" [formControl]="myControl"  matInput formControlName="imo_no" [matAutocomplete]="auto">
+                                <mat-autocomplete #auto="matAutocomplete">
+                                    <mat-option *ngFor="let option of filteredOptions | async" [value]="option.id">
+                                    {{option.value}}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+
+                            <div class="col-md-2 mb-10px col-12 mt-4">
+                                From Date:
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <!-- <div class="col-md-3 mb-10px col-12 mx-auto"> -->
+                                <label class="control-label">Year</label>
+                                <select class="form-control custom-form-control" formControlName="fromYear" (change)="changeToDropDownValueForFromMonths()">
+                                    <option value="">Select Year</option>
+                                    <option *ngFor="let year of getLastYear()">{{year}}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <!-- <div class="col-md-3 mb-10px col-12 mx-auto"> -->
+                                <label class="control-label">Month</label>
+                                <select class="form-control custom-form-control" formControlName="fromMonth">
+                                    <option value="">Select Month</option>
+                                    <option *ngFor="let month of fromMonths;let i = index" [value]="i+1">{{month}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+
+                            <div class="col-md-2 mb-10px col-12 mt-4">
+                                To Date:
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <!-- <div class="col-md-3 mb-10px col-12 mx-auto"> -->
+                                <label class="control-label">Year</label>
+                                <select class="form-control custom-form-control" formControlName="toYear" (change)="changeToDropDownValue()">
+                                    <option value="">Select Year</option>
+                                    <option *ngFor="let year of getLastYear()">{{year}}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-10px col-12">
+                                <!-- <div class="col-md-3 mb-10px col-12 mx-auto"> -->
+                                <label class="control-label">Month</label>
+                                <select class="form-control custom-form-control" formControlName="toMonth">
+                                    <option value="">Select Month</option>
+                                    <option *ngFor="let month of toMonths; let i = index" [value]="i+1">{{month}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ///// -->
+
+                    <div class="col-12 mb-4 mt-4">
+                        <div class="form-group">
+                            <button (click)="getReport()" class="btn btn-yellow text-uppercase fw-semibold"
+                                type="button">Details
+                            </button>
+                            <button class="btn fw-semibold text-decoration-underline" type="button" (click)="clear()">Clear
+                                Search
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- /////---port rotation---//// -->
+            <div class="col-12 mt-2">
+                <div *ngIf="showContent" class="panel panel-white h-100">
+                    <div class="panel-heading d-inline-block float-left" style="color: rgb(24, 23, 20);">
+                        {{vesselDetail.vessel_name}}
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <form class="form-horizontal">
+                            <div class="search-group bg-transparent pl-0">
+                                <button class="btn btn-secondary text-center" (click)="export()">Export To Excel</button>
+                                <!-- <button class="btn btn-secondary text-center ml-2">Export with Excel</button> -->
+                            </div>
+                        </form>
+                    </div>
+                    <div class="panel-body table-responsive pt-3">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>IMO Number</th>
+                                    <th>Teu Cap</th>
+                                    <th class="text-right">Present Operator</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-1 lh-28"><label style="font-weight: bold;">{{vesselDetail.vessel_type}}</label></td>
+                                            
+                                    <td class="py-2 lh-28">{{vesselDetail.IMO_no}}</td>
+                                    <td class="py-2 lh-28">{{vesselDetail.teu_capacity}}</td>
+                                    <td class="text-right lh-28 py-2"> {{vesselDetail.operator_name}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- ///////// -->
+                </div>
+            </div>
+
+            <!-- //------// -->
+            <div class="col-12 mt-2">
+                <div *ngIf="showContent" class="panel panel-white h-100">
+                    <div class="panel-heading" style="color: rgb(24, 23, 20);">
+
+                    </div>
+                    <div class="panel-body table-responsive pt-3">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Sort</th>
+                                    <th>Trade Route</th>
+                                    <th>Service Name</th>
+                                    <th class="text-right">RCD Code</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let report of reports">
+                                    <td>{{ report.add_date | date: 'MMM y'}}</td>
+                                    <td>
+                                        <span *ngIf="report.trade_route_name">
+                                            {{report.trade_route_name}}
+                                        </span>
+                                        <span *ngIf="!report.trade_route_name">
+                                            N/A
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {{report.service_name}}
+                                    </td>
+                                    <td class="text-right">
+                                        {{report.drewry_service_name}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- ///////// -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

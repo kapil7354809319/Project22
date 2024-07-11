@@ -1,0 +1,206 @@
+<app-data-loader *ngIf="(loading | async)"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+  <div class="container-fluid">
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-4 col-12">
+          <h1 class="m-0">Manage Content</h1>
+        </div><!-- /.col -->
+        <div class="col-md-8 col-12 text-right">
+
+        </div><!-- /.col -->
+      </div>
+    </div>
+    <!-- Page Content -->
+    <div class="row m-0">
+      <div class="col-12">
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#home" role="tab">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#methodology" role="tab">Methodology</a>
+          </li>
+          <!-- <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#asktheanalyst" role="tab">Ask the Analyst</a>
+          </li> -->
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="home" role="tabpanel">
+            <form class="form-horizontal row" enctype='multipart/form-data' class="form-horizontal row" method="post"
+              [formGroup]="contentHomeForm" (ngSubmit)="onUpdateHome()">
+              <div class="col-md-12 col-12">
+                <div class="row">
+                  <div class="col-lg-8">
+                    <div class="form-group row">
+                      <div class="col-md-12 col-12 pr-md-2 mb-2">
+                        <label class="control-label">Route Capacity Database</label>
+                        <div class="NgxEditor__Wrapper">
+                          <ngx-editor-menu [editor]="editor5" class="editorbox"> </ngx-editor-menu>
+                          <ngx-editor [editor]="editor5" formControlName="home_description"
+                            [placeholder]="'Type here...'" [(ngModel)]="contentList.title"
+                            class="editorbox"></ngx-editor>
+                        </div>
+                      </div>
+                      <div class="col-md-12 mb-10px pr-md-2 col-12 my-4">
+                        <div *ngIf="contentList.image" class="my-4">
+                          <img [src]="imageBasePath + contentList.image" alt="home" width="600px">
+                        </div>
+                        <input type="file" class="form-control border-0" (change)="onFileSelected($event)"
+                          formControlName="image" accept=".jpeg, .jpg, .png, .gif">
+                        <label class="control-label">Recommended Size: 644 X 355
+                        </label>
+                        <div *ngIf="selectedImage" class="mt-3"><img width="150px" [src]="selectedImage"
+                            alt="Selected File">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button class="btn btn-yellow text-uppercase fw-bold mr-2" type="submit">Save</button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="tab-pane" id="methodology" role="tabpanel">
+            <form class="form-horizontal row" enctype='multipart/form-data' class="form-horizontal row" method="post"
+              [formGroup]="methodologyForm" (ngSubmit)="onUpdateMethodology()">
+              <div class="col-md-12 col-12">
+                <div class="row">
+                  <div class="col-lg-8">
+                    <div class="form-group row">
+                      <div class="col-md-12 col-12 pr-md-2 mb-2">
+                        <label class="control-label">Route Capacity Database</label>
+                        <div class="NgxEditor__Wrapper">
+                          <ngx-editor-menu [editor]="editor" class="editorbox"> </ngx-editor-menu>
+                          <ngx-editor [editor]="editor" formControlName="methodology_description"
+                            [placeholder]="'Type here...'" [(ngModel)]="contentList.methodology_title"
+                            class="editorbox"></ngx-editor>
+                        </div>
+                      </div>
+                      <div class="col-md-12 mb-10px pr-md-2 col-12 my-4">
+                        <div *ngIf="contentList.image" class="my-4">
+                          <img [src]="imageBasePath + contentList.methodology_image" alt="methodology" width="400px">
+                        </div>
+                        <input type="file" class="form-control border-0" (change)="onImageSelected($event)"
+                          formControlName="files" accept=".jpeg, .jpg, .png, .gif">
+                        <label class="control-label">Recommended Size: 644 X 355
+                        </label>
+                        <div *ngIf="selectedImageShow" class="mt-3"><img width="150px" [src]="selectedImageShow"
+                            alt="Selected File">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button class="btn btn-yellow text-uppercase fw-bold mr-2" type="submit">Save</button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="tab-pane" id="asktheanalyst" role="tabpanel">
+            <form class="form-horizontal row" enctype='multipart/form-data' class="form-horizontal row" method="post"
+              [formGroup]="analystForm" (ngSubmit)="onSubmit()">
+              <div class="col-md-12 col-12">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="form-group row">
+                      <div class="col-md-6 col-12 mb-2">
+                        <label class="control-label">Name (Top)</label>
+                        <div class="NgxEditor__Wrapper">
+                          <ngx-editor-menu [editor]="editor1" class="editorheight"> </ngx-editor-menu>
+                          <ngx-editor [editor]="editor1" formControlName="analyst_name" [placeholder]="'Type here...'"
+                            [(ngModel)]="contentList.principal_analyst_name" class="editorheight"></ngx-editor>
+                        </div>
+                      </div>
+                      <div class="col-md-6 col-12 mb-2">
+                        <label class="control-label">Name (Bottom)</label>
+                        <div class="NgxEditor__Wrapper">
+                          <ngx-editor-menu [editor]="editor4" class="editorheight"> </ngx-editor-menu>
+                          <ngx-editor [editor]="editor4" formControlName="research_analyst_name"
+                            [placeholder]="'Type here...'" [(ngModel)]="contentList.research_analyst_name"
+                            class="editorheight"></ngx-editor>
+                        </div>
+                      </div>
+                      <div class="col-md-6 col-12 mb-2">
+                        <label class="control-label">Designation (Top)</label>
+                        <div class="NgxEditor__Wrapper">
+                          <ngx-editor-menu [editor]="editor0" class="editorheight"> </ngx-editor-menu>
+                          <ngx-editor [editor]="editor0" formControlName="analyst_designation"
+                            [placeholder]="'Type here...'" [(ngModel)]="contentList.principal_analyst_designation"
+                            class="editorheight"></ngx-editor>
+                        </div>
+                      </div>
+                      <div class="col-md-6 col-12 mb-2">
+                        <label class="control-label"> Designation (Bottom)</label>
+                        <div class="NgxEditor__Wrapper">
+                          <ngx-editor-menu [editor]="editor3" class="editorheight"> </ngx-editor-menu>
+                          <ngx-editor [editor]="editor3" formControlName="research_analyst_designation"
+                            [placeholder]="'Type here...'" [(ngModel)]="contentList.research_analyst_designation"
+                            class="editorheight"></ngx-editor>
+                        </div>
+                      </div>
+                      <div class="col-md-6 col-12 mb-2">
+                        <label class="control-label"></label>
+                        <div class="NgxEditor__Wrapper">
+                          <ngx-editor-menu [editor]="editor2" class="editorbox"> </ngx-editor-menu>
+                          <ngx-editor [editor]="editor2" formControlName="analyst_text" [placeholder]="'Type here...'"
+                            [(ngModel)]="contentList.principal_analyst_text" class="editorbox"></ngx-editor>
+                        </div>
+                      </div>
+                      <div class="col-md-6 col-12 pr-md-2 mb-2">
+                        <label class="control-label"></label>
+                        <div class="NgxEditor__Wrapper">
+                          <ngx-editor-menu [editor]="editor6" class="editorbox"> </ngx-editor-menu>
+                          <ngx-editor [editor]="editor6" formControlName="research_analyst_text"
+                            [placeholder]="'Type here...'" [(ngModel)]="contentList.research_analyst_text"
+                            class="editorbox"></ngx-editor>
+                        </div>
+                      </div>
+                      <div class="col-md-6 mb-10px col-12 mb-2">
+                        <div *ngIf="contentList.principal_analyst_image" class="my-4">
+                          <img width="150px" src="http://staging.drewryrcd.com/{{contentList.principal_analyst_image}}">
+                        </div>
+                        <input type="file" class="form-control border-0" (change)="onFileSelected($event)"
+                          formControlName="files"
+                          accept=".jpeg, .jpg, .png, .gif, .bmp, .txt, .pdf, .doc, .docx, .ppt, .pptx, .xls, .xlsx">
+                        <div *ngIf="selectedImage" class="mt-3"><img width="150px" [src]="selectedImage"
+                            alt="Selected File">
+                        </div>
+                        <label class="control-label">Recommended Size: 150 X 150</label>
+                      </div>
+                      <div class="col-md-6 mb-10px col-12 mb-2">
+                        <div *ngIf="contentList.research_analyst_image" class="my-4">
+                          <img width="150px" src="http://staging.drewryrcd.com/{{contentList.research_analyst_image}}">
+                        </div>
+                        <input type="file" class="form-control border-0" (change)="onFileSelected($event)"
+                          formControlName="files"
+                          accept=".jpeg, .jpg, .png, .gif, .bmp, .txt, .pdf, .doc, .docx, .ppt, .pptx, .xls, .xlsx">
+                        <div *ngIf="selectedImage" class="mt-3"><img width="150px" [src]="selectedImage"
+                            alt="Selected File">
+                        </div>
+                        <label class="control-label">Recommended Size: 150 X 150</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button class="btn btn-yellow text-uppercase fw-bold mr-2" type="submit">Save</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>

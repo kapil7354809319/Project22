@@ -1,0 +1,605 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+  <div class="container-fluid">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-12 col-12">
+          <h1 class="m-0">Manage Trade Route ({{ tabActive }})</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12 text-right"></div>
+        <!-- /.col -->
+      </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="row m-0">
+      <div class="col-12">
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item">
+            <a (click)="tabChange('Add')" class="nav-link active" data-toggle="tab" href="#addnew" role="tab">Add
+              New</a>
+          </li>
+          <li class="nav-item">
+            <a (click)="tabChange('Search')" class="nav-link" data-toggle="tab" href="#search" role="tab">Search</a>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane active" id="addnew" role="tabpanel">
+            <form class="form-horizontal row" method="post" [formGroup]="tradeForm" (ngSubmit)="onSubmit()">
+              <div class="col-md-12 col-12">
+                <div class="form-group row">
+                  <div class="col-md-3 col-12">
+                    <label class="control-label">Trade Route Name *</label>
+                    <input type="text" class="form-control custom-form-control" placeholder=""
+                      formControlName="trade_route_name" />
+                    <div *ngIf="
+                        tradeForm
+                          ?.get('trade_route_name')
+                          ?.hasError('required') &&
+                        tradeForm?.get('trade_route_name')?.touched
+                      ">
+                      <span class="error-message">Trade Route Name is required</span>
+                    </div>
+                  </div>
+                  <div class="col-md-3 col-12 mb-10px">
+                    <label class="control-label">Out Of Scope %</label>
+                    <input type="text" (keyup)="onKeyUp($event)" class="form-control custom-form-control" placeholder=""
+                      formControlName="out_of_scope" />
+                  </div>
+
+                  <div class="col-md-3 col-12 mb-10px">
+                    <label class="control-label">Dwt Adjustment %</label>
+                    <input type="text" (keyup)="onKeyUp($event)" class="form-control custom-form-control" placeholder=""
+                      formControlName="dwt_adjustment" />
+                  </div>
+
+                  <div class="col-md-3 col-12 mb-10px">
+                    <label class="control-label">High Cube Adjustment %</label>
+                    <input type="text" (keyup)="onKeyUp($event)" class="form-control custom-form-control" placeholder=""
+                      formControlName="high_cube_adjustment" />
+                  </div>
+
+                  <div class="col-md-3 col-12 mb-10px">
+                    <label class="control-label">Sequence</label>
+                    <input type="text" class="form-control custom-form-control" placeholder=""
+                      formControlName="sequence" />
+                    <div *ngIf="
+                        tradeForm.get('sequence')?.hasError('pattern') &&
+                        tradeForm.get('sequence')?.touched
+                      ">
+                      <span class="error-message">Please enter only numeric values.</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 col-12 mb-10px">
+                    <label class="control-label">Direction*</label>
+                    <select class="form-control custom-form-control" formControlName="direction">
+                      <option value="">Select</option>
+                      <option value="Eastbound">Eastbound</option>
+                      <option value="Westbound">Westbound</option>
+                      <option value="Northbound">Northbound</option>
+                      <option value="Southbound">Southbound</option>
+                    </select>
+                    <div *ngIf="
+                        tradeForm?.get('direction')?.hasError('required') &&
+                        tradeForm?.get('direction')?.touched
+                      ">
+                      <span class="error-message">Direction is required</span>
+                    </div>
+                  </div>
+                  <div class="col-md-6 col-12 mb-10px">
+                    <label class="control-label">Show this trade route name in vessel deployment and
+                      captab report</label>
+                    <select class="form-control custom-form-control" formControlName="vessel_deployment">
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 col-12 mb-10px">
+                    <label class="control-label">Valid for Report â€“ Shipping capacity by ports and trade
+                      routes</label>
+                    <select class="form-control custom-form-control" formControlName="shipping_capacity">
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 mb-5">
+                <div class="multiselect row">
+                  <div class="holder col-md-5">
+                    <label class="control-label">All Trades </label>
+                    <select multiple="multiple" id="select1">
+                      <option *ngFor="let trade of tradeList" [value]="trade.trade_id">
+                        {{ trade.trade_name }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-2">
+                    <a id="add" class="m-1 btn btn-yellow text-uppercase fw-bold">To Right</a>
+                    <a id="remove" class="m-1 btn btn-yellow text-uppercase fw-bold">To Left</a>
+                  </div>
+                  <div class="holder col-md-5">
+                    <label class="control-label">Allocated Sub-Trades</label>
+                    <select multiple="multiple" id="select2" #mySelect></select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button class="btn btn-yellow text-uppercase fw-bold mr-2 checkbutton" type="submit">
+                    Add New
+                  </button>
+                  <button class="btn btn-yellow text-uppercase fw-bold" type="button" (click)="resetForm()">
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="tab-pane" id="search" role="tabpanel">
+            <form class="form-horizontal row" [formGroup]="tradeSearchForm" (ngSubmit)="onSearch()">
+              <div class="col-md-12 col-12">
+                <div class="form-group row">
+                  <div class="col-md-6 col-12">
+                    <label class="control-label">Trade Route Name</label>
+                    <input type="text" class="form-control custom-form-control" placeholder=""
+                      formControlName="trade_route_name" />
+                  </div>
+                  <div class="col-md-6 col-12 mb-10px">
+                    <label class="control-label">Direction</label>
+                    <select class="form-control custom-form-control" formControlName="direction">
+                      <option value="">Select</option>
+                      <option value="Eastbound">Eastbound</option>
+                      <option value="Westbound">Westbound</option>
+                      <option value="Northbound">Northbound</option>
+                      <option value="Southbound">Southbound</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 col-12 mb-10px">
+                    <label class="control-label">Show this trade route name in vessel deployment and
+                      captab report</label>
+                    <select class="form-control custom-form-control" formControlName="vessel_deployment">
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 col-12 mb-10px">
+                    <label class="control-label">Valid for Report â€“ Shipping capacity by ports and trade
+                      routes</label>
+                    <select class="form-control custom-form-control" formControlName="shipping_capacity">
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 mb-5">
+                <div class="multiselect row">
+                  <div class="holder col-md-5">
+                    <label class="control-label">All Trades</label>
+                    <select multiple="multiple" id="select3">
+                      <option *ngFor="let trade of tradeSerachList" [value]="trade.trade_id">
+                        {{ trade.trade_name }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-2">
+                    <a id="added1" class="m-1 btn btn-yellow text-uppercase fw-bold">To Right</a>
+                    <a id="removed1" class="m-1 btn btn-yellow text-uppercase fw-bold">To Left</a>
+                  </div>
+                  <div class="holder col-md-5">
+                    <label class="control-label">Allocated Sub-Trades</label>
+                    <select multiple="multiple" id="select4" #mySearch></select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button class="btn btn-yellow text-uppercase fw-bold mr-2" type="submit"
+                    [disabled]="tradeSearchForm.invalid">
+                    Search
+                  </button>
+                  <button class="btn btn-yellow text-uppercase fw-bold" type="button" (click)="resetSearchForm()">
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 mt-2">
+        <div class="panel panel-white h-100">
+          <div class="panel-heading d-inline-block float-left">
+            Trade Route List
+          </div>
+          <div class="d-inline-block float-right text-right">
+            <form class="form-horizontal" [formGroup]="tradeSearchBoxForm">
+              <div class="search-group">
+                <svg class="svg-inline--fa fa-search fa-w-16 text-grey" aria-hidden="true" data-prefix="fa"
+                  data-icon="search" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                  data-fa-i2svg="">
+                  <path fill="currentColor"
+                    d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z">
+                  </path>
+                </svg>
+                <input type="text" class="f-12" placeholder="Search Here" (keyup)="onBoxSearch()"
+                  formControlName="trade_route_name" />
+              </div>
+            </form>
+          </div>
+          <div class="panel-body table-responsive pt-3">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>S.NO</th>
+                  <th (click)="sortData('trade_route_name')">
+                    Trade Route Name
+                    <i class="fas fa-sort" [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'trade_route_name' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'trade_route_name' &&
+                          sortDirection === 'desc'
+                      }"></i>
+                  </th>
+                  <th (click)="sortData('out_of_scope')">
+                    Out Of Scope %
+                    <i class="fas fa-sort" [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'out_of_scope' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'out_of_scope' &&
+                          sortDirection === 'desc'
+                      }"></i>
+                  </th>
+                  <th (click)="sortData('dwt_adjustment')">
+                    Dwt Adjustment %
+                    <i class="fas fa-sort" [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'dwt_adjustment' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'dwt_adjustment' &&
+                          sortDirection === 'desc'
+                      }"></i>
+                  </th>
+                  <th (click)="sortData('high_cube_adjustment')">
+                    High Cube Adjustment %
+                    <i class="fas fa-sort" [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'high_cube_adjustment' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'high_cube_adjustment' &&
+                          sortDirection === 'desc'
+                      }"></i>
+                  </th>
+                  <th (click)="sortData('direction')">
+                    Direction
+                    <i class="fas fa-sort" [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'direction' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'direction' &&
+                          sortDirection === 'desc'
+                      }"></i>
+                  </th>
+                  <th class="text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let tradeRoute of tradeRouteList; let index = index">
+                  <td class="py-1 lh-28">{{ index + fromStart.from }}.</td>
+                  <td class="py-2 lh-28">{{ tradeRoute.trade_route_name }}</td>
+                  <td class="py-2 lh-28">{{ tradeRoute.out_of_scope }}</td>
+                  <td class="py-2 lh-28">{{ tradeRoute.dwt_adjustment }}</td>
+                  <td class="py-2 lh-28">
+                    {{ tradeRoute.high_cube_adjustment }}
+                  </td>
+                  <td class="py-2 lh-28">{{ tradeRoute.direction }}</td>
+                  <td class="text-right lh-28 py-2">
+                    <button (click)="viewData(tradeRoute.trade_route_id)" class="btn btn-transparent btn-sm my-0">
+                      View
+                    </button>
+                    <button (click)="editSelect(tradeRoute.trade_route_id)" class="btn btn-blue btn-sm my-0 px-3"
+                      style="background-color: #97bfe480; color: #132e67">
+                      Edit
+                    </button>
+                    <button (click)="
+                        deleteData(
+                          tradeRoute.trade_route_id,
+                          tradeRoute.trade_route_name
+                        )
+                      " class="btn btn-transparent btn-sm my-0">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="tradeRouteList && tradeRouteList.length === 0">
+                  <td colspan="4"><strong>No records found</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-paggination">
+            <div class="page-counter">
+              Showing
+              <select class="" [(ngModel)]="per_page" (change)="onPerPageChange($event)">
+                <option *ngFor="let value of getPerPageCount" [value]="value">
+                  {{ value }}
+                </option>
+              </select>
+              of {{ total }} entries
+            </div>
+            <div class="custom-paggination float-right">
+              <ul>
+                <li *ngFor="let pagination of pagination; let index = index">
+                  <ng-container *ngIf="pagination.label !== '...'; else emptyLabel">
+                    <a [innerHTML]="pagination.label" [ngClass]="{
+                        active: pagination.label == fromStart.current_page,
+                        disabled: pagination.url == null
+                      }" (click)="changePagination(pagination.url)"></a>
+                  </ng-container>
+                  <ng-template #emptyLabel>
+                    <a>{{ pagination.label }}</a>
+                  </ng-template>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>
+
+<div id="myModal" class="modal fade editModal" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Trade Route</h5>
+        <button type="button" class="close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal row" method="post" [formGroup]="tradeForm" (ngSubmit)="onUpdate()"
+          *ngIf="editListData && editListData.length > 0">
+          <div *ngFor="let editList of editListData">
+            <div class="col-md-12 col-12">
+              <div class="form-group row">
+                <div class="col-md-3 col-12">
+                  <label class="control-label">Trade Route Name *</label>
+                  <input type="hidden" formControlName="id" [(ngModel)]="editList.trade_route_id" />
+                  <input type="text" class="form-control custom-form-control" placeholder=""
+                    formControlName="trade_route_name" [(ngModel)]="editList.trade_route_name" />
+                  <div *ngIf="
+                      tradeForm
+                        ?.get('trade_route_name')
+                        ?.hasError('required') &&
+                      tradeForm?.get('trade_route_name')?.touched
+                    ">
+                    <span class="error-message">Trade Route Name is required</span>
+                  </div>
+                </div>
+                <div class="col-md-3 col-12 mb-10px">
+                  <label class="control-label">Out Of Scope %</label>
+                  <input type="text" (keyup)="onKeyUp($event)" [(ngModel)]="editList.out_of_scope"
+                    class="form-control custom-form-control" placeholder="" formControlName="out_of_scope" />
+                </div>
+
+                <div class="col-md-3 col-12 mb-10px">
+                  <label class="control-label">Dwt Adjustment %</label>
+                  <input type="text" (keyup)="onKeyUp($event)" class="form-control custom-form-control" placeholder=""
+                    formControlName="dwt_adjustment" [(ngModel)]="editList.dwt_adjustment" />
+                </div>
+
+                <div class="col-md-3 col-12 mb-10px">
+                  <label class="control-label">High Cube Adjustment %</label>
+                  <input type="text" (keyup)="onKeyUp($event)" class="form-control custom-form-control" placeholder=""
+                    formControlName="high_cube_adjustment" [(ngModel)]="editList.high_cube_adjustment" />
+                </div>
+
+                <div class="col-md-3 col-12 mb-10px">
+                  <label class="control-label">Sequence</label>
+                  <input type="text" class="form-control custom-form-control" placeholder="" formControlName="sequence"
+                    [(ngModel)]="editList.sequence" />
+                  <div *ngIf="
+                      tradeForm.get('sequence')?.hasError('pattern') &&
+                      tradeForm.get('sequence')?.touched
+                    ">
+                    <span class="error-message">Please enter only numeric values.</span>
+                  </div>
+                </div>
+
+                <div class="col-md-3 col-12 mb-10px">
+                  <label class="control-label">Direction*</label>
+                  <select class="form-control custom-form-control" formControlName="direction"
+                    [(ngModel)]="editList.direction">
+                    <option value="">Select</option>
+                    <option value="Eastbound">Eastbound</option>
+                    <option value="Westbound">Westbound</option>
+                    <option value="Northbound">Northbound</option>
+                    <option value="Southbound">Southbound</option>
+                  </select>
+                  <div *ngIf="
+                      tradeForm?.get('direction')?.hasError('required') &&
+                      tradeForm?.get('direction')?.touched
+                    ">
+                    <span class="error-message">Direction is required</span>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12 mb-10px">
+                  <label class="control-label">Show this trade route name in vessel deployment and captab
+                    report</label>
+                  <select class="form-control custom-form-control" [(ngModel)]="editList.vessel_deployment_status"
+                    formControlName="vessel_deployment">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
+                </div>
+                <div class="col-md-6 col-12 mb-10px">
+                  <label class="control-label">Valid for Report â€“ Shipping capacity by ports and trade
+                    routes</label>
+                  <select class="form-control custom-form-control" [(ngModel)]="editList.valid_for_reports"
+                    formControlName="shipping_capacity">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 mb-5">
+              <div class="multiselect row">
+                <div class="holder col-md-5">
+                  <label class="control-label">All Trades </label>
+                  <select multiple="multiple" id="select1" class="select1">
+                    <option *ngFor="let trade of tradeEditForm" [value]="trade.trade_id">
+                      {{ trade.trade_name }}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <a id="add" class="add m-1 btn btn-yellow text-uppercase fw-bold">To Right</a>
+                  <a id="remove" class="remove m-1 btn btn-yellow text-uppercase fw-bold">To Left</a>
+                </div>
+                <div class="holder col-md-5">
+                  <label class="control-label">Allocated Sub-Trades</label>
+                  <select multiple="multiple" id="select2" class="select2" #mySelectEdit>
+                    <option *ngFor="let tradedata of editList.traderoutetrade" [value]="tradedata.trade_id">
+                      {{ tradedata.trade_name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 mb-4">
+              <div class="form-group">
+                <button class="btn btn-yellow text-uppercase fw-bold mr-2" type="submit" [disabled]="tradeForm.invalid">
+                  Save
+                </button>
+                <button (click)="closeModal()" class="btn btn-yellow text-uppercase fw-bold" type="button">
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="viewModal" class="modal fade editModal" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">View Trade Route</h5>
+        <button type="button" class="close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-horizontal row" *ngIf="editListData && editListData.length > 0">
+          <div *ngFor="let editList of editListData">
+            <div class="col-md-12 col-12 viewtraderoute">
+              <div class="form-group row">
+                <div class="col-md-6 col-12">
+                  <div class="d-flex justify-content-between">
+                    <label class="control-label">Trade Route Name :-</label>
+                    <span>{{ editList.trade_route_name }}</span>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12 mb-10px">
+                  <div class="d-flex justify-content-between">
+                    <label class="control-label">Out Of Scope % :-</label>
+                    <span>{{ editList.out_of_scope }}</span>
+                  </div>
+                </div>
+
+                <div class="col-md-6 col-12 mb-10px">
+                  <div class="d-flex justify-content-between">
+                    <label class="control-label">Dwt Adjustment % :-</label>
+                    <span>{{ editList.dwt_adjustment }}</span>
+                  </div>
+                </div>
+
+                <div class="col-md-6 col-12 mb-10px">
+                  <div class="d-flex justify-content-between">
+                    <label class="control-label">High Cube Adjustment % :-</label>
+                    <span>{{ editList.high_cube_adjustment }}</span>
+                  </div>
+                </div>
+
+                <div class="col-md-6 col-12 mb-10px">
+                  <div class="d-flex justify-content-between">
+                    <label class="control-label">Sequence :-</label>
+                    <span>{{ editList.sequence }}</span>
+                  </div>
+                </div>
+
+                <div class="col-md-6 col-12 mb-10px">
+                  <div class="d-flex justify-content-between">
+                    <label class="control-label">Direction :-</label>
+                    <span>{{ editList.direction }}</span>
+                  </div>
+                </div>
+
+                <div class="col-md-6 col-12 mb-10px">
+                  <div class="d-flex justify-content-between">
+                    <label class="control-label">Show this trade route name in vessel deployment and
+                      captab report :-</label>
+                    <span>{{ editList.vessel_deployment_status }}</span>
+                  </div>
+                </div>
+
+                <div class="col-md-6 col-12 mb-10px">
+                  <div class="d-flex justify-content-between">
+                    <label class="control-label">Valid for Report â€“ Shipping capacity by ports and trade
+                      routes :-</label>
+                    <span>{{ editList.valid_for_reports }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 mb-5">
+              <div class="multiselect row">
+                <div class="holder col-md-5">
+                  <label class="control-label">Allocated Sub-Trades :-</label>
+                  <div>
+                    <span *ngFor="let tradedata of editList.traderoutetrade">
+                      {{ tradedata.trade_name }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 mb-4">
+              <div class="form-group">
+                <button (click)="closeModal()" class="btn btn-yellow text-uppercase fw-bold" type="button">
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

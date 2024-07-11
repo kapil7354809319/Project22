@@ -1,0 +1,46 @@
+::ng-deep {
+    .monthly-archive .mat-mdc-form-field-subscript-wrapper {
+        height: 0px;
+    }
+
+    .monthly-archive .mat-mdc-form-field-infix {
+        min-height: 30px !important;
+        padding: 6px !important;
+    }
+
+    .monthly-archive mat-form-field {
+        width: 100%;
+    }
+    // .mat-mdc-text-field-wrapper:not(.mdc-text-field--outlined) .mat-mdc-form-field-infix,
+    // .mdc-text-field{
+    //     padding: 0px !important;
+    // }
+
+    .monthly-archive .mat-mdc-text-field-wrapper .mat-mdc-form-field-input-control:focus{
+        outline: none !important;
+    }
+    .monthly-archive .mat-mdc-icon-button.mat-mdc-button-base {
+        --mdc-icon-button-state-layer-size: 36px;
+    }
+
+    .monthly-archive .mat-mdc-icon-button .mat-mdc-button-touch-target {
+        height: 34px;
+    }
+
+    .monthly-archive .mat-mdc-icon-button.mat-mdc-button-base {
+        padding: 0px;
+    }
+
+    .monthly-archive .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+        background-color: #fff !important;
+        border: none !important;
+        border-radius: 2px;
+        padding-left: 0px;
+    }
+
+    .monthly-archive mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-line-ripple::before,
+    .monthly-archive .mdc-line-ripple {
+        display: none !important;
+    }
+
+}

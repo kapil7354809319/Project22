@@ -1,0 +1,540 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+  <div class="container-fluid">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-4 col-12">
+          <h1 class="m-0">Logs</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12 text-right"></div>
+        <!-- /.col -->
+      </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="row m-0">
+      <div class="col-12 mt-2">
+        <div class="panel panel-white h-100">
+          <div class="panel-heading d-inline-block float-left">
+            Service Log List
+          </div>
+          <div class="panel-body table-responsive pt-3">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Service Name</th>
+                  <th>Updated By</th>
+                  <th>Update Date</th>
+                  <th>Log Description</th>
+                  <th>Archive Available</th>
+                  <th class="text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="let serviceLog of serviceLogList; let index = index"
+                >
+                  <td class="py-2 lh-28">
+                    <span *ngIf="serviceLog.archived_service != ''">
+                      {{ serviceLog?.archived_service?.service_name }}
+                    </span>
+                    <span *ngIf="!serviceLog?.archived_service?.service_name">
+                      {{ serviceLog?.current_service_name.service_name }}
+                    </span>
+                  </td>
+                  <td class="py-2 lh-28">
+                    {{ serviceLog?.user?.user_display_name }}
+                  </td>
+                  <td class="py-2 lh-28">
+                    {{ serviceLog.updated_at | date: 'dd/MM/yyyy hh:mm a' }}
+                  </td>
+                  <td class="py-2 lh-28">{{ serviceLog.change_reasion }}</td>
+
+                  <td class="py-2 lh-28">{{ serviceLog.archive_available }}</td>
+                  <td class="py-2 lh-28">
+                    <div *ngIf="log_type; else ForCurrentService">
+                      <button
+                        (click)="
+                          viewService(serviceLog.archive_service_change_log_id)
+                        "
+                        class="btn btn-blue btn-sm my-0 px-3"
+                        style="background-color: #97bfe480; color: #132E67"
+                      >
+                        View Detail
+                      </button>
+                    </div>
+                    <ng-template #ForCurrentService>
+                      <span
+                      *ngIf="
+                        serviceLog.updated_zip_data;
+                        else notAvailableArchive
+                      "
+                    >
+                      <button
+                        (click)="
+                          viewService(serviceLog.current_service_change_log_id)
+                        "
+                        class="btn btn-blue btn-sm my-0 px-3"
+                        style="background-color: #97bfe480; color: #132E67"
+                      >
+                        View Detail
+                      </button>
+                    </span>
+                    <ng-template #notAvailableArchive> N/A </ng-template>
+                    </ng-template>
+                  </td>
+                  <!-- <td class="text-right lh-28 py-2">
+                    <button
+                      (click)="viewData(serviceLog.trade_route_id)"
+                      class="btn btn-transparent btn-sm my-0"
+                    >
+                      View
+                    </button>
+                    <button
+                      (click)="editSelect(serviceLog.trade_route_id)"
+                      class="btn btn-blue btn-sm my-0 px-3"
+                      style="background-color: #97bfe480; color: #132e67"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      (click)="
+                        deleteData(
+                            serviceLog.trade_route_id,
+                            serviceLog.trade_route_name
+                        )
+                      "
+                      class="btn btn-transparent btn-sm my-0"
+                    >
+                      Delete
+                    </button>
+                  </td> -->
+                </tr>
+                <tr *ngIf="serviceLogList && serviceLogList.length === 0">
+                  <td colspan="4"><strong>No records found</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>
+
+<!-- View service Modal start -->
+<div
+  id="viewServiceModal"
+  class="modal fade editModal service-view"
+  tabindex="-1"
+  role="dialog"
+  data-backdrop="static"
+>
+  <form class="form-horizontal row" method="post">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Service View</h5>
+          <button type="button" class="close" (click)="closeServiceModal()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" *ngFor="let serviceObject of serviceViewObject">
+          <div class="col-12 mt-2">
+            <div class="panel panel-white h-100 service-classification-table">
+              <div class="panel-body table-responsive pt-3">
+                <table class="table" align="left" id="add_class_box">
+                  <tbody>
+                    <tr>
+                      <td align="right">
+                        <label>Service Name:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b
+                          >{{ serviceObject?.service_name }}
+                          <a>
+                            <img
+                              width="25"
+                              src="../assets/images/news_icon.png"
+                              title="News"
+                            />
+                          </a>
+                        </b>
+                      </td>
+                      <td align="right">
+                        <label>Service Frequency:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject?.service_frequency }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Round Voyage Start Date:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject?.service_start_date_current }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Round Voyage End Date:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject?.service_end_date_current }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Service Alliance:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>
+                          {{
+                            serviceObject?.serviceAlliance.ServiceAllianceArray
+                              .alliance_name
+                          }}
+                        </b>
+                      </td>
+                      <td align="right">
+                        <label>Service Code:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject?.service_code }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Service Starting Date:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject?.starting_date_attribute }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Service End Date:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b></b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Drewry Reference Code:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{
+                          serviceObject?.service_drewry_reference_name
+                        }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Service Status:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject?.service_status_name }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Service Type:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject?.service_type_name }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Service Routing:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject?.canal_name }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Total Vessel:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject?.serviceVessels.total_vessels }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Active Vessel:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{
+                          serviceObject?.serviceVessels.no_of_active_vessels
+                        }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Missed Vessel:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{
+                          serviceObject?.serviceVessels.no_of_missed_vessels
+                        }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Round Voyage Days:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject?.service_round_voyage_days }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">
+                        <label>Average Capacity:</label>
+                      </td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject?.service_average_vessel_size }}</b>
+                      </td>
+                      <td align="right">
+                        <label>Remarks:</label>
+                      </td>
+                      <td class="fieldbox" width="300px">
+                        <b>{{ serviceObject?.service_remarks }}</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="right">Performa Frequencty:</td>
+                      <td class="fieldbox">
+                        <b>{{ serviceObject?.performa_frequency }}</b>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2">
+            <div class="panel panel-white h-100 service-classification-table">
+              <div class="panel-heading d-inline-block float-left">
+                Service Ports
+              </div>
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Port Name</th>
+                      <th>Arrival Days</th>
+                      <th>Departure Days</th>
+                      <th>Arrival Day</th>
+                      <th>Departute Day</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      class="table_row_1"
+                      *ngFor="
+                        let port of serviceObject?.servicePorts.ServicePortArray
+                      " [class.add]="port.class == 'new'" [class.remove]="port.class == 'remove'"
+                    >
+                      <td
+                        class="service_name_class"
+                        title="Port Departure Days Can not be less than port arrival days;"
+                      >
+                        {{ port.port_name }}
+                      </td>
+                      <td>{{ port.arrival_days }}</td>
+                      <td>{{ port.departure_days }}</td>
+                      <td>{{ port.arrival_day }}</td>
+                      <td>{{ port.departure_day }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2">
+            <div class="panel panel-white h-100 service-classification-table">
+              <div class="panel-heading d-inline-block float-left">
+                Service Trade Routes
+              </div>
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Primary</th>
+                      <th>Trade Route Name</th>
+                      <th title="123">Way Port Percentage %</th>
+                      <th>Out of Scope %</th>
+                      <th>Dwt Adjustment %</th>
+                      <th>High Cube Adjustment %</th>
+                      <th>Vessel Development</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      class="table_row_1"
+                      *ngFor="
+                        let tradeRoutes of serviceObject?.serviceTradeRoutes
+                          .ServiceTradeRouteArray
+                      "  [class.add]="tradeRoutes.class == 'new'" [class.remove]="tradeRoutes.class == 'remove'"
+                    >
+                      <td>
+                        <div
+                          *ngIf="
+                            tradeRoutes.service_primary_trade_route =='Yes';
+                            else elseBlock
+                          "
+                        >
+                          YES
+                        </div>
+                        <ng-template #elseBlock> NO </ng-template>
+                      </td>
+                      <td class="service_name_class" title="">
+                        {{ tradeRoutes.trade_route_name }}
+                      </td>
+                      <td>
+                        {{ tradeRoutes.wayport_percentage }}
+                      </td>
+                      <td>
+                        {{ tradeRoutes.out_of_scope }}
+                      </td>
+                      <td>
+                        {{ tradeRoutes.dwt_adjustment }}
+                      </td>
+                      <td>
+                        {{ tradeRoutes.high_cube_adjustment }}
+                      </td>
+                      <td>
+                        <div
+                          *ngIf="
+                            tradeRoutes.vessel_deployment_flag;
+                            else elseBlockShow
+                          "
+                        >
+                          YES
+                        </div>
+                        <ng-template #elseBlockShow> NO </ng-template>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2">
+            <div class="panel panel-white h-100 service-classification-table">
+              <div class="panel-heading d-inline-block float-left">
+                Operator Detail
+              </div>
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Operator Name</th>
+                      <th>Alias Name</th>
+                      <th>Schedule Hyperlink</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      class="table_row_1"
+                      *ngFor="
+                        let aliases of serviceObject?.serviceAliases
+                          .ServiceAliasArray
+                      " [class.add]="aliases.class == 'new'" [class.remove]="aliases.class == 'remove'"
+                    >
+                      <td>{{ aliases.operator_name }}</td>
+                      <td>{{ aliases.alias_name }}</td>
+                      <td>{{ aliases.schedule_hyperlink }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2">
+            <div class="panel panel-white h-100 service-classification-table">
+              <div class="panel-heading d-inline-block float-left">
+                Service Vessels
+              </div>
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Vessel Name</th>
+                      <th>Teu Capacity</th>
+                      <th>Operator Name</th>
+                      <th>IMO No.</th>
+                      <th>Ownership Status</th>
+                      <th>Move To</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container
+                      *ngIf="
+                        serviceObject?.serviceVessels.ServiceVesselArray
+                          .length > 0;
+                        else noDataBlock
+                      "
+                    >
+                      <tr
+                        class="table_row_1"
+                        *ngFor="
+                          let serviceVessel of serviceObject?.serviceVessels
+                            .ServiceVesselArray
+                        " [class.add]="serviceVessel.class == 'new'" [class.remove]="serviceVessel.class == 'remove'"
+                      >
+                        <td>{{ serviceVessel.vessel_name }}</td>
+                        <td>{{ serviceVessel.teu_capacity }}</td>
+                        <td>{{ serviceVessel.operator_name }}</td>
+                        <td>{{ serviceVessel.IMO_no }}</td>
+                        <td>{{ serviceVessel.ownership_status }}</td>
+                        <td>{{ serviceVessel.move_to_service }}</td>
+                      </tr>
+                    </ng-container>
+                    <ng-template #noDataBlock>
+                      <tr>
+                        <td colspan="6" align="center">
+                          You should choose at least a single vessel.
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2">
+            <div class="panel panel-white h-100 service-classification-table">
+              <div class="panel-heading d-inline-block float-left">
+                Service Operators
+              </div>
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Operator Name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      class="table_row_1"
+                      *ngFor="
+                        let serviceOperator of serviceObject?.serviceOperators
+                          .serviceOperatorsArray
+                      " [class.add]="serviceOperator.class == 'new'" [class.remove]="serviceOperator.class == 'remove'"
+                    >
+                      <td>{{ serviceOperator.operator_name ?  serviceOperator.operator_name : serviceOperator 
+                           }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2 text-center">
+            <button
+              class="btn btn-yellow text-uppercase fw-bold mr-2"
+              (click)="closeServiceModal()"
+              type="button"
+            >
+              BACK
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

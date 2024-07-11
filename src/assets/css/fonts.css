@@ -1,0 +1,81 @@
+@font-face {
+    font-family: 'Helvetica Neue LT Std';
+    src: url('/assets/fonts/HelveticaNeueLTStd-Bd.woff2') format('woff2'),
+        url('/assets/fonts/HelveticaNeueLTStd-Bd.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Helvetica Neue LT Std';
+    src: url('/assets/fonts/HelveticaNeueLTStd-Hv.woff2') format('woff2'),
+        url('/assets/fonts/HelveticaNeueLTStd-Hv.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Helvetica Neue LT Std';
+    src: url('/assets/fonts/HelveticaNeueLTStd-It.woff2') format('woff2'),
+        url('/assets/fonts/HelveticaNeueLTStd-It.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Helvetica Neue LT Std 300 normal';
+    src: url('/assets/fonts/HelveticaNeueLTStd-Lt.woff2') format('woff2'),
+        url('/assets/fonts/HelveticaNeueLTStd-Lt.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Helvetica Neue LT Std';
+    src: url('/assets/fonts/HelveticaNeueLTStd-Md.woff2') format('woff2'),
+        url('/assets/fonts/HelveticaNeueLTStd-Md.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Helvetica Neue LT Std';
+    src: url('/assets/fonts/HelveticaNeueLTStd-LtIt.woff2') format('woff2'),
+        url('/assets/fonts/HelveticaNeueLTStd-LtIt.woff') format('woff');
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Helvetica Neue LT Std';
+    src: url('/assets/fonts/HelveticaNeueLTStd-Roman.woff2') format('woff2'),
+        url('/assets/fonts/HelveticaNeueLTStd-Roman.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Wingdings';
+    src: url('/assets/fonts/Wingdings-Regular.woff2') format('woff2'),
+        url('/assets/fonts/Wingdings-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Minion Pro';
+    src: url('/assets/fonts/MinionPro-Regular.woff2') format('woff2'),
+        url('/assets/fonts/MinionPro-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+

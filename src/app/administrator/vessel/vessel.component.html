@@ -1,0 +1,2350 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+  <div class="container-fluid">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-12 col-12">
+          <h1 class="m-0">Manage Vessel ({{ tabActive }})</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12 text-right"></div>
+        <!-- /.col -->
+      </div>
+    </div>
+    <!-- Page Content -->
+    <div class="row m-0">
+      <div class="col-12">
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item">
+            <a
+              (click)="resetSearchForm('Add')"
+              class="nav-link"
+              data-toggle="tab"
+              href="#addnew"
+              role="tab"
+              >Add New</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              (click)="resetSearchForm('Search')"
+              class="nav-link active"
+              data-toggle="tab"
+              href="#search"
+              role="tab"
+              >Search</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              (click)="otherVessel()"
+              data-toggle="tab"
+              href="#othervessel"
+              role="tab"
+              >Other Vessel</a
+            >
+          </li>
+          <!-- <li class="nav-item">
+            <a
+              class="nav-link"
+              data-toggle="tab"
+              href="#verifyvessel"
+              role="tab"
+              >Verify Vessel</a
+            >
+          </li> -->
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              (click)="deletedVessel()"
+              data-toggle="tab"
+              href="#deletedvessel"
+              role="tab"
+              >Deleted Vessel</a
+            >
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane" id="addnew" role="tabpanel">
+            <form
+              class="form-horizontal row"
+              method="post"
+              [formGroup]="vesselForm"
+              (ngSubmit)="onSubmit()"
+            >
+              <div class="col-md-12 col-12">
+                <div class="form-group row">
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Vessel Name*</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="vessel_name"
+                    />
+                    <div
+                      *ngIf="
+                        vesselForm?.get('vessel_name')?.hasError('required') &&
+                        vesselForm?.get('vessel_name')?.touched
+                      "
+                    >
+                      <span class="error-message">Vessel Name is required</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Vessel Ex Name</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="vessel_ex_name"
+                    />
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">IMO No.*</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="IMO_no"
+                    />
+                    <div
+                      *ngIf="
+                        vesselForm?.get('IMO_no')?.hasError('required') &&
+                        vesselForm?.get('IMO_no')?.touched
+                      "
+                    >
+                      <span class="error-message">IMO No. is required</span>
+                    </div>
+                    <div
+                      *ngIf="
+                        vesselForm.get('IMO_no')?.hasError('pattern') &&
+                        vesselForm.get('IMO_no')?.touched
+                      "
+                    >
+                      <span class="error-message"
+                        >Please enter only numeric values.</span
+                      >
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Teu Capacity*</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="teu_capacity"
+                      (keyup)="getTeuCapacityRange()"
+                    />
+                    <div
+                      *ngIf="
+                        vesselForm?.get('teu_capacity')?.hasError('required') &&
+                        vesselForm?.get('teu_capacity')?.touched
+                      "
+                    >
+                      <span class="error-message"
+                        >Teu Capacity is required</span
+                      >
+                    </div>
+                    <div
+                      *ngIf="
+                        vesselForm.get('teu_capacity')?.hasError('pattern') &&
+                        vesselForm.get('teu_capacity')?.touched
+                      "
+                    >
+                      <span class="error-message"
+                        >Please enter only numeric values.</span
+                      >
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Refer Teu Capacity</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="refer_teu_capacity"
+                    />
+                    <div
+                      *ngIf="
+                        vesselForm
+                          .get('refer_teu_capacity')
+                          ?.hasError('pattern') &&
+                        vesselForm.get('refer_teu_capacity')?.touched
+                      "
+                    >
+                      <span class="error-message"
+                        >Please enter only numeric values.</span
+                      >
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Ship Dwt*</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="ship_dwt"
+                    />
+                    <div
+                      *ngIf="
+                        vesselForm?.get('ship_dwt')?.hasError('required') &&
+                        vesselForm?.get('ship_dwt')?.touched
+                      "
+                    >
+                      <span class="error-message">Ship Dwt is required</span>
+                    </div>
+                    <div
+                      *ngIf="
+                        vesselForm.get('ship_dwt')?.hasError('pattern') &&
+                        vesselForm.get('ship_dwt')?.touched
+                      "
+                    >
+                      <span class="error-message"
+                        >Please enter only numeric values.</span
+                      >
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Design Speed</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="design_speed"
+                    />
+                    <div
+                      *ngIf="
+                        vesselForm.get('design_speed')?.hasError('pattern') &&
+                        vesselForm.get('design_speed')?.touched
+                      "
+                    >
+                      <span class="error-message"
+                        >Please enter only numeric values.</span
+                      >
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Year Build*</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="year_build"
+                    />
+                    <div
+                      *ngIf="
+                        vesselForm?.get('year_build')?.hasError('required') &&
+                        vesselForm?.get('year_build')?.touched
+                      "
+                    >
+                      <span class="error-message">Year Build is required</span>
+                    </div>
+
+                    <div *ngIf="!vesselForm?.get('year_build')?.hasError('required') && vesselForm?.get('year_build')?.hasError('yearRange') && vesselForm?.get('year_build')?.touched">
+                      <span class="error-message">Year Build must be between 1901 and 2155</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Flag</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="flag"
+                    />
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Beam</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="beam"
+                    />
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Draft</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="draft"
+                    />
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Owner Company*</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="owner_company"
+                    />
+                    <div
+                      *ngIf="
+                        vesselForm
+                          ?.get('owner_company')
+                          ?.hasError('required') &&
+                        vesselForm?.get('owner_company')?.touched
+                      "
+                    >
+                      <span class="error-message"
+                        >Owner Company is required</span
+                      >
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Ship EEDI Value</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="ship_EEDI_value"
+                    />
+                    <div
+                      *ngIf="
+                        vesselForm
+                          .get('ship_EEDI_value')
+                          ?.hasError('pattern') &&
+                        vesselForm.get('ship_EEDI_value')?.touched
+                      "
+                    >
+                      <span class="error-message"
+                        >Please enter only numeric values.</span
+                      >
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label">Ship Main Fuel Type</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="ship_main_fuel_type"
+                    />
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label"
+                      >Ship Main Engine Fuel Consumption</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="ship_main_engine_fuel_consumption"
+                    />
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label"
+                      >Ship Auxiliary Fuel Type</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="ship_auxiliary_fuel_type"
+                    />
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12">
+                    <label class="control-label"
+                      >Ship Auxiliary Fuel Consumption</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="ship_auxiliary_fuel_consumption"
+                    />
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12 mb-10px">
+                    <label class="control-label">Teu Capacity Range</label>
+                    <select
+                      class="form-control custom-form-control"
+                      formControlName="teu_capacity_range"
+                    >
+                      <option value="">Select</option>
+                      <option
+                        *ngFor="let capacityrange of capacityrangeList"
+                        [value]="capacityrange.teucapacity_range_id"
+                      >
+                        {{ capacityrange.teu_capacity_range }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12 mb-10px">
+                    <label class="control-label">Ownership Status*</label>
+                    <select
+                      class="form-control custom-form-control"
+                      formControlName="ownership_status"
+                    >
+                      <option value="">Select</option>
+                      <option value="Owned">Owned</option>
+                      <option value="Chartered">Chartered</option>
+                    </select>
+                    <div
+                      *ngIf="
+                        vesselForm
+                          ?.get('ownership_status')
+                          ?.hasError('required') &&
+                        vesselForm?.get('ownership_status')?.touched
+                      "
+                    >
+                      <span class="error-message"
+                        >Ownership Status is required</span
+                      >
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12 mb-10px">
+                    <label class="control-label">Vessel Type*</label>
+                    <select
+                      class="form-control custom-form-control"
+                      formControlName="vessel_type"
+                    >
+                      <option value="">Select</option>
+                      <option value="Cellular">Cellular</option>
+                      <option value="Non-Cellular">Non-Cellular</option>
+                      <option value="Fully Cellular Container">
+                        Fully Cellular Container
+                      </option>
+                    </select>
+                    <div
+                      *ngIf="
+                        vesselForm?.get('vessel_type')?.hasError('required') &&
+                        vesselForm?.get('vessel_type')?.touched
+                      "
+                    >
+                      <span class="error-message">Vessel Type is required</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12 mb-10px">
+                    <label class="control-label">Operator*</label>
+                    <select
+                      class="form-control custom-form-control"
+                      formControlName="operator"
+                    >
+                      <option value="">Select</option>
+                      <option
+                        *ngFor="let operator of operatorList"
+                        [value]="operator.operator_id"
+                      >
+                        {{ operator.operator_name }}
+                      </option>
+                    </select>
+                    <div
+                      *ngIf="
+                        vesselForm?.get('operator')?.hasError('required') &&
+                        vesselForm?.get('operator')?.touched
+                      "
+                    >
+                      <span class="error-message">Operator is required</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12 mb-10px">
+                    <label class="control-label">Ship Status</label>
+                    <select
+                      class="form-control custom-form-control"
+                      formControlName="ship_status"
+                    >
+                      <option value="">Select</option>
+                      <option value="Active">Active</option>
+                      <option value="In Service">In Service</option>
+                      <option value="Inactive">Inactive</option>
+                      <option value="Shelved">Shelved</option>
+                      <option value="Suspended">Suspended</option>
+                      <option value="Demolished">Demolished</option>
+                      <option value="Idle/Laid up">Idle/Laid up</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold mr-2"
+                    type="submit"
+                  >
+                    Add New
+                  </button>
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold"
+                    type="button"
+                    (click)="resetForm()"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <div class="panel panel-white h-100">
+              <div class="panel-heading d-inline-block float-left">
+                Vessel List
+              </div>
+              <div
+                class="panel-heading d-inline-block float-right d-flex align-items-center"
+              >
+                <form
+                  class="form-horizontal"
+                  method="post"
+                  [formGroup]="vesselSearchBox"
+                >
+                  <div class="search-group">
+                    <svg
+                      class="svg-inline--fa fa-search fa-w-16 text-grey"
+                      aria-hidden="true"
+                      data-prefix="fa"
+                      data-icon="search"
+                      role="img"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 512 512"
+                      data-fa-i2svg=""
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"
+                      ></path>
+                    </svg>
+                    <input
+                      type="text"
+                      class="f-12"
+                      placeholder="Search Here"
+                      (keyup)="onSearchBox()"
+                      formControlName="searching"
+                    />
+                  </div>
+                </form>
+              </div>
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped">
+                  <thead>
+                    <tr></tr>
+                    <tr>
+                      <th>S.NO</th>
+                      <th (click)="sortData('vessel_name')">
+                        Vessel Name
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'vessel_name' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'vessel_name' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('vessel_ex_name')">
+                        Vessel Ex Name
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'vessel_ex_name' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'vessel_ex_name' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('vessel_type')">
+                        Vessel Type
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'vessel_type' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'vessel_type' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('operator_name')">
+                        Operator
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'operator_name' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'operator_name' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('owner_company')">
+                        Owner Company
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'owner_company' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'owner_company' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('IMO_no')">
+                        IMO No.
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'IMO_no' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'IMO_no' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('year_build')">
+                        Year Build
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'year_build' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'year_build' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('teu_capacity')">
+                        Teu Capacity
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'teu_capacity' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'teu_capacity' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th class="text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let vessel of vesselList; let index = index">
+                      <td class="py-1 lh-28">{{ index + fromStart.from }}.</td>
+                      <td class="py-1 lh-28">{{ vessel.vessel_name }}</td>
+                      <td class="py-2 lh-28">{{ vessel.vessel_ex_name }}</td>
+                      <td class="py-2 lh-28">{{ vessel.vessel_type }}</td>
+                      <td class="py-2 lh-28">
+                        {{ vessel.operator?.operator_name }}
+                      </td>
+                      <td class="py-2 lh-28">{{ vessel.owner_company }}</td>
+                      <td class="py-2 lh-28">{{ vessel.IMO_no }}</td>
+                      <td class="py-2 lh-28">{{ vessel.year_build }}</td>
+                      <td class="py-2 lh-28">{{ vessel.teu_capacity }}</td>
+                      <td class="text-right lh-28 py-2 d-flex">
+                        <button
+                          (click)="viewData(vessel.vessel_id)"
+                          class="btn btn-blue btn-sm my-0"
+                        >
+                          View
+                        </button>
+                        <button
+                          (click)="editSelect(vessel.vessel_id)"
+                          class="btn btn-transparent btn-sm my-0"
+                          style="background-color: #97bfe480; color: #132e67"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          (click)="
+                            deleteData(vessel.vessel_id, vessel.vessel_name)
+                          "
+                          class="btn btn-transparent btn-sm my-0"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                    <tr *ngIf="vesselList && vesselList.length === 0">
+                      <td colspan="10"><strong>No records found</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="table-paggination">
+                <div class="page-counter">
+                  Showing
+                  <select
+                    class=""
+                    [(ngModel)]="per_page"
+                    (change)="onPerPageChange($event)"
+                  >
+                    <option
+                      *ngFor="let value of getPerPageCount"
+                      [value]="value"
+                    >
+                      {{ value }}
+                    </option>
+                  </select>
+                  of {{ total }} entries
+                </div>
+                <div class="custom-paggination float-right">
+                  <ul>
+                    <li
+                      *ngFor="let pagination of pagination; let index = index"
+                    >
+                      <ng-container
+                        *ngIf="pagination.label !== '...'; else emptyLabel"
+                      >
+                        <a
+                          [innerHTML]="pagination.label"
+                          [ngClass]="{
+                            active: pagination.label == fromStart.current_page,
+                            disabled: pagination.url == null
+                          }"
+                          (click)="changePagination(pagination.url)"
+                        ></a>
+                      </ng-container>
+                      <ng-template #emptyLabel>
+                        <a>{{ pagination.label }}</a>
+                      </ng-template>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane active" id="search" role="tabpanel">
+            <form
+              class="form-horizontal row"
+              method="post"
+              [formGroup]="vesselSearchForm"
+              (ngSubmit)="onSearch()"
+            >
+              <div class="col-md-12 col-12">
+                <div class="form-group row">
+                  <div class="col-md-3 col-12">
+                    <label class="control-label">Vessel Name</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="vessel_name"
+                    />
+                  </div>
+
+                  <div class="col-md-3 col-12">
+                    <label class="control-label">Vessel Ex Name</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="vessel_ex_name"
+                    />
+                  </div>
+
+                  <div class="col-md-3 col-12">
+                    <label class="control-label">IMO No.</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="IMO_no"
+                    />
+                  </div>
+
+                  <div class="col-md-3 col-12">
+                    <label class="control-label">Owner Company</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="owner_company"
+                    />
+                  </div>
+
+                  <div class="col-md-3 col-12">
+                    <label class="control-label">Year Build </label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="year_build"
+                    />
+                  </div>
+
+                  <div class="col-md-3 mb-10px col-12 mb-10px">
+                    <label class="control-label">Operator</label>
+                    <select
+                      class="form-control custom-form-control"
+                      formControlName="operator"
+                    >
+                      <option value="">Select</option>
+                      <option
+                        *ngFor="let operator of operatorList"
+                        [value]="operator.operator_id"
+                      >
+                        {{ operator.operator_name }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-3 mb-10px col-12 mb-10px">
+                    <label class="control-label">Teu Capacity Range</label>
+                    <select
+                      class="form-control custom-form-control"
+                      formControlName="teu_capacity_range"
+                    >
+                      <option value="">Select</option>
+                      <option
+                        *ngFor="let capacityrange of capacityrangeList"
+                        [value]="capacityrange.teucapacity_range_id"
+                      >
+                        {{ capacityrange.teu_capacity_range }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold mr-2"
+                    type="submit"
+                  >
+                    Search
+                  </button>
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold"
+                    type="button"
+                    (click)="resetSearchForm('Search')"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <div class="panel panel-white h-100">
+              <div class="panel-heading d-inline-block float-left">
+                Vessel List
+              </div>
+              <div
+                class="panel-heading d-inline-block float-right d-flex align-items-center"
+              >
+                <button class="btn btn-secondary text-center export-excel" (click)="export()">
+                  Export To Excel <i id="collapseShipperBmcIcon" aria-hidden="true" class="fa fa-download float-right fa-sm ml-2"></i>
+                </button>
+                <form
+                  class="form-horizontal"
+                  method="post"
+                  [formGroup]="vesselSearchBox"
+                >
+                  <div class="search-group">
+                    <svg
+                      class="svg-inline--fa fa-search fa-w-16 text-grey"
+                      aria-hidden="true"
+                      data-prefix="fa"
+                      data-icon="search"
+                      role="img"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 512 512"
+                      data-fa-i2svg=""
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"
+                      ></path>
+                    </svg>
+                    <input
+                      type="text"
+                      class="f-12"
+                      placeholder="Search Here"
+                      (keyup)="onSearchBox()"
+                      formControlName="searching"
+                    />
+                  </div>
+                </form>
+              </div>
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>S.NO</th>
+                      <th (click)="sortData('vessel_name')">
+                        Vessel Name
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'vessel_name' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'vessel_name' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('vessel_ex_name')">
+                        Vessel Ex Name
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'vessel_ex_name' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'vessel_ex_name' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('service_name')">
+                        Service Name
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'service_name' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'service_name' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('operator_name')">
+                        Operator
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'operator_name' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'operator_name' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('owner_company')">
+                        Owner Company
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'owner_company' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'owner_company' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('IMO_no')">
+                        IMO No.
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'IMO_no' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'IMO_no' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('year_build')">
+                        Year Build
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'year_build' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'year_build' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('teu_capacity')">
+                        Teu Capacity
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'teu_capacity' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'teu_capacity' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th class="text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let vessel of vesselList; let index = index">
+                      <td class="py-1 lh-28">{{ index + fromStart.from }}.</td>
+                      <td title="{{vessel.service_name}}" class="py-1 lh-28">{{ vessel.vessel_name }}</td>
+                      <td class="py-2 lh-28">{{ vessel.vessel_ex_name }}</td>
+                      <td class="py-2 lh-28">{{vessel.service_name}}</td>
+                      <td class="py-2 lh-28">
+                        {{ vessel.operator?.operator_name }}
+                      </td>
+                      <td class="py-2 lh-28">{{ vessel.owner_company }}</td>
+                      <td class="py-2 lh-28">{{ vessel.IMO_no }}</td>
+                      <td class="py-2 lh-28">{{ vessel.year_build }}</td>
+                      <td class="py-2 lh-28">{{ vessel.teu_capacity }}</td>
+                      <td class="text-right lh-28 py-2 d-flex">
+                        <button
+                          (click)="viewData(vessel.vessel_id)"
+                          class="btn btn-blue btn-sm my-0"
+                        >
+                          View
+                        </button>
+                        <button
+                          (click)="editSelect(vessel.vessel_id)"
+                          class="btn btn-transparent btn-sm my-0"
+                          style="background-color: #97bfe480; color: #132e67"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          (click)="
+                            deleteData(vessel.vessel_id, vessel.vessel_name)
+                          "
+                          class="btn btn-transparent btn-sm my-0"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                    <tr *ngIf="vesselList && vesselList.length === 0">
+                      <td colspan="10"><strong>No records found</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="table-paggination">
+                <div class="page-counter">
+                  Showing
+                  <select
+                    class=""
+                    [(ngModel)]="per_page"
+                    (change)="onPerPageChange($event)"
+                  >
+                    <option
+                      *ngFor="let value of getPerPageCount"
+                      [value]="value"
+                    >
+                      {{ value }}
+                    </option>
+                  </select>
+                  of {{ total }} entries
+                </div>
+                <div class="custom-paggination float-right">
+                  <ul>
+                    <li
+                      *ngFor="let pagination of pagination; let index = index"
+                    >
+                      <ng-container
+                        *ngIf="pagination.label !== '...'; else emptyLabel"
+                      >
+                        <a
+                          [innerHTML]="pagination.label"
+                          [ngClass]="{
+                            active: pagination.label == fromStart.current_page,
+                            disabled: pagination.url == null
+                          }"
+                          (click)="changePagination(pagination.url)"
+                        ></a>
+                      </ng-container>
+                      <ng-template #emptyLabel>
+                        <a>{{ pagination.label }}</a>
+                      </ng-template>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" id="othervessel" role="tabpanel">
+            <div class="panel panel-white h-100">
+              <div class="panel-heading d-inline-block float-left">
+                Vessel List
+              </div>
+              <div
+                class="panel-heading d-inline-block float-right d-flex align-items-center"
+              >
+                <form
+                  class="form-horizontal"
+                  [formGroup]="otherVesselSearchBox"
+                >
+                  <div class="d-flex">
+                    <div class="align-items-center mr-3">
+                      <select
+                        (change)="otherSearch()"
+                        id="filter_other_vessel"
+                        class="form-control search-group"
+                        formControlName="vesselFilter"
+                      >
+                        <option value="">Select Vessel Filter</option>
+                        <option value="">All</option>
+                        <option value="Missed voyage">Missed voyage</option>
+                        <option value="Phased out vessel">
+                          Phased out vessel
+                        </option>
+                        <option value="TBN">TBN</option>
+                      </select>
+                    </div>
+                    <div class="search-group">
+                      <svg
+                        class="svg-inline--fa fa-search fa-w-16 text-grey"
+                        aria-hidden="true"
+                        data-prefix="fa"
+                        data-icon="search"
+                        role="img"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 512 512"
+                        data-fa-i2svg=""
+                      >
+                        <path
+                          fill="currentColor"
+                          d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"
+                        ></path>
+                      </svg>
+                      <input
+                        type="text"
+                        class="f-12"
+                        placeholder="Search Here"
+                        (keyup)="otherSearch()"
+                        formControlName="searching"
+                      />
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped otherVessel-th">
+                  <thead>
+                    <tr></tr>
+                    <tr>
+                      <th (click)="sortData('vessel_name', 'other')">
+                        Vessel Name
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'vessel_name' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'vessel_name' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('vessel_ex_name', 'other')">
+                        Vessel Ex Name
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'vessel_ex_name' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'vessel_ex_name' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('vessel_type', 'other')">
+                        Vessel Type
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'vessel_type' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'vessel_type' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('operator_name', 'other')">
+                        Operator
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'operator_name' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'operator_name' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('owner_company', 'other')">
+                        Owner Company
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'owner_company' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'owner_company' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('IMO_no', 'other')">
+                        IMO No.
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'IMO_no' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'IMO_no' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('year_build', 'other')">
+                        Year Build
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'year_build' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'year_build' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('teu_capacity', 'other')">
+                        Teu Capacity
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'teu_capacity' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'teu_capacity' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th class="">
+                        Action
+                        <!-- <input
+                          class="selectedId mx-2"
+                          type="checkbox"
+                          id="selectall"
+                        /> -->
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="let vessel of otherVesselList; let index = index"
+                    >
+                      <td class="py-1 lh-28">{{ vessel.vessel_name }}</td>
+                      <td class="py-2 lh-28">{{ vessel.vessel_ex_name }}</td>
+                      <td class="py-2 lh-28">{{ vessel.vessel_type }}</td>
+                      <td class="py-2 lh-28">
+                        {{ vessel.operator?.operator_name }}
+                      </td>
+                      <td class="py-2 lh-28">{{ vessel.owner_company }}</td>
+                      <td class="py-2 lh-28">{{ vessel.IMO_no }}</td>
+                      <td class="py-2 lh-28">{{ vessel.year_build }}</td>
+                      <td class="py-2 lh-28">{{ vessel.teu_capacity }}</td>
+                      <td class="text-right lh-28 py-2 d-flex">
+                        <button
+                          (click)="viewDataOther(vessel.vessel_id)"
+                          class="btn btn-blue btn-sm my-0"
+                        >
+                          View
+                        </button>
+                        <button
+                          (click)="editSelectOther(vessel.vessel_id)"
+                          class="btn btn-transparent btn-sm my-0"
+                          style="background-color: #97bfe480; color: #132e67"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          (click)="
+                            deleteData(vessel.vessel_id, vessel.vessel_name)
+                          "
+                          class="btn btn-transparent btn-sm my-0"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                    <tr *ngIf="otherVesselList && otherVesselList.length === 0">
+                      <td colspan="10"><strong>No records found</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="table-paggination">
+                <div class="page-counter">
+                  Showing
+                  <select
+                    class=""
+                    [(ngModel)]="per_page"
+                    (change)="onPerPageChangeOtherVessel($event)"
+                  >
+                    <option
+                      *ngFor="let value of getPerPageCount"
+                      [value]="value"
+                    >
+                      {{ value }}
+                    </option>
+                  </select>
+                  of {{ total }} entries
+                </div>
+                <div class="custom-paggination float-right">
+                  <ul>
+                    <li
+                      *ngFor="let pagination of pagination; let index = index"
+                    >
+                      <ng-container
+                        *ngIf="pagination.label !== '...'; else emptyLabel"
+                      >
+                        <a
+                          [innerHTML]="pagination.label"
+                          [ngClass]="{
+                            active: pagination.label == fromStart.current_page,
+                            disabled: pagination.url == null
+                          }"
+                          (click)="changePaginationother(pagination.url)"
+                        ></a>
+                      </ng-container>
+                      <ng-template #emptyLabel>
+                        <a>{{ pagination.label }}</a>
+                      </ng-template>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="tab-pane" id="verifyvessel" role="tabpanel">
+            <div class="panel panel-white h-100">
+              <div class="clearfix">
+                <div class="panel-heading d-inline-block float-left">
+                  Verify Vessel
+                </div>
+                <div class="panel-heading d-inline-block float-right">
+                  <a href="javascript:void(0)"
+                    >Download Vessel Upload Sample File</a
+                  >
+                </div>
+              </div>
+
+              <div class="panel-body pt-3">
+                <input
+                  type="file"
+                  id=" myFile"
+                  class="form-control border-0"
+                  formControlName="files"
+                  accept=".jpeg, .jpg, .png, .gif"
+                />
+
+                <div class="form-group mt-4">
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold mr-2"
+                    type="button"
+                  >
+                    Verify
+                  </button>
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold"
+                    type="button"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div> -->
+          <div class="tab-pane" id="deletedvessel" role="tabpanel">
+            <div class="panel panel-white h-100">
+              <div class="panel-heading d-inline-block float-left">
+                Deleted Vessel List
+              </div>
+              <div
+                class="panel-heading d-inline-block float-right d-flex align-items-center"
+              >
+                <form
+                  class="form-horizontal"
+                  method="post"
+                  [formGroup]="vesseldeletedBox"
+                >
+                  <div class="search-group">
+                    <svg
+                      class="svg-inline--fa fa-search fa-w-16 text-grey"
+                      aria-hidden="true"
+                      data-prefix="fa"
+                      data-icon="search"
+                      role="img"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 512 512"
+                      data-fa-i2svg=""
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"
+                      ></path>
+                    </svg>
+                    <input
+                      type="text"
+                      class="f-12"
+                      placeholder="Search Here"
+                      (keyup)="onSearchDeletedBox()"
+                      formControlName="search"
+                    />
+                  </div>
+                </form>
+              </div>
+
+              <div class="panel-body table-responsive pt-3">
+                <table class="table table-striped">
+                  <thead>
+                    <tr></tr>
+                    <tr>
+                      <th>S.NO</th>
+                      <th (click)="sortData('vessel_name', 'deleted')">
+                        Vessel Name
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'vessel_name' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'vessel_name' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('vessel_type', 'deleted')">
+                        Vessel Type
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'vessel_type' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'vessel_type' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('operator_name', 'deleted')">
+                        Operator
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'operator_name' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'operator_name' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('owner_company', 'deleted')">
+                        Owner Company
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'owner_company' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'owner_company' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('IMO_no', 'deleted')">
+                        IMO No.
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'IMO_no' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'IMO_no' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('year_build', 'deleted')">
+                        Year Build
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'year_build' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'year_build' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th (click)="sortData('teu_capacity', 'deleted')">
+                        Teu Capacity
+                        <i
+                          class="fas fa-sort"
+                          [ngClass]="{
+                            'fa-sort-up':
+                              sortedColumn === 'teu_capacity' &&
+                              sortDirection === 'asc',
+                            'fa-sort-down':
+                              sortedColumn === 'teu_capacity' &&
+                              sortDirection === 'desc'
+                          }"
+                        ></i>
+                      </th>
+                      <th class="text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let vessel of vesselDeletedList;
+                        let index = index
+                      "
+                    >
+                      <td class="py-1 lh-28">{{ index + fromStart.from }}.</td>
+                      <td class="py-1 lh-28">{{ vessel.vessel_name }}</td>
+                      <td class="py-2 lh-28">{{ vessel.vessel_type }}</td>
+                      <td class="py-2 lh-28">
+                        {{ vessel.operator?.operator_name }}
+                      </td>
+                      <td class="py-2 lh-28">{{ vessel.owner_company }}</td>
+                      <td class="py-2 lh-28">{{ vessel.IMO_no }}</td>
+                      <td class="py-2 lh-28">{{ vessel.year_build }}</td>
+                      <td class="py-2 lh-28">{{ vessel.teu_capacity }}</td>
+                      <td class="text-right lh-28 py-2 d-flex">
+                        <button
+                          (click)="viewData(vessel.vessel_id, true)"
+                          class="btn btn-blue btn-sm my-0 px-3"
+                        >
+                          View
+                        </button>
+                        <button
+                          (click)="editSelect(vessel.vessel_id, true)"
+                          class="btn btn-transparent btn-sm my-0"
+                          style="background-color: #97bfe480; color: #132e67"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          (click)="
+                            deletedeletedData(
+                              vessel.vessel_id,
+                              vessel.vessel_name
+                            )
+                          "
+                          class="btn btn-transparent btn-sm my-0"
+                        >
+                          Delete
+                        </button>
+                        <button
+                          (click)="restoreVessel(vessel.vessel_id)"
+                          class="btn btn-transparent btn-sm my-0"
+                          style="background-color: #97bfe480; color: #132e67"
+                        >
+                          Restore
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="table-paggination">
+                <div class="table-paggination">
+                  <div class="page-counter">
+                    Showing
+                    <select
+                      class=""
+                      [(ngModel)]="per_page"
+                      (change)="onPerPageChangeDeleted($event)"
+                    >
+                      <option
+                        *ngFor="let value of getPerPageCount"
+                        [value]="value"
+                      >
+                        {{ value }}
+                      </option>
+                    </select>
+                    of {{ total }} entries
+                  </div>
+                  <div class="custom-paggination float-right">
+                    <ul>
+                      <li
+                        *ngFor="let pagination of pagination; let index = index"
+                      >
+                        <ng-container
+                          *ngIf="pagination.label !== '...'; else emptyLabel"
+                        >
+                          <a
+                            [innerHTML]="pagination.label"
+                            [ngClass]="{
+                              active:
+                                pagination.label == fromStart.current_page,
+                              disabled: pagination.url == null
+                            }"
+                            (click)="changePagination(pagination.url)"
+                          ></a>
+                        </ng-container>
+                        <ng-template #emptyLabel>
+                          <a>{{ pagination.label }}</a>
+                        </ng-template>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>
+
+<div
+  id="myModal"
+  class="modal fade editModal"
+  tabindex="-1"
+  role="dialog"
+  data-backdrop="static"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Vessel</h5>
+        <button type="button" class="close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form
+          class="form-horizontal row"
+          method="post"
+          [formGroup]="vesselForm"
+          (ngSubmit)="onUpdate()"
+          *ngIf="editListData && editListData.length > 0"
+        >
+          <div class="col-md-12 col-12" *ngFor="let editList of editListData">
+            <div class="col-md-12 col-12">
+              <div class="form-group row">
+                <div class="col-md-3 mb-10px col-12">
+                  <label class="control-label">Vessel Name*</label>
+                  <input
+                    type="hidden"
+                    formControlName="id"
+                    [(ngModel)]="editList.vessel_id"
+                  />
+                  <input
+                  type="hidden"
+                  formControlName="current_service_id"
+                  [(ngModel)]="editList.current_service_id"
+                  />
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="vessel_name"
+                    [(ngModel)]="editList.vessel_name"
+                  />
+                  <div
+                    *ngIf="
+                      vesselForm?.get('vessel_name')?.hasError('required') &&
+                      vesselForm?.get('vessel_name')?.touched
+                    "
+                  >
+                    <span class="error-message">Vessel Name is required</span>
+                  </div>
+                </div>
+
+                <div class="col-md-3 mb-10px col-12">
+                  <label class="control-label">Vessel Ex Name</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="vessel_ex_name"
+                    [(ngModel)]="editList.vessel_ex_name"
+                  />
+                </div>
+
+                <div class="col-md-3 mb-10px col-12">
+                  <label class="control-label">IMO No.*</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="IMO_no"
+                    [(ngModel)]="editList.IMO_no"
+                  />
+                  <div
+                    *ngIf="
+                      vesselForm?.get('IMO_no')?.hasError('required') &&
+                      vesselForm?.get('IMO_no')?.touched
+                    "
+                  >
+                    <span class="error-message">IMO No. is required</span>
+                  </div>
+                  <div
+                    *ngIf="
+                      vesselForm.get('IMO_no')?.hasError('pattern') &&
+                      vesselForm.get('IMO_no')?.touched
+                    "
+                  >
+                    <span class="error-message"
+                      >Please enter only numeric values.</span
+                    >
+                  </div>
+                </div>
+
+                <div class="col-md-3 mb-10px col-12">
+                  <label class="control-label">Teu Capacity*</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="teu_capacity"
+                    [(ngModel)]="editList.teu_capacity"
+                  />
+                  <div
+                    *ngIf="
+                      vesselForm?.get('teu_capacity')?.hasError('required') &&
+                      vesselForm?.get('teu_capacity')?.touched
+                    "
+                  >
+                    <span class="error-message">Teu Capacity is required</span>
+                  </div>
+                  <div
+                    *ngIf="
+                      vesselForm.get('teu_capacity')?.hasError('pattern') &&
+                      vesselForm.get('teu_capacity')?.touched
+                    "
+                  >
+                    <span class="error-message"
+                      >Please enter only numeric values.</span
+                    >
+                  </div>
+                </div>
+
+                <div class="col-md-3 mb-10px col-12">
+                  <label class="control-label">Refer Teu Capacity</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="refer_teu_capacity"
+                    [(ngModel)]="editList.refer_teu_capacity"
+                  />
+                  <div
+                    *ngIf="
+                      vesselForm
+                        .get('refer_teu_capacity')
+                        ?.hasError('pattern') &&
+                      vesselForm.get('refer_teu_capacity')?.touched
+                    "
+                  >
+                    <span class="error-message"
+                      >Please enter only numeric values.</span
+                    >
+                  </div>
+                </div>
+
+                <div class="col-md-3 mb-10px col-12">
+                  <label class="control-label">Ship Dwt*</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="ship_dwt"
+                    [(ngModel)]="editList.ship_dwt"
+                  />
+                  <div
+                    *ngIf="
+                      vesselForm?.get('ship_dwt')?.hasError('required') &&
+                      vesselForm?.get('ship_dwt')?.touched
+                    "
+                  >
+                    <span class="error-message">Ship Dwt is required</span>
+                  </div>
+                  <div
+                    *ngIf="
+                      vesselForm.get('ship_dwt')?.hasError('pattern') &&
+                      vesselForm.get('ship_dwt')?.touched
+                    "
+                  >
+                    <span class="error-message"
+                      >Please enter only numeric values.</span
+                    >
+                  </div>
+                </div>
+
+                <div class="col-md-3 mb-10px col-12">
+                  <label class="control-label">Design Speed</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="design_speed"
+                    [(ngModel)]="editList.design_speed"
+                  />
+                  <div
+                    *ngIf="
+                      vesselForm.get('design_speed')?.hasError('pattern') &&
+                      vesselForm.get('design_speed')?.touched
+                    "
+                  >
+                    <span class="error-message"
+                      >Please enter only numeric values.</span
+                    >
+                  </div>
+                </div>
+
+                <div class="col-md-3 mb-10px col-12">
+                  <label class="control-label">Year Build*</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="year_build"
+                    [(ngModel)]="editList.year_build"
+                  />
+                  <div
+                    *ngIf="
+                      vesselForm?.get('year_build')?.hasError('required') &&
+                      vesselForm?.get('year_build')?.touched
+                    "
+                  >
+                    <span class="error-message">Year Build is required</span>
+                  </div>
+                </div>
+
+                <div class="col-md-3 mb-10px col-12">
+                  <label class="control-label">Flag</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="flag"
+                    [(ngModel)]="editList.flag"
+                  />
+                </div>
+
+                <div class="col-md-3 mb-10px col-12">
+                  <label class="control-label">Beam</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="beam"
+                    [(ngModel)]="editList.beam"
+                  />
+                </div>
+
+                <div class="col-md-3 mb-10px col-12">
+                  <label class="control-label">Draft</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="draft"
+                    [(ngModel)]="editList.draft"
+                  />
+                </div>
+
+                <div class="col-md-3 mb-10px col-12">
+                  <label class="control-label">Owner Company*</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="owner_company"
+                    [(ngModel)]="editList.owner_company"
+                  />
+                  <div
+                    *ngIf="
+                      vesselForm?.get('owner_company')?.hasError('required') &&
+                      vesselForm?.get('owner_company')?.touched
+                    "
+                  >
+                    <span class="error-message">Owner Company is required</span>
+                  </div>
+                </div>
+
+                <div class="col-md-3 mb-10px col-12">
+                  <label class="control-label">Ship EEDI Value</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="ship_EEDI_value"
+                    [(ngModel)]="editList.ship_EEDI_value"
+                  />
+                  <div
+                    *ngIf="
+                      vesselForm.get('ship_EEDI_value')?.hasError('pattern') &&
+                      vesselForm.get('ship_EEDI_value')?.touched
+                    "
+                  >
+                    <span class="error-message"
+                      >Please enter only numeric values.</span
+                    >
+                  </div>
+                </div>
+
+                <div class="col-md-3 mb-10px col-12">
+                  <label class="control-label">Ship Main Fuel Type</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="ship_main_fuel_type"
+                    [(ngModel)]="editList.ship_main_fuel_type"
+                  />
+                </div>
+
+                <div class="col-md-3 mb-10px col-12">
+                  <label class="control-label"
+                    >Ship Main Engine Fuel Consumption</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="ship_main_engine_fuel_consumption"
+                    [(ngModel)]="editList.ship_main_engine_fuel_consumption"
+                  />
+                </div>
+
+                <div class="col-md-3 mb-10px col-12">
+                  <label class="control-label">Ship Auxiliary Fuel Type</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="ship_auxiliary_fuel_type"
+                    [(ngModel)]="editList.ship_auxiliary_fuel_type"
+                  />
+                </div>
+
+                <div class="col-md-3 mb-10px col-12">
+                  <label class="control-label"
+                    >Ship Auxiliary Fuel Consumption</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="ship_auxiliary_fuel_consumption"
+                    [(ngModel)]="editList.ship_auxiliary_fuel_consumption"
+                  />
+                </div>
+
+                <div class="col-md-3 mb-10px col-12 mb-10px">
+                  <label class="control-label">Teu Capacity Range</label>
+                  <select
+                    class="form-control custom-form-control"
+                    formControlName="teu_capacity_range"
+                    [(ngModel)]="editList.teu_capacity_range"
+                  >
+                    <option value="">Select</option>
+                    <option
+                      *ngFor="let capacityrange of capacityrangeList"
+                      [value]="capacityrange.teucapacity_range_id"
+                    >
+                      {{ capacityrange.teu_capacity_range }}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="col-md-3 mb-10px col-12 mb-10px">
+                  <label class="control-label">Ownership Status*</label>
+                  <select
+                    class="form-control custom-form-control"
+                    formControlName="ownership_status"
+                    [(ngModel)]="editList.ownership_status"
+                  >
+                    <option value="">Select</option>
+                    <option value="Owned">Owned</option>
+                    <option value="Chartered">Chartered</option>
+                  </select>
+                  <div
+                    *ngIf="
+                      vesselForm
+                        ?.get('ownership_status')
+                        ?.hasError('required') &&
+                      vesselForm?.get('ownership_status')?.touched
+                    "
+                  >
+                    <span class="error-message"
+                      >Ownership Status is required</span
+                    >
+                  </div>
+                </div>
+
+                <div class="col-md-3 mb-10px col-12 mb-10px">
+                  <label class="control-label">Vessel Type*</label>
+                  <select
+                    class="form-control custom-form-control"
+                    formControlName="vessel_type"
+                    [(ngModel)]="editList.vessel_type"
+                  >
+                    <option value="">Select</option>
+                    <option value="Cellular">Cellular</option>
+                    <option value="Non-Cellular">Non-Cellular</option>
+                    <option value="Fully Cellular Container">
+                      Fully Cellular Container
+                    </option>
+                  </select>
+                  <div
+                    *ngIf="
+                      vesselForm?.get('vessel_type')?.hasError('required') &&
+                      vesselForm?.get('vessel_type')?.touched
+                    "
+                  >
+                    <span class="error-message">Routing Name is required</span>
+                  </div>
+                </div>
+
+                <div class="col-md-3 mb-10px col-12 mb-10px">
+                  <label class="control-label">Operator*</label>
+                  <select
+                    class="form-control custom-form-control"
+                    formControlName="operator"
+                    [(ngModel)]="editList.operator_id"
+                  >
+                    <option value="">Select</option>
+                    <option
+                      *ngFor="let operator of operatorList"
+                      [value]="operator.operator_id"
+                    >
+                      {{ operator.operator_name }}
+                    </option>
+                  </select>
+                  <div
+                    *ngIf="
+                      vesselForm?.get('operator')?.hasError('required') &&
+                      vesselForm?.get('operator')?.touched
+                    "
+                  >
+                    <span class="error-message">Routing Name is required</span>
+                  </div>
+                </div>
+
+                <div class="col-md-3 mb-10px col-12 mb-10px">
+                  <label class="control-label">Ship Status*</label>
+                  <select
+                    class="form-control custom-form-control"
+                    formControlName="ship_status"
+                    [(ngModel)]="editList.ship_status"
+                  >
+                    <option value="">Select</option>
+                    <option value="Active">Active</option>
+                    <option value="In Service">In Service</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="Shelved">Shelved</option>
+                    <option value="Suspended">Suspended</option>
+                    <option value="Demolished">Demolished</option>
+                    <option value="Idle/Laid up">Idle/Laid up</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 mb-4">
+              <div class="form-group">
+                <button
+                  class="btn btn-yellow text-uppercase fw-bold mr-2"
+                  type="submit"
+                  [disabled]="vesselForm.invalid"
+                >
+                  Save
+                </button>
+                <button
+                  class="btn btn-yellow text-uppercase fw-bold"
+                  (click)="closeModal()"
+                  type="button"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  id="viewModal"
+  class="modal fade editModal"
+  tabindex="-1"
+  role="dialog"
+  data-backdrop="static"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">View Vessel</h5>
+        <button type="button" class="close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row" *ngIf="viewListData && viewListData.length > 0">
+          <div class="col-md-12 col-12" *ngFor="let editList of viewListData">
+            <div class="row">
+              <div class="col-md-12 col-12 viewvessel">
+                <div class="form-group row">
+                  <div class="col-md-6 mb-10px col-12">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">Vessel Name*</label>
+                      <span>{{ editList.vessel_name }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">Vessel Ex Name</label>
+                      <span>{{ editList.vessel_ex_name }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">IMO No.*</label>
+                      <span>{{ editList.IMO_no }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">Teu Capacity*</label>
+                      <span>{{ editList.teu_capacity }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">Refer Teu Capacity</label>
+                      <span>{{ editList.refer_teu_capacity }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">Ship Dwt*</label>
+                      <span>{{ editList.ship_dwt }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">Design Speed</label>
+                      <span>{{ editList.design_speed }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">Year Build*</label>
+                      <span>{{ editList.year_build }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">Flag</label>
+                      <span>{{ editList.flag }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">Beam</label>
+                      <span>{{ editList.beam }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">Draft</label>
+                      <span>{{ editList.draft }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">Owner Company*</label>
+                      <span>{{ editList.owner_company }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">Ship EEDI Value</label>
+                      <span>{{ editList.ship_EEDI_value }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">Ship Main Fuel Type</label>
+                      <span>{{ editList.ship_main_fuel_type }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label"
+                        >Ship Main Engine Fuel Consumption</label
+                      >
+                      <span>{{
+                        editList.ship_main_engine_fuel_consumption
+                      }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label"
+                        >Ship Auxiliary Fuel Type</label
+                      >
+                      <span>{{ editList.ship_auxiliary_fuel_type }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label"
+                        >Ship Auxiliary Fuel Consumption</label
+                      >
+                      <span>{{
+                        editList.ship_auxiliary_fuel_consumption
+                      }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12 mb-10px">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">Teu Capacity Range</label>
+                      <span>{{ editList.teu_capacity_range }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12 mb-10px">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">Ownership Status*</label>
+                      <span>{{ editList.ownership_status }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12 mb-10px">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">Vessel Type*</label>
+                      <span>{{ editList.vessel_type }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12 mb-10px">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">Operator*</label>
+                      <span>{{ editList.operator.operator_name }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-10px col-12 mb-10px">
+                    <div class="d-flex justify-content-between">
+                      <label class="control-label">Ship Status*</label>
+                      <span>{{ editList.ship_status }}</span>
+                    </div>
+                  </div>
+
+                  <div class="col-12 mt-3">
+                    <div class="form-group mb-0">
+                      <button
+                        class="btn btn-yellow text-uppercase fw-bold"
+                        (click)="closeModal()"
+                        type="button"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

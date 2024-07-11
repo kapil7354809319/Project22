@@ -1,0 +1,545 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+  <div class="container-fluid">
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-4 col-12">
+          <h1 class="m-0">Manage Source ({{ tabActive }})</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12 text-right"></div>
+        <!-- /.col -->
+      </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="row m-0">
+      <div class="col-12">
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item">
+            <a
+              (click)="tabChange('Add')"
+              class="nav-link active"
+              data-toggle="tab"
+              href="#addnew"
+              role="tab"
+              >Add New</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              (click)="tabChange('Search')"
+              class="nav-link"
+              data-toggle="tab"
+              href="#search"
+              role="tab"
+              >Search</a
+            >
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="addnew" role="tabpanel">
+            <form
+              class="form-horizontal row"
+              method="post"
+              [formGroup]="sourceForm"
+              (ngSubmit)="onSubmit()"
+            >
+              <div class="col-md-12 col-12">
+                <div class="form-group row">
+                  <div class="col-md-6 col-12">
+                    <label class="control-label">Source Name *</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="source_name"
+                    />
+                    <div
+                      *ngIf="
+                        sourceForm?.get('source_name')?.hasError('required') &&
+                        sourceForm?.get('source_name')?.touched
+                      "
+                    >
+                      <span class="error-message">Source Name is required</span>
+                    </div>
+                  </div>
+                  <div class="col-md-6 col-12">
+                    <label class="control-label">Source Contact Name *</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="source_contact_name"
+                    />
+                    <div
+                      *ngIf="
+                        sourceForm
+                          ?.get('source_contact_name')
+                          ?.hasError('required') &&
+                        sourceForm?.get('source_contact_name')?.touched
+                      "
+                    >
+                      <span class="error-message"
+                        >Source Contact Name is required</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12 col-12">
+                <div class="form-group row">
+                  <div class="col-md-4 col-12">
+                    <label class="control-label">Source Contact Phone * </label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="source_contact_phone"
+                    />
+                    <div
+                      *ngIf="
+                        sourceForm
+                          ?.get('source_contact_phone')
+                          ?.hasError('required') &&
+                        sourceForm?.get('source_contact_phone')?.touched
+                      "
+                    >
+                      <span class="error-message"
+                        >Source Contact Phone is required</span
+                      >
+                    </div>
+                  </div>
+                  <div class="col-md-4 col-12">
+                    <label class="control-label">Source Contact Email *</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="source_contact_email"
+                    />
+                    <div
+                      *ngIf="
+                        sourceForm
+                          ?.get('source_contact_email')
+                          ?.hasError('required') &&
+                        sourceForm?.get('source_contact_email')?.touched
+                      "
+                    >
+                      <span class="error-message"
+                        >Source Contact Email is required</span
+                      >
+                    </div>
+                    <div
+                      *ngIf="
+                        sourceForm
+                          ?.get('source_contact_email')
+                          ?.hasError('email') &&
+                        sourceForm?.get('source_contact_email')?.touched
+                      "
+                    >
+                      <span class="error-message"
+                        >Enter Valid Email</span
+                      >
+                    </div>
+                  </div>
+                  <div class="col-md-4 col-12">
+                    <label class="control-label">Source Fax</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="source_fax"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12 col-12">
+                <div class="form-group row">
+                  <div class="col-md-6 col-12">
+                    <label class="control-label">Source Address </label>
+                    <textarea
+                      id="w3review"
+                      name="w3review"
+                      rows="2"
+                      cols="40"
+                      class="custom-form-control form-control"
+                      formControlName="source_address"
+                    ></textarea>
+                  </div>
+                  <div class="col-md-6 col-12">
+                    <label class="control-label">Source Description</label>
+                    <textarea
+                      id="w3review"
+                      name="w3review"
+                      rows="2"
+                      cols="40"
+                      class="custom-form-control form-control"
+                      formControlName="source_description"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold mr-2"
+                    type="submit"
+                  >
+                    Add New
+                  </button>
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold"
+                    type="button"
+                    (click)="resetForm()"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="tab-pane" id="search" role="tabpanel">
+            <form
+              class="form-horizontal row"
+              method="post"
+              [formGroup]="sourceSearchForm"
+              (ngSubmit)="onSearch()"
+            >
+              <div class="col-md-12 col-12">
+                <div class="form-group row">
+                  <div class="col-md-4 col-12">
+                    <label class="control-label">Source Name</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="source_name"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold mr-2"
+                    type="submit"
+                    [disabled]="sourceSearchForm.invalid"
+                  >
+                    Search
+                  </button>
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold"
+                    type="button"
+                    (click)="resetSearchForm()"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 mt-2">
+        <div class="panel panel-white h-100">
+          <div class="panel-heading d-inline-block float-left">Source List</div>
+          <div class="d-inline-block float-right text-right">
+            <form class="form-horizontal">
+              <div class="search-group"></div>
+            </form>
+          </div>
+          <div class="panel-body table-responsive pt-3">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>S.NO</th>
+                  <th (click)="sortData('source_name')">
+                    Source Name
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'source_name' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'source_name' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th (click)="sortData('source_contact_person')">
+                    Source Contact Name
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'source_contact_person' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'source_contact_person' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th class="text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let source of sourceList; let index = index">
+                  <td class="py-1 lh-28">{{ index + fromStart.from }}.</td>
+                  <td class="py-2 lh-28">{{ source.source_name }}</td>
+                  <td class="py-2 lh-28">{{ source.source_contact_person }}</td>
+                  <td class="text-right lh-28 py-2">
+                    <button
+                      (click)="editSelect(source.source_id)"
+                      class="btn btn-blue btn-sm my-0 px-3"
+                      style="background-color: #97bfe480; color: #132e67"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      (click)="deleteData(source.source_id, source.source_name)"
+                      class="btn btn-transparent btn-sm my-0"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="sourceList && sourceList.length === 0">
+                  <td colspan="4"><strong>No records found</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-paggination">
+            <div class="page-counter">
+              Showing
+              <select
+                class=""
+                [(ngModel)]="per_page"
+                (change)="onPerPageChange($event)"
+              >
+                <option *ngFor="let value of getPerPageCount" [value]="value">
+                  {{ value }}
+                </option>
+              </select>
+              of {{ total }} entries
+            </div>
+            <div class="custom-paggination float-right">
+              <ul>
+                <li *ngFor="let pagination of pagination; let index = index">
+                  <ng-container
+                    *ngIf="pagination.label !== '...'; else emptyLabel"
+                  >
+                    <a
+                      [innerHTML]="pagination.label"
+                      [ngClass]="{
+                        active: pagination.label == fromStart.current_page,
+                        disabled: pagination.url == null
+                      }"
+                      (click)="changePagination(pagination.url)"
+                    ></a>
+                  </ng-container>
+                  <ng-template #emptyLabel>
+                    <a>{{ pagination.label }}</a>
+                  </ng-template>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>
+
+<div
+  id="myModal"
+  class="modal fade editModal"
+  tabindex="-1"
+  role="dialog"
+  data-backdrop="static"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Source</h5>
+        <button type="button" class="close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form
+          class="form-horizontal"
+          method="post"
+          [formGroup]="sourceForm"
+          (ngSubmit)="onUpdate()"
+          *ngIf="editListData && editListData.length > 0"
+        >
+          <div *ngFor="let editList of editListData">
+            <div class="col-md-12 col-12">
+              <div class="form-group row">
+                <div class="col-md-6 col-12">
+                  <label class="control-label">Source Name *</label>
+                  <input
+                    type="hidden"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="id"
+                    [(ngModel)]="editList.source_id"
+                  />
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="source_name"
+                    [(ngModel)]="editList.source_name"
+                  />
+                  <div
+                    *ngIf="
+                      sourceForm?.get('source_name')?.hasError('required') &&
+                      sourceForm?.get('source_name')?.touched
+                    "
+                  >
+                    <span class="error-message">Source Name is required</span>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12">
+                  <label class="control-label">Source Contact Name *</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="source_contact_name"
+                    [(ngModel)]="editList.source_contact_person"
+                  />
+                  <div
+                    *ngIf="
+                      sourceForm
+                        ?.get('source_contact_name')
+                        ?.hasError('required') &&
+                      sourceForm?.get('source_contact_name')?.touched
+                    "
+                  >
+                    <span class="error-message"
+                      >Source Contact Name is required</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 col-12">
+              <div class="form-group row">
+                <div class="col-md-4 col-12">
+                  <label class="control-label">Source Contact Phone * </label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="source_contact_phone"
+                    [(ngModel)]="editList.source_contact_phone"
+                  />
+                  <div
+                    *ngIf="
+                      sourceForm
+                        ?.get('source_contact_phone')
+                        ?.hasError('required') &&
+                      sourceForm?.get('source_contact_phone')?.touched
+                    "
+                  >
+                    <span class="error-message"
+                      >Source Contact Phone is required</span
+                    >
+                  </div>
+                </div>
+                <div class="col-md-4 col-12">
+                  <label class="control-label">Source Contact Email *</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="source_contact_email"
+                    [(ngModel)]="editList.source_contact_email"
+                  />
+                  <div
+                    *ngIf="
+                      sourceForm
+                        ?.get('source_contact_email')
+                        ?.hasError('required') &&
+                      sourceForm?.get('source_contact_email')?.touched
+                    "
+                  >
+                    <span class="error-message"
+                      >Source Contact Email is required</span
+                    >
+                  </div>
+                </div>
+                <div class="col-md-4 col-12">
+                  <label class="control-label">Source Fax</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="source_fax"
+                    [(ngModel)]="editList.source_fax"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 col-12">
+              <div class="form-group row">
+                <div class="col-md-6 col-12">
+                  <label class="control-label">Source Address </label>
+                  <textarea
+                    id="w3review"
+                    name="w3review"
+                    rows="2"
+                    cols="40"
+                    class="custom-form-control form-control"
+                    formControlName="source_address"
+                    [(ngModel)]="editList.source_address"
+                  ></textarea>
+                </div>
+                <div class="col-md-6 col-12">
+                  <label class="control-label">Source Description</label>
+                  <textarea
+                    id="w3review"
+                    name="w3review"
+                    rows="2"
+                    cols="40"
+                    class="custom-form-control form-control"
+                    formControlName="source_description"
+                    [(ngModel)]="editList.source_description"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 mb-4">
+              <div class="form-group">
+                <button
+                  class="btn btn-yellow text-uppercase fw-bold mr-2"
+                  type="submit"
+                  [disabled]="sourceForm.invalid"
+                >
+                  Save
+                </button>
+                <button
+                  class="btn btn-yellow text-uppercase fw-bold"
+                  type="button"
+                  (click)="closeModal()"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

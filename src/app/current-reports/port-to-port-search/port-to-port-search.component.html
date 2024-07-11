@@ -1,0 +1,295 @@
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+  <div class="container-fluid">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-4 col-12">
+          <h1 class="m-0">Port to Port Search</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12 text-right"></div>
+        <!-- /.col -->
+      </div>
+    </div>
+    <div class="row m-0">
+      <div class="col-md-12">
+        <form
+          class="form-horizontal row"
+          method="post"
+          [formGroup]="portToPortSearch"
+          (ngSubmit)="onSubmit()"
+        >
+          <div class="col-md-12 col-12">
+            <div class="form-group row"></div>
+          </div>
+          <div class="col-md-12 col-12">
+            <div class="form-group row">
+              <div class="col-md-3 mb-10px col-12">
+                <!-- <div class="col-md-3 mb-10px col-12 mx-auto"> -->
+                <label class="control-label">Select Year</label>
+                <select
+                  class="form-control custom-form-control"
+                  (change)="onChangeYear()"
+                  formControlName="year"
+                >
+                  <option value="">Select Year</option>
+                  <option *ngFor="let years of years" [value]="years.year">
+                    {{ years.year }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-md-3 mb-10px col-12">
+                <label class="control-label">Select Month</label>
+                <select
+                  class="form-control custom-form-control"
+                  formControlName="month"
+                  (change)="onChangeMonth()"
+                >
+                  <option value="">Select Month</option>
+                  <option *ngFor="let month of months" [value]="month.month">
+                    {{ month.month }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-md-3 mb-10px col-12">
+                <label class="control-label">Departure Port*</label>
+                <select class="form-control custom-form-control" formControlName="departurePort">
+                  <option value="">Select Departure Port</option>
+                  <option
+                    *ngFor="let port of portList"
+                    [value]="port.port_name"
+                  >
+                    {{ port.port_name }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-md-3 mb-10px col-12">
+                <label class="control-label">Arrival Port*</label>
+                <select class="form-control custom-form-control" formControlName="arrivalPort">
+                  <option value="">Select Arrival Port</option>
+                  <option
+                    *ngFor="let port of portList"
+                    [value]="port.port_name"
+                  >
+                    {{ port.port_name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-12 col-12">
+              <div class="form-group row">
+                <div class="col-md-3 mb-10px col-12 d-flex">
+                  <input type="radio" name="report-one" checked />
+                  <label class="control-label ml-2" name="report-one"
+                    >Direct</label
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 mb-4">
+            <div class="form-group">
+              <button
+                (click)="onSubmit()"
+                class="btn btn-yellow text-uppercase fw-semibold mr-2"
+                type="button"
+              >
+                Search
+              </button>
+              <button
+                class="btn fw-semibold text-decoration-underline"
+                type="button"
+                (click)="clear()"
+              >
+                Clear Search
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- for service details---///////////// -->
+      <div class="col-12 mt-2">
+        <div *ngIf="showContent" class="panel panel-white h-100">
+          <div class="panel-heading" style="color: rgb(153, 12, 66)">
+            Service Details
+          </div>
+          <div class="d-flex justify-content-end">
+            <form class="form-horizontal">
+              <div class="search-group bg-transparent pl-0">
+                <button class="btn btn-secondary text-center" (click)="export('excel-export')">
+                  Export To Excel
+                </button>
+                <!-- <button class="btn btn-secondary text-center ml-2">Export with Excel</button> -->
+              </div>
+            </form>
+
+            <form
+              class="search-group bg-transparent pl-0"
+              method="post"
+            >
+              <div class="search-group bg-transparent pl-0">
+                <button class="btn btn-secondary text-center ml-2" (click)="export('excel-export-with-ships')">
+                  Export To Excel with Ships
+                </button>
+              </div>
+            </form>
+          </div>
+          <div class="panel-body table-responsive pt-3">
+            <table  class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Service Name</th>
+                  <th>Transit Days</th>
+                  <th>Total Ships</th>
+                  <th>Active Ships</th>
+                  <th>Missed Ships</th>
+                  <th>Frequency <span class="d-block">(Days)</span></th>
+                  <th>Round Voyage</th>
+                  <th>Total ship TEU capacit</th>
+                  <th>
+                    Average Capacity<span class="d-block">(Total Ships)</span>
+                  </th>
+                  <th>
+                    Average Capacity<span class="d-block">(Active Ships)</span>
+                  </th>
+                  <th>Maximum ship TEU</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="bg-dark-grey">
+                  <td class="pt-2 pb-2">
+                    Total Services <span class="text-mute-blue"> : {{total}} </span>
+                  </td>
+                  <td class="pt-2 pb-2"></td>
+                  <td class="pt-2 pb-2">{{totalShips}}</td>
+                  <td class="pt-2 pb-2">{{activeShips}}</td>
+                  <td>{{missedShips}}</td>
+                  <td></td>
+                  <td></td>
+                  <td>{{totalShipTeu| number}}</td>
+                  <td>{{averageCapacity| number}}</td>
+                  <td>{{averageActiveCapacity| number}}</td>
+                  <td>{{maxShipTeu | number}}</td>
+                </tr>
+                <tr *ngFor="let service of servicesList">
+                  <td>
+                    <a
+                      [routerLink]="['/current-report/search-by-service']"
+                      [queryParams]="{serviceId: service.archived_service_id}"
+                      target="_blank"
+                    >
+                      {{service.service_name}}
+                    </a>
+                  </td>
+                  <td>{{ getTransitDays(service.zip_data) }}</td>
+                  <td>{{service.no_of_vessel}}</td>
+                  <td>{{service.active_vessels_count}}</td>
+                  <td>{{service.missed_vessels_count}}</td>
+                  <td>{{service.service_frequency}}</td>
+                  <td>{{service.service_round_voyage_days}}</td>
+                  <td>{{service.vessels_sum_teu_capacity | number}}</td>
+                  <td>{{roundOff(service.vessels_avg_teu_capacity) | number}}</td>
+                  <td>{{roundOff(service.active_vessels_avg_teu_capacity) | number}}</td>
+                  <td>{{service.vessels_max_teu_capacity | number}}</td>
+                </tr>
+              </tbody>
+            </table>
+            <!-- <table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Service Name</th>
+      <th>Total Ships </th>
+      <th>Active Ships</th>
+      <th>Missed Ships</th>
+      <th>Frequency <span class="d-block">(Days)</span></th>
+      <th>Round Voyage</th>
+      <th>Total ship TEU capacit</th>
+      <th>Average Capacity<span class="d-block">(Total Ships)</span></th>
+      <th>Average Capacity<span class="d-block">(Active Ships)</span></th>
+      <th>Maximum ship TEU</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let row of dummyData">
+      <td>{{ row['Service Name'] }}</td>
+      <td>{{ row['Total Ships'] }}</td>
+      <td>{{ row['Active Ships'] }}</td>
+      <td>{{ row['Missed Ships'] }}</td>
+      <td>{{ row['Frequency (Days)'] }}</td>
+      <td>{{ row['Round Voyage'] }}</td>
+      <td>{{ row['Total ship TEU capacity'] }}</td>
+      <td>{{ row['Average Capacity (Total Ships)'] }}</td>
+      <td>{{ row['Average Capacity (Active Ships)'] }}</td>
+      <td>{{ row['Maximum ship TEU'] }}</td>
+    </tr>
+
+    <tr *ngFor="let service of filteredServices">
+        <td>{{ service['Service Name'] }}</td>
+        <td>{{ service['Total Ships'] }}</td>
+        <td>{{ service['Active Ships'] }}</td>
+        <td>{{ service['Missed Ships'] }}</td>
+        <td>{{ service['Frequency (Days)'] }}</td>
+        <td>{{ service['Round Voyage'] }}</td>
+        <td>{{ service['Total ship TEU capacity'] }}</td>
+        <td>{{ service['Average Capacity (Total Ships)'] }}</td>
+        <td>{{ service['Average Capacity (Active Ships)'] }}</td>
+        <td>{{ service['Maximum ship TEU'] }}</td>
+      </tr>
+  </tbody>
+</table> -->
+          </div>
+
+          <div class="table-paggination">
+            <div class="page-counter">
+              Showing
+              <select
+                class=""
+                [(ngModel)]="per_page"
+                (change)="onPerPageChange($event)"
+              >
+                <option
+                  *ngFor="let value of getPerPageCount"
+                  [value]="value"
+                >
+                  {{ value }}
+                </option>
+              </select>
+              of {{ total }} entries
+            </div>
+            <div class="custom-paggination float-right">
+              <ul>
+                <li
+                  *ngFor="let pagination of pagination; let index = index"
+                >
+                  <ng-container
+                    *ngIf="pagination.label !== '...'; else emptyLabel"
+                  >
+                    <a
+                      [innerHTML]="pagination.label"
+                      [ngClass]="{
+                        active: pagination.label == fromStart.current_page,
+                        disabled: pagination.url == null
+                      }"
+                      (click)="changePagination(pagination.url)"
+                    ></a>
+                  </ng-container>
+                  <ng-template #emptyLabel>
+                    <a>{{ pagination.label }}</a>
+                  </ng-template>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- archive End -->
+    </div>
+  </div>
+</div>

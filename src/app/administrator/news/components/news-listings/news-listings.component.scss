@@ -1,0 +1,19 @@
+.statusinactive {
+    color: #e2e5ed;
+}
+.statusactive {
+    color: #f1ae27;
+}
+.statuspending{
+    color: #e2e5ed;
+}
+.statusdone{
+    color: #4cb332;
+}
+
+.action a {
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}

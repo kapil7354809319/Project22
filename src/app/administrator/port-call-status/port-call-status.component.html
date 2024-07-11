@@ -1,0 +1,360 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+  <div class="container-fluid">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-12 col-12">
+          <h1 class="m-0">Manage Port Call Status ({{ tabActive }})</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12 text-right"></div>
+        <!-- /.col -->
+      </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="row m-0">
+      <div class="col-12">
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item">
+            <a
+              (click)="tabChange('Add')"
+              class="nav-link active"
+              data-toggle="tab"
+              href="#addnew"
+              role="tab"
+              >Add New</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              (click)="tabChange('Search')"
+              class="nav-link"
+              data-toggle="tab"
+              href="#search"
+              role="tab"
+              >Search</a
+            >
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane active" id="addnew" role="tabpanel">
+            <form
+              class="form-horizontal row"
+              method="post"
+              [formGroup]="portCallStatusForm"
+              (ngSubmit)="onSubmit()"
+            >
+              <div class="col-md-12 col-12">
+                <div class="form-group row">
+                  <div class="col-md-4 col-12">
+                    <label class="control-label">Port Call Status*</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="port_call_status"
+                      id="port_call_status"
+                    />
+                    <div
+                      *ngIf="
+                        portCallStatusForm
+                          ?.get('port_call_status')
+                          ?.hasError('required') &&
+                        portCallStatusForm?.get('port_call_status')?.touched
+                      "
+                    >
+                      <span class="error-message"
+                        >Port Call Status is required</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 col-12">
+                <div class="form-group row">
+                  <div class="col-md-4 col-12">
+                    <label class="control-label">Profile Definition</label>
+                    <textarea
+                      id="profile_definition"
+                      rows="2"
+                      cols="40"
+                      class="custom-form-control form-control"
+                      formControlName="profile_definition"
+                      id="profile_definition"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold mr-2"
+                    type="submit"
+                  >
+                    Add New
+                  </button>
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold"
+                    (click)="resetForm()"
+                    type="button"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="tab-pane" id="search" role="tabpanel">
+            <form
+              class="form-horizontal row"
+              method="post"
+              [formGroup]="portCallStatusSearchForm"
+              (ngSubmit)="onSearch()"
+            >
+              <div class="col-md-12 col-12">
+                <div class="form-group row">
+                  <div class="col-md-4 col-12">
+                    <label class="control-label">Port Call Status</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="port_call_status"
+                      id="port_call_status"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 mb-4">
+                <div class="form-group">
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold mr-2"
+                    type="submit"
+                    [disabled]="portCallStatusSearchForm.invalid"
+                  >
+                    Search
+                  </button>
+                  <button
+                    class="btn btn-yellow text-uppercase fw-bold"
+                    (click)="resetSearchForm()"
+                    type="button"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 mt-2">
+        <div class="panel panel-white h-100">
+          <div class="panel-heading d-inline-block float-left">
+            Port Call Status List
+          </div>
+          <div class="panel-body table-responsive pt-3">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>S.NO</th>
+                  <th (click)="sortData('port_call_status')">
+                    Port Call Status
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'port_call_status' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'port_call_status' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th class="text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let portCallStatus of portCallStatusList;
+                    let index = index
+                  "
+                >
+                  <td class="py-1 lh-28">{{ index + fromStart.from }}.</td>
+                  <td class="py-2 lh-28">
+                    {{ portCallStatus.port_call_status }}
+                  </td>
+                  <td class="text-right lh-28 py-2">
+                    <button
+                      (click)="editSelect(portCallStatus.port_call_status_id)"
+                      class="btn btn-blue btn-sm my-0 px-3"
+                      style="background-color: #97bfe480; color: #132e67"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      (click)="
+                        deleteData(
+                          portCallStatus.port_call_status_id,
+                          portCallStatus.port_call_status
+                        )
+                      "
+                      class="btn btn-transparent btn-sm my-0"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+                <tr
+                  *ngIf="portCallStatusList && portCallStatusList.length === 0"
+                >
+                  <td colspan="3"><strong>No records found</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-paggination">
+            <div class="page-counter">
+              Showing
+              <select
+                class=""
+                [(ngModel)]="per_page"
+                (change)="onPerPageChange($event)"
+              >
+                <option *ngFor="let value of getPerPageCount" [value]="value">
+                  {{ value }}
+                </option>
+              </select>
+              of {{ total }} entries
+            </div>
+            <div class="custom-paggination float-right">
+              <ul>
+                <li *ngFor="let pagination of pagination; let index = index">
+                  <ng-container
+                    *ngIf="pagination.label !== '...'; else emptyLabel"
+                  >
+                    <a
+                      [innerHTML]="pagination.label"
+                      [ngClass]="{
+                        active: pagination.label == fromStart.current_page,
+                        disabled: pagination.url == null
+                      }"
+                      (click)="changePagination(pagination.url)"
+                    ></a>
+                  </ng-container>
+                  <ng-template #emptyLabel>
+                    <a>{{ pagination.label }}</a>
+                  </ng-template>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>
+
+<div
+  id="myModal"
+  class="modal fade editModal"
+  tabindex="-1"
+  role="dialog"
+  data-backdrop="static"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Port Call Status</h5>
+        <button type="button" class="close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form
+          class="form-horizontal"
+          method="post"
+          [formGroup]="portCallStatusForm"
+          (ngSubmit)="onUpdate()"
+          *ngIf="editListData && editListData.length > 0"
+        >
+          <div *ngFor="let editList of editListData">
+            <div class="col-md-12 col-12">
+              <div class="form-group row">
+                <div class="col-md-7 col-12">
+                  <label class="control-label">Port Call Status*</label>
+                  <input
+                    type="hidden"
+                    formControlName="id"
+                    [(ngModel)]="editList.port_call_status_id"
+                  />
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="port_call_status"
+                    id="port_call_status"
+                    [(ngModel)]="editList.port_call_status"
+                  />
+                  <div
+                    *ngIf="
+                      portCallStatusForm
+                        ?.get('port_call_status')
+                        ?.hasError('required') &&
+                      portCallStatusForm?.get('port_call_status')?.touched
+                    "
+                  >
+                    <span class="error-message"
+                      >Port Call Status is required</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 col-12">
+              <div class="form-group row">
+                <div class="col-md-7 col-12">
+                  <label class="control-label">Profile Definition</label>
+                  <textarea
+                    id="profile_definition"
+                    rows="2"
+                    cols="40"
+                    class="custom-form-control form-control"
+                    [(ngModel)]="editList.profile_definition"
+                    formControlName="profile_definition"
+                    id="profile_definition"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 mb-4">
+              <div class="form-group">
+                <button
+                  class="btn btn-yellow text-uppercase fw-bold mr-2"
+                  type="submit"
+                  [disabled]="portCallStatusForm.invalid"
+                >
+                  Save
+                </button>
+                <button
+                  class="btn btn-yellow text-uppercase fw-bold"
+                  (click)="closeModal()"
+                  type="button"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

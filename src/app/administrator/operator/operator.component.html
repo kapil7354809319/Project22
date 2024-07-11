@@ -1,0 +1,461 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+  <div class="container-fluid">
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-4 col-12">
+          <h1 class="m-0">Manage Operator</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12 text-right"></div>
+        <!-- /.col -->
+      </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="row m-0">
+      <div class="col-12">
+        <form
+          class="form-horizontal row"
+          method="post"
+          [formGroup]="operatorForm"
+          (ngSubmit)="onSubmit()"
+        >
+          <div class="col-md-6 col-12">
+            <div class="form-group row">
+              <div class="col-md-6 col-12">
+                <label class="control-label">Operator Code*</label>
+                <input
+                  type="text"
+                  class="form-control custom-form-control"
+                  placeholder=""
+                  formControlName="operator_code"
+                  id="operator_code"
+                />
+                <div
+                  *ngIf="
+                    operatorForm?.get('operator_code')?.hasError('required') &&
+                    operatorForm?.get('operator_code')?.touched
+                  "
+                >
+                  <span class="error-message">Operator Code is required</span>
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <label class="control-label">Operator Name*</label>
+                <input
+                  type="text"
+                  class="form-control custom-form-control"
+                  placeholder=""
+                  formControlName="operator_name"
+                  id="operator_name"
+                />
+                <div
+                  *ngIf="
+                    operatorForm?.get('operator_name')?.hasError('required') &&
+                    operatorForm?.get('operator_name')?.touched
+                  "
+                >
+                  <span class="error-message">Operator Name is required</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-12">
+            <div class="form-group row">
+              <div class="col-md-6 col-12">
+                <label class="control-label">Operator Type</label>
+                <input
+                  type="text"
+                  class="form-control custom-form-control"
+                  placeholder=""
+                  formControlName="operator_type"
+                  id="operator_type"
+                />
+              </div>
+              <div class="col-md-6 col-12">
+                <label class="control-label">Operator Source</label>
+                <select
+                  class="form-control custom-form-control"
+                  formControlName="operator_source"
+                  id="operator_source"
+                >
+                  <option value="">Select</option>
+                  <option
+                    *ngFor="let source of sourceList"
+                    [value]="source.source_id"
+                  >
+                    {{ source.source_name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12 col-12">
+            <div class="form-group row">
+              <div class="col-md-6 col-12">
+                <label class="control-label">Operator Description</label>
+                <textarea
+                  id="operator_description"
+                  rows="2"
+                  cols="40"
+                  class="custom-form-control form-control"
+                  formControlName="operator_description"
+                ></textarea>
+              </div>
+              <div class="col-md-6 col-12">
+                <label class="control-label">Remarks</label>
+                <textarea
+                  id="operator_remarks"
+                  rows="2"
+                  cols="40"
+                  class="custom-form-control form-control"
+                  formControlName="operator_remarks"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mb-4">
+            <div class="form-group">
+              <button
+                class="btn btn-yellow text-uppercase fw-bold mr-2"
+                type="submit"
+              >
+                Add New
+              </button>
+              <button
+                class="btn btn-yellow text-uppercase fw-bold"
+                type="button"
+                (click)="resetForm()"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="col-12 mt-2">
+        <div class="panel panel-white h-100">
+          <div class="panel-heading d-inline-block float-left">
+            Operator List
+          </div>
+          <div class="d-inline-block float-right text-right">
+            <form
+              class="form-horizontal row"
+              method="post"
+              [formGroup]="operatorSearchForm"
+            >
+              <div class="search-group">
+                <svg
+                  class="svg-inline--fa fa-search fa-w-16 text-grey"
+                  aria-hidden="true"
+                  data-prefix="fa"
+                  data-icon="search"
+                  role="img"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                  data-fa-i2svg=""
+                >
+                  <path
+                    fill="currentColor"
+                    d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"
+                  ></path></svg
+                ><!-- <i class="fa fa-search text-grey" aria-hidden="true"></i> -->
+                <input
+                  type="text"
+                  class="f-12"
+                  placeholder="Search Here"
+                  (keyup)="onSearch()"
+                  formControlName="searching"
+                />
+              </div>
+            </form>
+          </div>
+          <div class="panel-body table-responsive pt-3">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>S.NO</th>
+                  <th (click)="sortData('operator_code')">
+                    Operator Code
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'operator_code' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'operator_code' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th (click)="sortData('operator_name')">
+                    Operator Name
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'operator_name' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'operator_name' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th (click)="sortData('operator_type')">
+                    Operator Type
+                    <i
+                      class="fas fa-sort"
+                      [ngClass]="{
+                        'fa-sort-up':
+                          sortedColumn === 'operator_type' &&
+                          sortDirection === 'asc',
+                        'fa-sort-down':
+                          sortedColumn === 'operator_type' &&
+                          sortDirection === 'desc'
+                      }"
+                    ></i>
+                  </th>
+                  <th class="text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let operator of operatorList; let index = index">
+                  <td class="py-1 lh-28">{{ index + fromStart.from }}.</td>
+                  <td class="py-2 lh-28">{{ operator.operator_code }}</td>
+                  <td class="py-2 lh-28">{{ operator.operator_name }}</td>
+                  <td>{{ operator.operator_type }}</td>
+                  <td class="text-right lh-28 py-2">
+                    <button
+                      (click)="editSelect(operator.operator_id)"
+                      class="btn btn-blue btn-sm my-0 px-3"
+                      style="background-color: #97bfe480; color: #132e67"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      (click)="
+                        deleteData(operator.operator_id, operator.operator_name)
+                      "
+                      class="btn btn-transparent btn-sm my-0"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="operatorList && operatorList.length === 0">
+                  <td colspan="4"><strong>No records found</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-paggination">
+            <div class="page-counter">
+              Showing
+              <select
+                class=""
+                [(ngModel)]="per_page"
+                (change)="onPerPageChange($event)"
+              >
+                <option
+                  *ngFor="let value of getPerPageCount"
+                  [value]="value"
+                >
+                  {{ value }}
+                </option>
+              </select>
+              of {{ total }} entries
+            </div>
+            <div class="custom-paggination float-right">
+              <ul>
+                <li *ngFor="let pagination of pagination; let index = index">
+                  <ng-container
+                    *ngIf="pagination.label !== '...'; else emptyLabel"
+                  >
+                    <a
+                      [innerHTML]="pagination.label"
+                      [ngClass]="{
+                        active: pagination.label == fromStart.current_page,
+                        disabled: pagination.url == null
+                      }"
+                      (click)="changePagination(pagination.url)"
+                    ></a>
+                  </ng-container>
+                  <ng-template #emptyLabel>
+                    <a>{{ pagination.label }}</a>
+                  </ng-template>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>
+
+<div
+  id="myModal"
+  class="modal fade editModal"
+  tabindex="-1"
+  role="dialog"
+  data-backdrop="static"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Operator</h5>
+        <button type="button" class="close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form
+          class="form-horizontal"
+          method="post"
+          [formGroup]="operatorForm"
+          (ngSubmit)="onUpdate()"
+          *ngIf="editListData && editListData.length > 0"
+        >
+          <div *ngFor="let editList of editListData" class="row">
+            <div class="col-md-12 col-12">
+              <div class="row">
+                <div class="col-md-6 col-12">
+                  <div class="form-group">
+                    <label class="control-label">Operator Code*</label>
+                    <input
+                      type="hidden"
+                      formControlName="id"
+                      [(ngModel)]="editList.operator_id"
+                    />
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="operator_code"
+                      id="operator_code"
+                      [(ngModel)]="editList.operator_code"
+                    />
+                    <div
+                      *ngIf="
+                        operatorForm
+                          ?.get('operator_code')
+                          ?.hasError('required') &&
+                        operatorForm?.get('operator_code')?.touched
+                      "
+                    >
+                      <span class="error-message"
+                        >Operator Code is required</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12">
+                  <label class="control-label">Operator Name*</label>
+                  <input
+                    type="text"
+                    class="form-control custom-form-control"
+                    placeholder=""
+                    formControlName="operator_name"
+                    id="operator_name"
+                    [(ngModel)]="editList.operator_name"
+                  />
+                  <div
+                    *ngIf="
+                      operatorForm
+                        ?.get('operator_name')
+                        ?.hasError('required') &&
+                      operatorForm?.get('operator_name')?.touched
+                    "
+                  >
+                    <span class="error-message">Operator Name is required</span>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12">
+                  <div class="form-group">
+                    <label class="control-label">Operator Type</label>
+                    <input
+                      type="text"
+                      class="form-control custom-form-control"
+                      placeholder=""
+                      formControlName="operator_type"
+                      id="operator_type"
+                      [(ngModel)]="editList.operator_type"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6 col-12">
+                  <div class="form-group">
+                    <label class="control-label">Operator Source</label>
+                    <select
+                      class="form-control custom-form-control"
+                      formControlName="operator_source"
+                      id="operator_source"
+                      [(ngModel)]="editList.operator_source"
+                    >
+                      <option value="">Select</option>
+                      <option
+                        *ngFor="let source of sourceList"
+                        [value]="source.source_id"
+                      >
+                        {{ source.source_name }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 col-12">
+              <div class="form-group row">
+                <div class="col-md-6 col-12">
+                  <label class="control-label">Operator Description</label>
+                  <textarea
+                    id="operator_description"
+                    rows="2"
+                    cols="40"
+                    class="custom-form-control form-control"
+                    formControlName="operator_description"
+                    [(ngModel)]="editList.operator_description"
+                  ></textarea>
+                </div>
+                <div class="col-md-6 col-12">
+                  <label class="control-label">Remarks</label>
+                  <textarea
+                    id="operator_remarks"
+                    rows="2"
+                    cols="40"
+                    class="custom-form-control form-control"
+                    formControlName="operator_remarks"
+                    [(ngModel)]="editList.remarks"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 mb-4">
+              <div class="form-group">
+                <button
+                  class="btn btn-yellow text-uppercase fw-bold mr-2"
+                  type="submit"
+                  [disabled]="operatorForm.invalid"
+                >
+                  Save
+                </button>
+                <button
+                  class="btn btn-yellow text-uppercase fw-bold"
+                  type="button"
+                  (click)="closeModal()"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

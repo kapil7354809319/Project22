@@ -1,0 +1,37 @@
+#viewModal{
+    .modal-body{
+        background-color: #fff;
+        padding-left: 33px;
+        .viewtraderoute{
+            .mb-10px{
+                margin-bottom: 15px;
+            }
+            .control-label {
+                font-weight: bold;
+            }
+            span{
+                font-size: 13px;
+                padding-right: 33px;
+            }
+        }
+        .multiselect  {
+            span{
+                font-size: 13px;
+                display: block;
+            }
+            .control-label {
+                font-weight: bold;
+            }
+        }
+    }
+    
+}
+
+.btn-disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.65;
+    filter: alpha(opacity=65);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}

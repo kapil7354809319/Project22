@@ -1,0 +1,392 @@
+<app-data-loader *ngIf="loading | async"></app-data-loader>
+
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+  <div class="container-fluid">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-4 col-12">
+          <h1 class="m-0">Search By Filter</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12 text-right"></div>
+        <!-- /.col -->
+      </div>
+    </div>
+    <div class="row m-0">
+      <div class="col-md-12">
+        <form
+          class="form-horizontal row"
+          method="post"
+          [formGroup]="searchByFilters"
+          (ngSubmit)="onSubmit()"
+        >
+          <div class="col-md-12 col-12">
+            <div class="form-group row"></div>
+          </div>
+          <div class="col-md-12 col-12">
+            <div class="form-group row">
+              <div class="col-md-3 mb-10px col-12">
+                <label class="control-label">Select Year</label>
+                <select
+                  class="form-control custom-form-control"
+                  (change)="onChangeYear()"
+                  formControlName="year"
+                >
+                  <option value="">Select Year</option>
+                  <option *ngFor="let years of years" [value]="years.year">
+                    {{ years.year }}
+                  </option>
+                </select>
+              </div>
+              <div class="col-md-3 mb-10px col-12">
+                <label class="control-label">Select Month</label>
+                <select
+                  class="form-control custom-form-control"
+                  formControlName="month"
+                  (change)="onChangeMonth()"
+                >
+                  <option value="">Select Month</option>
+                  <option *ngFor="let month of months" [value]="month.month">
+                    {{ month.month }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- create space -->
+            <div class="col-md-12 col-12 mt-6">
+              <div class="form-group row"></div>
+            </div>
+            <div class="col-md-12 col-12 mt-2">
+              <div class="form-group row"></div>
+            </div>
+
+            <!-- //search-optiops -->
+            <div class="form-group row">
+              <div class="col-md-3 pr-md-2 col-12">
+                <label class="control-label">Ports</label>
+                <ng-multiselect-dropdown
+                  [placeholder]="'Select Ports'"
+                  [settings]="portDownSettings"
+                  [data]="portList"
+                  formControlName="port"
+                  (onDeSelect)="onDeselectPort($event)"
+                  (onSelect)="onItemSelectPort($event)"
+                  (onSelectAll)="onSelectAllPort($event)"
+                  
+                  (onDeSelectAll)="onSelectAllPort($event)"
+                >
+                </ng-multiselect-dropdown>
+              </div>
+
+              <div class="col-md-3 pr-md-2 col-12">
+                <label class="control-label">Operators</label>
+                <ng-multiselect-dropdown
+                  [placeholder]="'Select Operators'"
+                  [settings]="operatorDownSettings"
+                  [data]="operatorList"
+                  formControlName="operator"
+                  (onDeSelect)="onDeselectOperator($event)"
+                  (onSelect)="onItemSelectOperator($event)"
+                  (onSelectAll)="onSelectAllOperator($event)"
+                  
+                  (onDeSelectAll)="onSelectAllOperator($event)"
+                >
+                </ng-multiselect-dropdown>
+              </div>
+
+              <div class="col-md-3 mb-10px pr-md-2 col-12 mb-10px">
+                <label class="control-label">Country</label>
+                <ng-multiselect-dropdown
+                  [placeholder]="'Select Country'"
+                  [settings]="countryDownSettings"
+                  [data]="countryList"
+                  formControlName="country"
+                  (onDeSelect)="onDeselectCountry($event)"
+                  (onSelect)="onItemSelectCountry($event)"
+                  (onSelectAll)="onSelectAllCountry($event)"
+                  
+                  (onDeSelectAll)="onSelectAllCountry($event)"
+                >
+                </ng-multiselect-dropdown>
+              </div>
+
+              <div class="col-md-3 mb-10px pr-md-2 col-12 mb-10px">
+                <label class="control-label">Regions</label>
+                <ng-multiselect-dropdown
+                  [placeholder]="'Select Regions'"
+                  [settings]="regionDownSettings"
+                  [data]="regionsList"
+                  formControlName="region"
+                  (onDeSelect)="onDeselectRegions($event)"
+                  (onSelect)="onItemSelectRegions($event)"
+                  (onSelectAll)="onSelectAllRegions($event)"
+                  
+                  (onDeSelectAll)="onSelectAllRegions($event)"
+                >
+                </ng-multiselect-dropdown>
+              </div>
+
+              <div class="col-md-3 mb-10px pr-md-2 col-12 mb-10px">
+                <label class="control-label">Vessels</label>
+                <ng-multiselect-dropdown
+                  [placeholder]="'Select Vessels'"
+                  
+                  [settings]="VesselDownSettings"
+                  [data]="vesselsList"
+                  (onDeSelect)="onDeselectVessels($event)"
+                  (onSelect)="onItemSelectVessels($event)"
+                  (onSelectAll)="onSelectAllVessels($event)"
+                  formControlName="vessel"
+                  (onDeSelectAll)="onSelectAllVessels($event)"
+                >
+                </ng-multiselect-dropdown>
+              </div>
+
+              <div class="col-md-3 mb-10px pr-md-2 col-12 mb-10px">
+                <label class="control-label">Alliances</label>
+                <ng-multiselect-dropdown
+                  [placeholder]="'Select Alliances'"
+                  [settings]="allianceDownSettings"
+                  [data]="alliancesList"
+                  (onDeSelect)="onDeselectAlliances($event)"
+                  (onSelect)="onItemSelectAlliances($event)"
+                  (onSelectAll)="onSelectAllAlliances($event)"
+                  formControlName="alliance"
+                  (onDeSelectAll)="onSelectAllAlliances($event)"
+                >
+                </ng-multiselect-dropdown>
+              </div>
+
+              <div class="col-md-3 mb-10px pr-md-2 col-12 mb-10px">
+                <label class="control-label">Sub-Trade</label>
+                <ng-multiselect-dropdown
+                  [placeholder]="'Select Sub-Trade'"
+                  [settings]="subTradeDownSettings"
+                  [data]="subtradeList"
+                  (onDeSelect)="onDeselectSubtrade($event)"
+                  (onSelect)="onItemSelectSubtrade($event)"
+                  (onSelectAll)="onSelectAllSubtrade($event)"
+                  formControlName="subTrade"
+                  (onDeSelectAll)="onSelectAllSubtrade($event)"
+                >
+                </ng-multiselect-dropdown>
+              </div>
+
+              <div class="col-md-3 mb-10px pr-md-2 col-12 mb-10px">
+                <label class="control-label">Trade-Route</label>
+                <ng-multiselect-dropdown
+                  [placeholder]="'Select Trade Route'"
+                  [settings]="tradeDownSettings"
+                  [data]="traderouteList"
+                  formControlName="route"
+                  (onDeSelect)="onDeselectTraderoute($event)"
+                  (onSelect)="onItemSelectTraderoute($event)"
+                  (onSelectAll)="onSelectAllTraderoute($event)"
+                  
+                  (onDeSelectAll)="onSelectAllTraderoute($event)"
+                >
+                </ng-multiselect-dropdown>
+              </div>
+            </div>
+          </div>
+
+          <!-- ///// -->
+
+          <div class="col-12 mb-4">
+            <div class="form-group">
+              <button
+                (click)="viewReport()"
+                class="btn btn-yellow text-uppercase fw-semibold mr-2"
+                type="button"
+              >
+                VIEW REPORT
+              </button>
+              <button (click)="clear()"
+                class="btn fw-semibold text-decoration-underline"
+                type="button"
+              >
+                Clear Search
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="col-12 mt-2">
+        <div *ngIf="showContent" class="panel panel-white h-100">
+          <div class="panel-heading d-inline-block float-left">
+            {{portNameWithRegion}}
+          </div>
+          <!-- <div class="d-inline-block float-right"></div> -->
+          <div class="d-flex justify-content-end">
+            <form class="form-horizontal">
+              <div class="search-group bg-transparent pl-0">
+                <button class="btn btn-secondary text-center" (click)="export('excel-export')">
+                  Export To Excel
+                </button>
+                <!-- <button class="btn btn-secondary text-center ml-2">Export with Excel</button> -->
+              </div>
+            </form>
+
+            <form
+              class="search-group bg-transparent pl-0"
+              action="excel_export_action.php"
+              method="post"
+            >
+              <div class="search-group bg-transparent pl-0">
+                <button class="btn btn-secondary text-center ml-2"  (click)="export('excel-export-with-ships')">
+                  Export To Excel with Ships
+                </button>
+              </div>
+            </form>
+          </div>
+          <div class="panel-body table-responsive pt-3">
+            <table  class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Service Name</th>
+                  <th>Total Ships</th>
+                  <th>Active Ships</th>
+                  <th>Missed Ships</th>
+                  <th>Frequency <span class="d-block">(Days)</span></th>
+                  <th>Round Voyage</th>
+                  <th>Total ship TEU capacit</th>
+                  <th>
+                    Average Capacity<span class="d-block">(Total Ships)</span>
+                  </th>
+                  <th>
+                    Average Capacity<span class="d-block">(Active Ships)</span>
+                  </th>
+                  <th>Maximum ship TEU</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="bg-dark-grey">
+                  <td class="pt-2 pb-2">
+                    Total Services <span class="text-mute-blue"> : {{total | number}} </span>
+                  </td>
+                  <td class="pt-2 pb-2">{{totalShips | number}}</td>
+                  <td class="pt-2 pb-2">{{activeShips | number}}</td>
+                  <td>{{missedShips | number}}</td>
+                  <td></td>
+                  <td></td>
+                  <td>{{totalShipTeu | number}}</td>
+                  <td>{{averageCapacity | number}}</td>
+                  <td>{{averageActiveCapacity | number}}</td>
+                  <td>{{maxShipTeu | number}}</td>
+                </tr>
+                <tr *ngFor="let service of servicesList">
+                  <td>
+                    <a
+                     [routerLink]="['/current-report/search-by-service']"
+                     [queryParams]="{serviceId: service.archived_service_id}"
+                     queryParamsHandling="merge"
+                      target="_blank"
+                    >
+                      {{service.service_name}}
+                    </a>
+                  </td>
+                  <td>{{service.no_of_vessel | number}}</td>
+                  <td>{{service.active_vessels_count | number}}</td>
+                  <td>{{service.missed_vessels_count| number}}</td>
+                  <td>{{service.service_frequency | number}}</td>
+                  <td>{{service.service_round_voyage_days | number}}</td>
+                  <td>{{service.vessels_sum_teu_capacity| number}}</td>
+                  <td>{{roundOff(service.vessels_avg_teu_capacity) | number}}</td>
+                  <td>{{roundOff(service.active_vessels_avg_teu_capacity)| number}}</td>
+                  <td>{{service.vessels_max_teu_capacity| number}}</td>
+                </tr>
+              </tbody>
+            </table>
+            <!-- <table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Service Name</th>
+      <th>Total Ships </th>
+      <th>Active Ships</th>
+      <th>Missed Ships</th>
+      <th>Frequency <span class="d-block">(Days)</span></th>
+      <th>Round Voyage</th>
+      <th>Total ship TEU capacit</th>
+      <th>Average Capacity<span class="d-block">(Total Ships)</span></th>
+      <th>Average Capacity<span class="d-block">(Active Ships)</span></th>
+      <th>Maximum ship TEU</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let row of dummyData">
+      <td>{{ row['Service Name'] }}</td>
+      <td>{{ row['Total Ships'] }}</td>
+      <td>{{ row['Active Ships'] }}</td>
+      <td>{{ row['Missed Ships'] }}</td>
+      <td>{{ row['Frequency (Days)'] }}</td>
+      <td>{{ row['Round Voyage'] }}</td>
+      <td>{{ row['Total ship TEU capacity'] }}</td>
+      <td>{{ row['Average Capacity (Total Ships)'] }}</td>
+      <td>{{ row['Average Capacity (Active Ships)'] }}</td>
+      <td>{{ row['Maximum ship TEU'] }}</td>
+    </tr>
+
+    <tr *ngFor="let service of filteredServices">
+        <td>{{ service['Service Name'] }}</td>
+        <td>{{ service['Total Ships'] }}</td>
+        <td>{{ service['Active Ships'] }}</td>
+        <td>{{ service['Missed Ships'] }}</td>
+        <td>{{ service['Frequency (Days)'] }}</td>
+        <td>{{ service['Round Voyage'] }}</td>
+        <td>{{ service['Total ship TEU capacity'] }}</td>
+        <td>{{ service['Average Capacity (Total Ships)'] }}</td>
+        <td>{{ service['Average Capacity (Active Ships)'] }}</td>
+        <td>{{ service['Maximum ship TEU'] }}</td>
+      </tr>
+  </tbody>
+</table> -->
+          </div>
+
+          <div class="table-paggination">
+            <div class="page-counter">
+              Showing
+              <select
+                class=""
+                [(ngModel)]="per_page"
+                (change)="onPerPageChange($event)"
+              >
+                <option
+                  *ngFor="let value of getPerPageCount"
+                  [value]="value"
+                >
+                  {{ value }}
+                </option>
+              </select>
+              of {{ total }} entries
+            </div>
+            <div class="custom-paggination float-right">
+              <ul>
+                <li
+                  *ngFor="let pagination of pagination; let index = index"
+                >
+                  <ng-container
+                    *ngIf="pagination.label !== '...'; else emptyLabel"
+                  >
+                    <a
+                      [innerHTML]="pagination.label"
+                      [ngClass]="{
+                        active: pagination.label == fromStart.current_page,
+                        disabled: pagination.url == null
+                      }"
+                      (click)="changePagination(pagination.url)"
+                    ></a>
+                  </ng-container>
+                  <ng-template #emptyLabel>
+                    <a>{{ pagination.label }}</a>
+                  </ng-template>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

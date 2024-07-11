@@ -1,0 +1,181 @@
+<app-data-loader *ngIf="(loading | async)"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+    <div class="container-fluid">
+        <div class="content-header">
+            <div class="row page-header" id="stickyHeader">
+                <div class="col-md-4 col-12">
+                    <h1 class="m-0">Document Repository</h1>
+                </div><!-- /.col -->
+                <div class="col-md-8 col-12 text-right">
+
+                </div><!-- /.col -->
+            </div>
+        </div>
+        <!-- Page Content -->
+        <div class="row m-0">
+            <div class="col-md-12 col-12">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#addnew" role="tab">Add New</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#search" role="tab">Search</a>
+                    </li>
+                </ul><!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="addnew" role="tabpanel">
+                        <h3>Add Document</h3>
+                        <form class="form-horizontal row" method="post" [formGroup]="documentRepForm"
+                            (ngSubmit)="onSubmit()">
+                            <div class="col-md-6 col-12">
+                                <div class="form-group row">
+                                    <div class="col-md-6 pr-md-2 col-12">
+                                        <label class="control-label">Title*</label>
+                                        <input type="text" class="form-control custom-form-control" placeholder=""
+                                            formControlName="title" id="title" />
+                                        <div
+                                            *ngIf="documentRepForm?.get('country_name')?.hasError('required') && documentRepForm?.get('country_name')?.touched">
+                                            <span class="error-message">Country Name is required</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 pr-md-2 col-12">
+                                        <label class="control-label">Module</label>
+                                        <input type="text" class="form-control custom-form-control" placeholder=""
+                                            formControlName="module" id="module" />
+                                        <div
+                                            *ngIf="documentRepForm?.get('country_name')?.hasError('required') && documentRepForm?.get('country_name')?.touched">
+                                            <span class="error-message">Country Name is required</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 pr-md-2 col-12">
+                                        <label class="control-label">Purpose</label>
+                                        <input type="text" class="form-control custom-form-control" placeholder=""
+                                            formControlName="purpose" id="purpose" />
+                                        <div
+                                            *ngIf="documentRepForm?.get('country_name')?.hasError('required') && documentRepForm?.get('country_name')?.touched">
+                                            <span class="error-message">Country Name is required</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 pr-md-2 col-12">
+                                        <label class="control-label"></label>
+                                        <input type="text" class="form-control custom-form-control" placeholder=""
+                                            formControlName="country_name" id="country_name" />
+                                        <div
+                                            *ngIf="documentRepForm?.get('country_name')?.hasError('required') && documentRepForm?.get('country_name')?.touched">
+                                            <span class="error-message">Country Name is required</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 mb-4">
+                                <div class="form-group">
+                                    <button class="btn btn-yellow text-uppercase fw-bold mr-2" type="submit"
+                                        [disabled]="documentRepForm.invalid">Add
+                                        New</button>
+                                    <button class="btn btn-yellow text-uppercase fw-bold" (click)="resetForm()"
+                                        type="button">Reset</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane" id="search" role="tabpanel">
+                        <h3>Search Document</h3>
+                        <!-- <form class="form-horizontal row" method="post" [formGroup]="countrySearchForm"
+                            (ngSubmit)="onSearch()">
+                            <div class="col-md-6 col-12">
+                                <div class="form-group row">
+                                    <div class="col-md-6 pr-md-2 col-12">
+                                        <label class="control-label">Country Name</label>
+                                        <input type="text" class="form-control custom-form-control" placeholder=""
+                                            formControlName="country_name" id="country_name" />
+                                    </div>
+                                    <div class="col-md-6 pl-md-2 col-12">
+                                        <label class="control-label">Routing Name</label>
+                                        <select class="form-control custom-form-control" formControlName="routing"
+                                            id="routing">
+                                            <option value="">Select</option>
+                                            <option *ngFor="let region of regionList" [value]="region.region_id">
+                                                {{region.region_name}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 mb-4">
+                                <div class="form-group">
+                                    <button class="btn btn-yellow text-uppercase fw-bold mr-2" type="submit"
+                                        [disabled]="countrySearchForm.invalid">Search
+                                    </button>
+                                    <button class="btn btn-yellow text-uppercase fw-bold" (click)="resetSearchForm()"
+                                        type="button">Reset</button>
+                                </div>
+                            </div>
+                        </form> -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 mt-2">
+                <div class="panel panel-white h-100">
+                    <div class="panel-heading">
+                        Country List
+                    </div>
+                    <div class="panel-body table-responsive pt-3">
+                        <!-- <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>S.NO</th>
+                                    <th>Country Name</th>
+                                    <th>Routing</th>
+                                    <th class="text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let country of countryList; let index = index">
+                                    <td class="py-1 lh-28">{{index+fromStart.from}}.</td>
+                                    <td class="py-2 lh-28">{{country.country_name}}</td>
+                                    <td class="py-2 lh-28">{{country.region.region_name}}</td>
+                                    <td class="text-right lh-28 py-2">
+                                        <button (click)="editSelect(country.country_id)"
+                                            class="btn btn-blue btn-sm my-0 px-3"
+                                            style="background-color: #97BFE480; color: #132E67">Edit</button>
+                                        <button (click)="deleteData(country.country_id, country.country_name)"
+                                            class="btn btn-transparent btn-sm my-0">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="countryList && countryList.length === 0">
+                                    <td colspan="4"><strong>No records found</strong></td>
+                                </tr>
+                            </tbody>
+                        </table> -->
+                    </div>
+
+                    <!-- <div class="table-paggination">
+                        <div class="page-counter">
+                            Showing
+                            <select class="" [(ngModel)]="per_page" (change)="onPerPageChange($event)">
+                                <option *ngFor="let value of [10, 20, 30, 40, 50]" [value]="value">{{ value }}
+                                </option>
+                            </select>
+                            of {{total}} entries
+                        </div>
+                        <div class="custom-paggination float-right">
+                            <ul>
+                                <li *ngFor="let pagination of pagination; let index=index">
+                                    <ng-container *ngIf="pagination.label !== '...'; else emptyLabel">
+                                        <a [innerHTML]="pagination.label"
+                                            [ngClass]="{'active': pagination.label == fromStart.current_page, 'disabled':  pagination.url == null}"
+                                            (click)="changePagination(pagination.url)"></a>
+                                    </ng-container>
+                                    <ng-template #emptyLabel>
+                                        <a>{{pagination.label}}</a>
+                                    </ng-template>
+                                </li>
+                            </ul>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+        <app-footer></app-footer>
+    </div>
+</div>

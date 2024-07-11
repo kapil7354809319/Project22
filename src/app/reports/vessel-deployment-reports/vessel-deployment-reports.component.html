@@ -1,0 +1,190 @@
+<app-data-loader *ngIf="(loading | async)"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+    <div class="container-fluid">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="row page-header" id="stickyHeader">
+                <div class="col-md-12 col-12">
+                    <h1 class="m-0">Vessel Deployment Reports</h1>
+                </div><!-- /.col -->
+                <div class="col-md-8 col-12 text-right">
+
+                </div><!-- /.col -->
+            </div>
+        </div>
+        <div class="row m-0">
+            <div class="col-md-12">
+                <form class="form-horizontal row" [formGroup]="vesselDeploymentReportForm" (ngSubmit)="onSubmit()">
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+                            <div class="col-md-3 mb-10px col-12 d-flex">
+                                <input type="radio" checked id="report-one" name="report-group"
+                                    (change)="loadYears('after17')" />
+                                <label class="control-label ml-2" for="report-one">Report (Sep 17 Onwards)</label>
+                            </div>
+                            <div class="col-md-3 mb-10px pr-md-2 col-12 d-flex">
+                                <input type="radio" id="report-two" name="report-group"
+                                    (change)="loadYears('before17')" />
+                                <label class="control-label ml-2" for="report-two">Report (Jan 15 - Aug 17)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-12">
+                        <div class="form-group row">
+                            <div class="col-md-3 mb-10px col-12">
+                                <label class="control-label">Select Year</label>
+                                <select class="form-control custom-form-control" (change)="onChangeYear()"
+                                    formControlName="year">
+                                    <option value="">Select Year</option>
+                                    <option *ngFor="let years of years" [value]="years.year">
+                                        {{ years.year }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-10px pr-md-2 col-12">
+                                <label class="control-label">Select Month</label>
+                                <select class="form-control custom-form-control" formControlName="month">
+                                    <option value="">Select Month</option>
+                                    <option *ngFor="let month of months" [value]="month.month">
+                                        {{ month.month }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-4">
+                        <div class="form-group">
+                            <button class="btn btn-yellow text-uppercase fw-semibold mr-2" type="submit"
+                                [disabled]="vesselDeploymentReportForm.invalid">GET
+                                REPORT</button>
+                            <button class="btn fw-semibold text-decoration-underline" type="button">Clear
+                                Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-12 mt-2" *ngIf="vesselDeploymentReport && vesselDeploymentReport.length === 0">
+                <div class="panel panel-white h-100">
+                    <div class="panel-heading d-inline-block float-left">Service-wise vessel list as on 01 Jan 2018
+                    </div>
+                    <div class="d-inline-block float-right text-right">
+                        <form class="form-horizontal">
+                            <div class="search-group bg-transparent pl-0">
+                                <button class="btn btn-secondary text-center">Export</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="panel-body table-responsive pt-3">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Primary Trade route</th>
+                                    <th>Trade route</th>
+                                    <th>Carrier</th>
+                                    <!-- <th>Capacity- TEU<span class="d-block">(Average/Annual Operational)</span></th> -->
+                                    <th>Service name<span>(Service Type)</span></th>
+                                    <th>Drewry Ref. Code</th>
+                                    <th>Routing</th>
+                                    <th>Vessel</th>
+                                    <th>IMO No</th>
+                                    <th>Operator</th>
+                                    <th>Teu Capacity</th>
+                                    <th>Ownership Status</th>
+                                    <th>Way port%<span class="d-block">(Eastbound / Westbound)</span></th>
+                                    <th>Way port%<span class="d-block">(Northbound / Southbound)</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>No</td>
+                                    <td>Asia-Central America/Caribbean</td>
+                                    <td>2M</td>
+                                    <td>2M - TP11/USEC-1 America <span class="text-muted">(ETE)</span></td>
+                                    <td>RCD346</td>
+                                    <td>Suez</td>
+                                    <td>Maersk Sana</td>
+                                    <td>9289922</td>
+                                    <td>Maersk</td>
+                                    <td>8450</td>
+                                    <td>Chartered</td>
+                                    <td>100/ 80</td>
+                                    <td>0 / 0</td>
+                                </tr>
+                                <tr>
+                                    <td>No</td>
+                                    <td>Asia-Central America/Caribbean</td>
+                                    <td>2M</td>
+                                    <td>2M - TP11/USEC-1 America <span class="text-muted">(ETE)</span></td>
+                                    <td>RCD346</td>
+                                    <td>Suez</td>
+                                    <td>Maersk Sana</td>
+                                    <td>9289922</td>
+                                    <td>Maersk</td>
+                                    <td>8450</td>
+                                    <td>Chartered</td>
+                                    <td>100/ 80</td>
+                                    <td>0 / 0</td>
+                                </tr>
+                                <tr>
+                                    <td>No</td>
+                                    <td>Asia-Central America/Caribbean</td>
+                                    <td>2M</td>
+                                    <td>2M - TP11/USEC-1 America <span class="text-muted">(ETE)</span></td>
+                                    <td>RCD346</td>
+                                    <td>Suez</td>
+                                    <td>Maersk Sana</td>
+                                    <td>9289922</td>
+                                    <td>Maersk</td>
+                                    <td>8450</td>
+                                    <td>Chartered</td>
+                                    <td>100/ 80</td>
+                                    <td>0 / 0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-paggination">
+                        <div class="page-counter">Showing
+                            <select class="">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                                <option value="50">50</option>
+                            </select>
+                            of 34 entries
+                        </div>
+                        <div class="custom-paggination float-right">
+                            <ul>
+                                <li class="disabled"><a class="" href="#"><svg
+                                            class="svg-inline--fa fa-angle-left fa-w-8 mr-1 mt-3px" aria-hidden="true"
+                                            data-prefix="fa" data-icon="angle-left" role="img"
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg="">
+                                            <path fill="currentColor"
+                                                d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z">
+                                            </path>
+                                        </svg><!-- <i class="fa fa-angle-left mr-1 mt-3px" aria-hidden="true"></i> --><span
+                                            class="float-right">Prev</span></a></li>
+                                <li><a class="active" href="#">1</a></li>
+                                <li><a href="#">2</a></li>
+                                <li><a href="#">3</a></li>
+                                <li><a href="#">4</a></li>
+                                <li><a href="#"><span class="float-left">Next</span> <svg
+                                            class="svg-inline--fa fa-angle-right fa-w-8 ml-1 mt-3px" aria-hidden="true"
+                                            data-prefix="fa" data-icon="angle-right" role="img"
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg="">
+                                            <path fill="currentColor"
+                                                d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z">
+                                            </path>
+                                        </svg><!-- <i class="fa fa-angle-right ml-1 mt-3px" aria-hidden="true"></i> --></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- //// -->
+        </div>
+    </div>
+</div>

@@ -1,0 +1,362 @@
+<app-data-loader *ngIf="(loading | async)"></app-data-loader>
+<div class="content-wrapper reefer-bg" data-widget="main-content">
+  <div class="container-fluid monthly-archive">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="row page-header" id="stickyHeader">
+        <div class="col-md-4 col-12">
+          <h1 class="m-0">Manage Archived Trade Route</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-8 col-12 text-right"></div>
+        <!-- /.col -->
+      </div>
+    </div>
+    <div class="row m-0">
+      <div class="col-md-12">
+        <form class="form-horizontal row addsearchform" method="post" [formGroup]="manageTradeRouteForm">
+          <div class="col-md-12 col-12">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="form-group row">
+                  <div class="col-md-6 mb-10px pr-md-2 col-12 mb-2">
+                    <label class="control-label">Select Archived Year*</label>
+                    <select class="form-control custom-form-control" (change)="onChangeYear()"
+                      formControlName="archivedYear">
+                      <option value="">Select</option>
+                      <option *ngFor="let years of years" [value]="years.year">
+                        {{ years.year }}
+                      </option>
+                    </select>
+                    <div *ngIf="
+                          manageTradeRouteForm
+                            ?.get('archivedYear')
+                            ?.hasError('required') &&
+                          manageTradeRouteForm?.get('archivedYear')?.touched
+                        ">
+                      <span class="error-message">Archived Year is required</span>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-10px pr-md-2 col-12 mb-2">
+                    <label class="control-label">Select Archived Month</label>
+                    <select class="form-control custom-form-control" formControlName="archivedMonth"
+                      (change)="monthChange()">
+                      <option value="">Select</option>
+                      <option *ngFor="let month of months" [value]="month.month">
+                        {{ month.month }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="panel panel-white h-100" *ngIf="manageTradeRouteList">
+        <div class="panel-heading">Archived Trade Route List</div>
+        <div class="panel-body table-responsive pt-3">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>S.NO&nbsp;</th>
+                <th (click)="sortData('trade_route_name')">Trade Route Name
+                  <i class="fas fa-sort" [ngClass]="{
+                                  'fa-sort-up':
+                                    sortedColumn === 'trade_route_name' &&
+                                    sortDirection === 'asc',
+                                  'fa-sort-down':
+                                    sortedColumn === 'trade_route_name' &&
+                                    sortDirection === 'desc'
+                                }"></i>
+                </th>
+                <th (click)="sortData('out_of_scope')">Out Of Scope % <i class="fas fa-sort" [ngClass]="{
+                                    'fa-sort-up':
+                                      sortedColumn === 'out_of_scope' &&
+                                      sortDirection === 'asc',
+                                    'fa-sort-down':
+                                      sortedColumn === 'out_of_scope' &&
+                                      sortDirection === 'desc'
+                                  }"></i></th>
+                <th (click)="sortData('dwt_adjustment')">Dwt Adjustment % <i class="fas fa-sort" [ngClass]="{
+                                    'fa-sort-up':
+                                      sortedColumn === 'dwt_adjustment' &&
+                                      sortDirection === 'asc',
+                                    'fa-sort-down':
+                                      sortedColumn === 'dwt_adjustment' &&
+                                      sortDirection === 'desc'
+                                  }"></i></th>
+                <th (click)="sortData('high_cube_adjustment')">High Cube Adjustment % <i class="fas fa-sort" [ngClass]="{
+                                    'fa-sort-up':
+                                      sortedColumn === 'high_cube_adjustment' &&
+                                      sortDirection === 'asc',
+                                    'fa-sort-down':
+                                      sortedColumn === 'high_cube_adjustment' &&
+                                      sortDirection === 'desc'
+                                  }"></i></th>
+                <th (click)="sortData('direction')">Direction <i class="fas fa-sort" [ngClass]="{
+                                    'fa-sort-up':
+                                      sortedColumn === 'direction' &&
+                                      sortDirection === 'asc',
+                                    'fa-sort-down':
+                                      sortedColumn === 'direction' &&
+                                      sortDirection === 'desc'
+                                  }"></i></th>
+                <th class="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let tradeRoute of manageTradeRouteList; let index = index">
+                <td class="py-1 lh-28">{{ index + fromStart.from }}.</td>
+                <td class="py-2 lh-28">
+                  {{ tradeRoute.trade_route_name }}
+                </td>
+                <td class="py-2 lh-28">
+                  {{ tradeRoute.out_of_scope }}
+                </td>
+                <td class="py-2 lh-28">
+                  {{ tradeRoute.dwt_adjustment }}
+                </td>
+                <td class="py-2 lh-28">
+                  {{ tradeRoute.high_cube_adjustment }}
+                </td>
+                <td class="py-2 lh-28">
+                  {{ tradeRoute.direction }}
+                </td>
+                <td class="text-right lh-28 py-2 manage_trade_route">
+                  <a class="text-black"><span title="view" (click)="viewData(tradeRoute.archive_trade_route_id)"><i
+                        class="fa fa-eye"></i></span></a>
+
+                  <a class="text-black"><span title="edit" (click)="editSelect(tradeRoute.archive_trade_route_id)"><i
+                        aria-hidden="true" class="fa fa-edit"></i></span></a>
+
+                  <a class="text-black"><span title="delete" (click)="
+                      deleteData(
+                        tradeRoute.trade_route_id,
+                        tradeRoute.trade_route_name
+                      )
+                    "><i aria-hidden="true" class="fa fa-trash"></i></span></a>
+
+
+
+                </td>
+              </tr>
+              <tr *ngIf="manageTradeRouteList && manageTradeRouteList.length === 0">
+                <td colspan="4"><strong>No records found</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-paggination">
+          <div class="page-counter">
+            Showing
+            <select class="" [(ngModel)]="per_page" (change)="onPerPageChange($event)">
+              <option *ngFor="let value of getPerPageCount" [value]="value">
+                {{ value }}
+              </option>
+            </select>
+            of {{ total }} entries
+          </div>
+          <div class="custom-paggination float-right">
+            <ul>
+              <li *ngFor="let pagination of pagination; let index = index">
+                <ng-container *ngIf="pagination.label !== '...'; else emptyLabel">
+                  <a [innerHTML]="pagination.label" [ngClass]="{
+                        active: pagination.label == fromStart.current_page,
+                        disabled: pagination.url == null
+                      }" (click)="changePagination(pagination.url)"></a>
+                </ng-container>
+                <ng-template #emptyLabel>
+                  <a>{{ pagination.label }}</a>
+                </ng-template>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </div>
+</div>
+
+<div id="archiveTradeRouteModal" class="modal fade editModal" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">View Archived Trade Route</h5>
+        <button type="button" class="close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-horizontal row" *ngIf="archiveTradeRouteView && archiveTradeRouteView.length > 0">
+          <div *ngFor="let editList of archiveTradeRouteView">
+            <div class="col-md-12 col-12 viewtraderoute">
+              <div class="form-group row">
+                <div class="col-md-6 col-12">
+                  <div class="d-flex justify-content-between">
+                    <label class="control-label">Trade Route Name :-</label>
+                    <span>{{ editList.trade_route_name }}</span>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12 mb-10px">
+                  <div class="d-flex justify-content-between">
+                    <label class="control-label">Out Of Scope % :-</label>
+                    <span>{{ editList.out_of_scope }}</span>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12 mb-10px">
+                  <div class="d-flex justify-content-between">
+                    <label class="control-label">Direction :-</label>
+                    <span>{{ editList.direction }}</span>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12 mb-10px">
+                  <div class="d-flex justify-content-between">
+                    <label class="control-label">Dwt Adjustment % :-</label>
+                    <span>{{ editList.dwt_adjustment }}</span>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12 mb-10px">
+                  <div class="d-flex justify-content-between">
+                    <label class="control-label">Show this trade route name in vessel deployment and
+                      captab report :-</label>
+                    <span>{{ editList.vessel_deployment_status }}</span>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12 mb-10px">
+                  <div class="d-flex justify-content-between">
+                    <label class="control-label">High Cube Adjustment % :-</label>
+                    <span>{{ editList.high_cube_adjustment }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 mb-4">
+              <div class="form-group">
+                <button (click)="closeModal()" class="btn btn-yellow text-uppercase fw-bold" type="button">
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="editArchiveTradeRouteModal" class="modal fade editModal" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Archived Trade Route</h5>
+        <button type="button" class="close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal row" method="post" [formGroup]="manageArchivedTradeRouteForm"
+          (ngSubmit)="onUpdate()" *ngIf="archiveTradeRouteView && archiveTradeRouteView.length > 0">
+          <div *ngFor="let editList of archiveTradeRouteView">
+            <div class="col-md-12 col-12">
+              <div class="form-group row">
+                <div class="col-md-6 col-12">
+                  <label class="control-label">Trade Route Name *</label>
+                  <input type="hidden" formControlName="id" [(ngModel)]="editList.trade_route_id" />
+                  <input type="hidden" formControlName="archivedYear" [(ngModel)]="Year" />
+                  <input type="hidden" formControlName="archivedMonth" [(ngModel)]="Month" />
+                  <input type="text" class="form-control custom-form-control" placeholder=""
+                    formControlName="trade_route_name" [(ngModel)]="editList.trade_route_name" />
+                  <div *ngIf="
+                      manageArchivedTradeRouteForm
+                        ?.get('trade_route_name')
+                        ?.hasError('required') &&
+                      manageArchivedTradeRouteForm?.get('trade_route_name')?.touched
+                    ">
+                    <span class="error-message">Trade Route Name is required</span>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12 mb-10px">
+                  <label class="control-label">Out Of Scope %</label>
+                  <input type="number" min="0" max="100" [(ngModel)]="editList.out_of_scope"
+                    class="form-control custom-form-control" placeholder="" formControlName="out_of_scope" />
+                </div>
+                <div class="col-md-6 col-12 mb-10px">
+                  <label class="control-label">Direction*</label>
+                  <select class="form-control custom-form-control" formControlName="direction"
+                    [(ngModel)]="editList.direction">
+                    <option value="">Select</option>
+                    <option value="Eastbound">Eastbound</option>
+                    <option value="Westbound">Westbound</option>
+                    <option value="Northbound">Northbound</option>
+                    <option value="Southbound">Southbound</option>
+                  </select>
+                  <div *ngIf="
+                      manageArchivedTradeRouteForm?.get('direction')?.hasError('required') &&
+                      manageArchivedTradeRouteForm?.get('direction')?.touched
+                    ">
+                    <span class="error-message">Direction is required</span>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12 mb-10px">
+                  <label class="control-label">High Cube Adjustment %</label>
+                  <input type="number" min="0" max="100" class="form-control custom-form-control" placeholder=""
+                    formControlName="high_cube_adjustment" [(ngModel)]="editList.high_cube_adjustment" />
+                </div>
+                <div class="col-md-6 col-12 mb-10px">
+                  <label class="control-label">Sequence</label>
+                  <input type="text" class="form-control custom-form-control" placeholder="" formControlName="sequence"
+                    [(ngModel)]="editList.sequence" />
+                  <div *ngIf="
+                      manageArchivedTradeRouteForm.get('sequence')?.hasError('pattern') &&
+                      manageArchivedTradeRouteForm.get('sequence')?.touched
+                    ">
+                    <span class="error-message">Please enter only numeric values.</span>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12 mb-10px">
+                  <label class="control-label">Dwt Adjustment %</label>
+                  <input type="number" min="0" max="100" class="form-control custom-form-control" placeholder=""
+                    formControlName="dwt_adjustment" [(ngModel)]="editList.dwt_adjustment" />
+                </div>
+                <div class="col-md-6 col-12 mb-10px">
+                  <label class="control-label">Show this trade route name in vessel deployment and captab
+                    report</label>
+                  <select class="form-control custom-form-control" [(ngModel)]="editList.vessel_deployment_status"
+                    formControlName="vessel_deployment">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
+                </div>
+                <div class="col-md-6 col-12 mb-10px">
+                  <label class="control-label">Valid for Report â€“ Shipping capacity by ports and trade
+                    routes</label>
+                  <select class="form-control custom-form-control" [(ngModel)]="editList.valid_for_reports"
+                    formControlName="shipping_capacity">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 mb-4">
+              <div class="form-group">
+                <button class="btn btn-yellow text-uppercase fw-bold mr-2" type="submit"
+                  [disabled]="manageArchivedTradeRouteForm.invalid">
+                  Save
+                </button>
+                <button (click)="closeModal()" class="btn btn-yellow text-uppercase fw-bold" type="button">
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

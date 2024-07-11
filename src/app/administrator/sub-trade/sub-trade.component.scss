@@ -1,0 +1,18 @@
+::ng-deep {
+    .subtrade-main .multiselectblock .custom-form-control {
+        min-width: 270px;
+        height: auto;
+        margin-left: 30px;
+        padding: 0px;
+    }
+
+    .subtrade-main .multiselectblock .multiselect-dropdown .dropdown-btn {
+        background-color: #e9ecf1;
+    }
+
+    .subtrade-main .multiselectblock .selected-item {
+        max-width: 100% !important;
+        border: 1px solid #545b62 !important;
+        background: #545b62 !important;
+    }
+}

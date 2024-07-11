@@ -1,0 +1,177 @@
+::ng-deep {
+    .port-multiselect .dropdown-list{
+        top: -10px;
+        padding: 0px !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    .port-multiselect .dropdown-list ul.item2 {
+        border: solid 1px #efefef61;
+        background: #00000005;
+    }
+    .port-multiselect  li.filter-textbox {
+        padding: 0px !important;
+    }
+    .mat-mdc-form-field-subscript-wrapper {
+        height: 0px;
+    }
+
+    .mat-mdc-form-field-infix {
+        min-height: 30px !important;
+    }
+
+    mat-form-field {
+        width: 100%;
+    }
+    .mat-mdc-text-field-wrapper:not(.mdc-text-field--outlined) .mat-mdc-form-field-infix,
+    .mdc-text-field{
+        padding: 0px !important;
+    }
+
+    .mdc-text-field--no-label:not(.mdc-text-field--outlined):not(.mdc-text-field--textarea) .mat-mdc-form-field-infix {
+        padding-top: 0px !important;
+        padding-bottom: 0 !important;
+    }
+    .mdc-text-field--no-label:not(.mdc-text-field--textarea) .mat-mdc-form-field-input-control.mdc-text-field__input,
+    .mat-mdc-text-field-wrapper .mat-mdc-form-field-input-control{
+        height: 36px !important;
+        padding: 0px 10px;
+    }
+    .mat-mdc-text-field-wrapper .mat-mdc-form-field-input-control:focus{
+        outline: none !important;
+    }
+    .mat-mdc-icon-button.mat-mdc-button-base {
+        --mdc-icon-button-state-layer-size: 36px;
+    }
+
+    .mat-mdc-icon-button .mat-mdc-button-touch-target {
+        height: 34px;
+    }
+
+    .mat-mdc-icon-button.mat-mdc-button-base {
+        padding: 0px;
+    }
+
+    .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+        background-color: #fff !important;
+        border: none !important;
+        border-radius: 2px;
+    }
+
+    .mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-line-ripple::before,
+    .mdc-line-ripple {
+        display: none !important;
+    }
+
+    .getrcdcode {
+        font-size: 14px;
+        margin: 0px 0px;
+        display: inline-block;
+        color: #002B5C;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .getrcdcode i {
+        font-size: 15px;
+        margin-left: 8px;
+    }
+
+    span.removecode {
+        position: absolute;
+        right: 12px;
+        top: 5px;
+        color: #757575;
+        cursor: pointer;
+    }
+
+    .dark-fields input,
+    .dark-fields select {
+        background-color: #e9ecf1 !important;
+
+    }
+
+    .forbtn button {
+        background: #e9ecf1;
+        border-color: #e9ecf1;
+    }
+
+    #trade_routes table thead tr th:first-child,
+    #aliases table thead tr th:first-child {
+        width: 255px;
+    }
+
+    #trade_routes ng-multiselect-dropdown,
+    #aliases ng-multiselect-dropdown {
+        height: auto;
+        padding: 0;
+    }
+
+    #trade_routes .custom-form-control .dropdown-btn,
+    #aliases .custom-form-control .dropdown-btn {
+        background: #e9ecf1;
+    }
+
+    #trade_routes .custom-form-control .dropdown-btn .selected-item,
+    #aliases .custom-form-control .dropdown-btn .selected-item {
+        max-width: 100%;
+    }
+
+    .removerow {
+        cursor: pointer;
+    }
+
+    .removerow:hover {
+        color: #8b7878
+    }
+
+    .dynamic-table thead tr th:first-child {
+        width: auto !important;
+    }
+
+    .addValidButton {
+        background-color: #59a357;
+        color: #fff;
+    }
+
+    .service-view table h3 {
+        font-size: 15px;
+        margin: 0px;
+    }
+
+    #add_class_box tr td {
+        padding: 5px;
+    }
+
+    #add_class_box tr td label {
+        margin: 0px;
+    }
+}
+
+.service-action a.text-black i {
+    display: inline-block;
+    margin-left: 7px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.service-action a.text-black svg {
+    width: 18px;
+    height: 20px;
+    transform: translateY(-4px);
+    margin-left: 3px;
+}
+
+.service-action a.text-black svg g,  .service-action a.text-black {
+    fill: #545B62;
+    color: #545B62;
+}
+
+.service-action a.text-black:hover,
+.service-action a.text-black:hover svg g {
+    color: #002B5C;
+    fill: #002B5C;
+}
+.service-action form {
+    margin-left: auto;
+}

@@ -1,0 +1,24 @@
+::ng-deep {
+    .NgxEditor__Content {
+        height: 200px;
+        overflow-y: auto;
+    }
+
+    .editorbox .ProseMirror.NgxEditor__Content {
+        height: 350px;
+    }
+
+    .editorheight .ProseMirror.NgxEditor__Content {
+        height: 50px;
+    }
+
+    .NgxEditor__Wrapper {
+        border: none !important;
+    }
+
+    .NgxEditor__MenuBar {
+        padding: 4px;
+        color: #002d5a;
+    }
+
+}

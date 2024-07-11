@@ -1,0 +1,29 @@
+.confirmation-dialog {
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.confirmation-dialog h1 {
+    font-size: 22px;
+    font-weight: bold !important;
+    margin-bottom: 5px;
+}
+
+.confirmation-dialog .btn:focus {
+    box-shadow: none;
+}
+
+.mat-mdc-dialog-actions {
+    justify-content: center;
+}
+
+.confirmation-dialog textarea:focus-visible {
+    outline: none;
+}
+
+.confirmation-dialog textarea {
+    border: none;
+    background: #e9ecf1 !important;
+    padding: 8px;
+    font-size: 13px;
+}
